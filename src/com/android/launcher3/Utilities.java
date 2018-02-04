@@ -975,4 +975,8 @@ public final class Utilities {
             Log.d(tag, message);
         }
     }
+
+    public static boolean isWorkspaceEditAllowed(Context context) {
+        return !LauncherPrefs.WORKSPACE_LOCK.get(context);
+    }
 }
