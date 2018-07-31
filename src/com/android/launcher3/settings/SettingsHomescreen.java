@@ -40,6 +40,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.display.DisplayController;
 import com.android.launcher3.display.LauncherDisplayInfo;
 import com.android.launcher3.util.SafeCloseable;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.util.SettingsCache;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
@@ -143,6 +144,10 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
         private boolean mPreferenceHighlighted = false;
 
+        private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
+
+        private Preference mShowGoogleAppPref;
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             if (BuildConfig.IS_DEBUG_DEVICE) {
@@ -174,6 +179,9 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             PreferenceScreen screen = getPreferenceScreen();
             initPreferences(screen);
+
+            mShowGoogleAppPref = screen.findPreference(KEY_MINUS_ONE);
+            updateIsGoogleAppEnabled();
 
             if (mHighLightKey != null
                     && !isKeyInPreferenceGroup(mHighLightKey, screen)) {
@@ -258,6 +266,12 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             return true;
         }
 
+        private void updateIsGoogleAppEnabled() {
+            if (mShowGoogleAppPref != null) {
+                mShowGoogleAppPref.setEnabled(Utilities.isGSAEnabled(getContext()));
+            }
+        }
+
         @Override
         public void onResume() {
             super.onResume();
@@ -269,6 +283,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                     mPreferenceHighlighted = true;
                 }
             }
+            updateIsGoogleAppEnabled();
 
             if (mRestartOnResume) {
                 recreateActivityNow();
