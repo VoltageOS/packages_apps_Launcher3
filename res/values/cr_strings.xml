@@ -128,4 +128,7 @@
     <!-- Memory info -->
     <string name="meminfo_text">%1$s available | %2$s</string>
     
+    <!-- Force stop shortcut -->
+    <string name="recent_task_force_stop_app">Force stop</string>
+    <string name="recents_app_force_stopped">App force stopped</string>
 </resources>
