@@ -38,8 +38,8 @@ import androidx.annotation.Nullable;
 
 import com.android.internal.jank.Cuj;
 import com.android.internal.jank.InteractionJankMonitor;
+import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.anim.AnimationSuccessListener;
-import com.android.launcher3.icons.IconProvider;
 import com.android.quickstep.TaskAnimationManager;
 import com.android.systemui.shared.pip.PipSurfaceTransactionHelper;
 import com.android.wm.shell.common.pip.IPipAnimationListener.PipResources;
