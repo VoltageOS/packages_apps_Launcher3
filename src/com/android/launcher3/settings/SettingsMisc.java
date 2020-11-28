@@ -72,6 +72,7 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
             !Utilities.IS_DEBUG_DEVICE ? Collections.emptyList()
                     : Collections.singletonList(DeveloperOptionsFragment.class.getName());
 
+    private static final String SUGGESTIONS_KEY = "pref_suggestions";
     private static final String DEVELOPER_OPTIONS_KEY = "pref_developer_options";
 
     public static final String EXTRA_FRAGMENT_ARG_KEY = ":settings:fragment_args_key";
@@ -185,6 +186,7 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
         private String mHighLightKey;
         private boolean mPreferenceHighlighted = false;
         private Preference mDeveloperOptionPref;
+        protected static final String DPS_PACKAGE = "com.google.android.as";
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -257,6 +259,10 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                             RotationHelper.getAllowRotationDefaultValue(deviceProfile));
                     return true;
 
+                case SUGGESTIONS_KEY:
+                    // Show if Device Personalization Services is present.
+                    return isDPSEnabled(getContext());
+
                 case DEVELOPER_OPTIONS_KEY:
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
@@ -286,6 +292,15 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
             }
             return showPreference;
         }
+
+        public static boolean isDPSEnabled(Context context) {
+            try {
+                return context.getPackageManager().getApplicationInfo(DPS_PACKAGE, 0).enabled;
+            } catch (PackageManager.NameNotFoundException e) {
+                return false;
+            }
+        }
+
         @Override
         public void onResume() {
             super.onResume();
