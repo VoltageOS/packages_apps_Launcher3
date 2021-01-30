@@ -90,6 +90,7 @@ import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_NOT_PINNABL
 import static com.android.launcher3.popup.SystemShortcut.ADD_TO_HOME_SCREEN;
 import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
+import static com.android.launcher3.popup.SystemShortcut.UNINSTALL;
 import static com.android.launcher3.popup.SystemShortcut.REMOVE;
 import static com.android.launcher3.popup.SystemShortcut.WIDGETS;
 import static com.android.launcher3.states.RotationHelper.REQUEST_LOCK;
@@ -2812,7 +2813,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                 return Stream.of(APP_INFO, WIDGETS, INSTALL);
             }
         }
-        return Stream.of(APP_INFO, WIDGETS, INSTALL);
+        return Stream.of(APP_INFO, WIDGETS, INSTALL, UNINSTALL);
     }
 
     /**
