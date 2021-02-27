@@ -19,6 +19,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PointF
 import com.android.launcher3.R
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.deviceprofile.parser.DeviceTypedMap.COUNT_SIZES
 import com.android.launcher3.deviceprofile.parser.DeviceTypedMap.INDEX_DEFAULT
 import com.android.launcher3.deviceprofile.parser.DeviceTypedMap.parsePointMap
@@ -34,6 +35,10 @@ private constructor(@JvmField val grid: GridOption, context: Context, ta: TypedA
     val minHeightDps: Float = ta.getFloat(R.styleable.ProfileDisplayOption_minHeightDps, 0f)
     @JvmField
     val canBeDefault: Boolean = ta.getBoolean(R.styleable.ProfileDisplayOption_canBeDefault, false)
+
+    private val iconSizeModifier: Float = LauncherPrefs.ICON_SIZE.get(context) / 100f
+
+    private val fontSizeModifier: Float = LauncherPrefs.FONT_SIZE.get(context) / 100f
 
     @JvmField
     val minCellSize: Array<PointF> =
@@ -121,7 +126,7 @@ private constructor(@JvmField val grid: GridOption, context: Context, ta: TypedA
                 R.styleable.ProfileDisplayOption_iconSizeTwoPanelPortrait,
                 R.styleable.ProfileDisplayOption_iconSizeTwoPanelLandscape,
             ) { i, v ->
-                getFloat(i, v)
+                getFloat(i, v) * if (i == R.styleable.ProfileDisplayOption_iconImageSize) iconSizeModifier else 1f
             }
             .toFloatArray()
 
@@ -134,7 +139,7 @@ private constructor(@JvmField val grid: GridOption, context: Context, ta: TypedA
                 R.styleable.ProfileDisplayOption_iconTextSizeTwoPanelPortrait,
                 R.styleable.ProfileDisplayOption_iconTextSizeTwoPanelLandscape,
             ) { i, v ->
-                getFloat(i, v)
+                getFloat(i, v) * if (i == R.styleable.ProfileDisplayOption_iconTextSize) fontSizeModifier else 1f
             }
             .toFloatArray()
 
