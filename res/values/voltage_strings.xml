@@ -192,4 +192,10 @@
     <!-- Force monochrome icons -->
     <string name="force_monochrome_icons_title">Force themed icons</string>
     <string name="force_monochrome_icons_summary">Generate monochromatic icons, if not supported by the app (requires re-toggling of themed icons)</string>
+
+    <!-- Lock -->
+    <string name="action_lock">Lock/Unlock app</string>
+    <string name="unlock_app">Unlocked app in recents</string>
+    <string name="lock_app">Locked app in recents</string>
+
 </resources>
