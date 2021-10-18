@@ -115,6 +115,12 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         View share = findViewById(R.id.action_share);
         share.setOnClickListener(this);
         findViewById(R.id.action_screenshot).setOnClickListener(this);
+        if (getContext().getPackageManager().getLaunchIntentForPackage("com.google.ar.lens") != null) {
+            View lens = findViewById(R.id.action_lens);
+            findViewById(R.id.action_lens).setOnClickListener(this);
+            lens.setVisibility(VISIBLE);
+            findViewById(R.id.lens_space).setVisibility(VISIBLE);
+        }
         if (ENABLE_OVERVIEW_SHARE.get()) {
             share.setVisibility(VISIBLE);
             findViewById(R.id.oav_three_button_space).setVisibility(VISIBLE);
@@ -140,6 +146,8 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
             mCallbacks.onShare();
         } else if (id == R.id.action_screenshot) {
             mCallbacks.onScreenshot();
+        } else if (id == R.id.action_lens) {
+            mCallbacks.onLens();
         }
     }
 
