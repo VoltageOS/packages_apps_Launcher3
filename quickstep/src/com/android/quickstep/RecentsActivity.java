@@ -76,9 +76,11 @@ import com.android.quickstep.fallback.FallbackRecentsStateController;
 import com.android.quickstep.fallback.FallbackRecentsView;
 import com.android.quickstep.fallback.RecentsDragLayer;
 import com.android.quickstep.fallback.RecentsState;
+import com.android.quickstep.SysUINavigationMode;
 import com.android.quickstep.util.RecentsAtomicAnimationFactory;
 import com.android.quickstep.util.SplitSelectStateController;
 import com.android.quickstep.util.TISBindHelper;
+import com.android.quickstep.views.MidClearAllButton;
 import com.android.quickstep.views.OverviewActionsView;
 import com.android.quickstep.views.RecentsView;
 import com.android.quickstep.views.TaskView;
@@ -111,6 +113,7 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
     private TISBindHelper mTISBindHelper;
     private @Nullable TaskbarManager mTaskbarManager;
     private @Nullable FallbackTaskbarUIController mTaskbarUIController;
+    private MidClearAllButton mMidClearAllButton;
 
     private Configuration mOldConfig;
 
@@ -134,13 +137,17 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
         mScrimView = findViewById(R.id.scrim_view);
         mFallbackRecentsView = findViewById(R.id.overview_panel);
         mActionsView = findViewById(R.id.overview_actions_view);
+        mMidClearAllButton = findViewById(R.id.mid_clear_all);
         SYSUI_PROGRESS.set(getRootView().getSysUiScrim(), 0f);
 
         SplitSelectStateController controller =
                 new SplitSelectStateController(mHandler, SystemUiProxy.INSTANCE.get(this),
                         getStateManager(), null /*depthController*/);
         mDragLayer.recreateControllers();
-        mFallbackRecentsView.init(mActionsView, controller);
+        mFallbackRecentsView.init(mActionsView, controller, mMidClearAllButton);
+
+        mMidClearAllButton.setDp(mDeviceProfile);
+        mMidClearAllButton.updateVerticalMargin(SysUINavigationMode.getMode(this));
 
         mTISBindHelper = new TISBindHelper(this, this::onTISConnected);
     }
@@ -220,6 +227,10 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
 
     public OverviewActionsView getActionsView() {
         return mActionsView;
+    }
+
+    public MidClearAllButton getMidClearAllButton() {
+        return mMidClearAllButton;
     }
 
     @Override
