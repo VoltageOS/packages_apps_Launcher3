@@ -33,6 +33,7 @@ import androidx.annotation.NonNull;
 
 import com.android.launcher3.LauncherModel.ModelUpdateTask;
 import com.android.launcher3.automation.AutomationRepository;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.icons.IconCache;
 import com.android.launcher3.logging.FileLog;
 import com.android.launcher3.model.AllAppsList;
@@ -99,10 +100,13 @@ public class PackageUpdatedTask implements ModelUpdateTask {
         }
 
         final HashMap<String, List<LauncherActivityInfo>> activitiesLists = new HashMap<>();
+        boolean needsRestart = false;
         for (String packageName : mPackages) {
             iconCache.updateIconsForPkg(packageName, mUser);
             activitiesLists.put(packageName, appsList.updatePackage(context, packageName, mUser));
         }
+
+        needsRestart = mPackages.stream().anyMatch(this::isTargetPackage);
 
         taskController.bindApplicationsIfNeeded();
 
@@ -227,5 +231,13 @@ public class PackageUpdatedTask implements ModelUpdateTask {
             }
             taskController.bindUpdatedWidgets(dataModel);
         }
+
+        if (needsRestart) {
+            Utilities.restart(context);
+        }
+    }
+
+    private boolean isTargetPackage(String packageName) {
+        return packageName.equals(Utilities.GSA_PACKAGE);
     }
 }
