@@ -32,4 +32,8 @@
     <dimen name="meminfo_bottom_margin_gesture">30dp</dimen>
     <dimen name="meminfo_bottom_margin_three_button">10dp</dimen>
 
+    <!-- Extra bottom margin for overview TaskViews -->
+    <dimen name="overview_task_extra_top_margin">40dp</dimen>
+    <dimen name="overview_task_extra_bottom_margin">30dp</dimen>
+
 </resources>
