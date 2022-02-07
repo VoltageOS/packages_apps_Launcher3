@@ -143,9 +143,8 @@ public class SettingsActivity extends FragmentActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case Utilities.KEY_DT_GESTURE:
-                LauncherAppState.getInstanceNoCreate().setNeedsRestart();
-                break;
             case Utilities.KEY_DOCK_SEARCH:
+            case Utilities.KEY_DOCK_THEME:
                 LauncherAppState.getInstanceNoCreate().setNeedsRestart();
                 break;
             default:
