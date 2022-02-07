@@ -339,4 +339,7 @@
     <string name="quick_event_weather_text_summary">Display current weather condition summary</string>
 
     <string name="intent_no_app_clock_found">Unable to find calendar or clock activity</string>
+
+    <!-- Memory info -->
+     <string name="meminfo_text">%1$s Available | %2$s Total</string>
 </resources>

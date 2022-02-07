@@ -13,6 +13,10 @@
  -->
  <resources>
 
+     <!-- Meminfo in overview -->
+     <dimen name="meminfo_bottom_margin_gesture">15dp</dimen>
+     <dimen name="meminfo_bottom_margin_three_button">15dp</dimen>
+
     <!-- QuickSpace -->
     <dimen name="quickspace_title_size">20sp</dimen>
     <dimen name="quickspace_subtitle_size">16sp</dimen>
