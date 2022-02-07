@@ -44,6 +44,7 @@ import com.android.quickstep.RecentsActivity;
 import com.android.quickstep.util.GroupTask;
 import com.android.quickstep.util.SplitSelectStateController;
 import com.android.quickstep.util.TaskViewSimulator;
+import com.android.quickstep.views.MemInfoView;
 import com.android.quickstep.views.MidClearAllButton;
 import com.android.quickstep.views.OverviewActionsView;
 import com.android.quickstep.views.RecentsView;
@@ -70,8 +71,8 @@ public class FallbackRecentsView extends RecentsView<RecentsActivity, RecentsSta
 
     @Override
     public void init(OverviewActionsView actionsView, SplitSelectStateController splitController,
-                        MidClearAllButton midClearAllButton) {
-        super.init(actionsView, splitController, midClearAllButton);
+                        MidClearAllButton midClearAllButton, MemInfoView memInfoView) {
+        super.init(actionsView, splitController, midClearAllButton, memInfoView);
         setOverviewStateEnabled(true);
         setOverlayEnabled(true);
     }

@@ -653,6 +653,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
 
     private OverviewActionsView mActionsView;
     private MidClearAllButton mMidClearAllButton;
+    private MemInfoView mMemInfoView;
 
     private MultiWindowModeChangedListener mMultiWindowModeChangedListener =
             new MultiWindowModeChangedListener() {
@@ -872,11 +873,12 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
     }
 
     public void init(OverviewActionsView actionsView, SplitSelectStateController splitController,
-                        MidClearAllButton midClearAllButton) {
+                        MidClearAllButton midClearAllButton, MemInfoView memInfoView) {
         mActionsView = actionsView;
         mActionsView.updateHiddenFlags(HIDDEN_NO_TASKS, getTaskViewCount() == 0);
         mSplitSelectStateController = splitController;
         mMidClearAllButton = midClearAllButton;
+        mMemInfoView = memInfoView;
         midClearAllButton.setOnClickListener(this::dismissAllTasks);
         midClearAllButton.hide(MidClearAllButton.HIDDEN_NO_TASKS, getTaskViewCount() == 0);
     }
@@ -1604,6 +1606,7 @@ public abstract class RecentsView<ACTIVITY_TYPE extends StatefulActivity<STATE_T
         float alpha = mapToRange(fullscreenProgress, 0, 0.1f, 1f, 0f, LINEAR);
         mActionsView.getFullscreenAlpha().setValue(alpha);
         mMidClearAllButton.setAlpha(MidClearAllButton.ALPHA_FS_PROGRESS, alpha);
+        mMemInfoView.setAlpha(MemInfoView.ALPHA_FS_PROGRESS, alpha);
     }
 
     private void updateTaskStackListenerState() {

@@ -80,6 +80,7 @@ import com.android.quickstep.SysUINavigationMode;
 import com.android.quickstep.util.RecentsAtomicAnimationFactory;
 import com.android.quickstep.util.SplitSelectStateController;
 import com.android.quickstep.util.TISBindHelper;
+import com.android.quickstep.views.MemInfoView;
 import com.android.quickstep.views.MidClearAllButton;
 import com.android.quickstep.views.OverviewActionsView;
 import com.android.quickstep.views.RecentsView;
@@ -114,6 +115,7 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
     private @Nullable TaskbarManager mTaskbarManager;
     private @Nullable FallbackTaskbarUIController mTaskbarUIController;
     private MidClearAllButton mMidClearAllButton;
+    private MemInfoView mMemInfoView;
 
     private Configuration mOldConfig;
 
@@ -138,16 +140,20 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
         mFallbackRecentsView = findViewById(R.id.overview_panel);
         mActionsView = findViewById(R.id.overview_actions_view);
         mMidClearAllButton = findViewById(R.id.mid_clear_all);
+        mMemInfoView= findViewById(R.id.meminfo);
         SYSUI_PROGRESS.set(getRootView().getSysUiScrim(), 0f);
 
         SplitSelectStateController controller =
                 new SplitSelectStateController(mHandler, SystemUiProxy.INSTANCE.get(this),
                         getStateManager(), null /*depthController*/);
         mDragLayer.recreateControllers();
-        mFallbackRecentsView.init(mActionsView, controller, mMidClearAllButton);
+        mFallbackRecentsView.init(mActionsView, controller, mMidClearAllButton, mMemInfoView);
 
         mMidClearAllButton.setDp(mDeviceProfile);
         mMidClearAllButton.updateVerticalMargin(SysUINavigationMode.getMode(this));
+
+        mMemInfoView.setDp(mDeviceProfile);
+        mMemInfoView.updateVerticalMargin(SysUINavigationMode.getMode(this));
 
         mTISBindHelper = new TISBindHelper(this, this::onTISConnected);
     }
@@ -231,6 +237,10 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
 
     public MidClearAllButton getMidClearAllButton() {
         return mMidClearAllButton;
+    }
+
+    public MemInfoView getMemInfoView() {
+        return mMemInfoView;
     }
 
     @Override

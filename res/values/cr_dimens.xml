@@ -28,4 +28,8 @@
     <dimen name="mid_clear_all_bottom_margin_gesture">70dp</dimen>
     <dimen name="mid_clear_all_bottom_margin_three_button">40dp</dimen>
 
+     <!-- Meminfo in overview -->
+    <dimen name="meminfo_bottom_margin_gesture">30dp</dimen>
+    <dimen name="meminfo_bottom_margin_three_button">10dp</dimen>
+
 </resources>
