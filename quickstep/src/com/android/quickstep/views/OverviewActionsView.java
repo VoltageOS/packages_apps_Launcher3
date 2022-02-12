@@ -36,6 +36,7 @@ import com.android.launcher3.R;
 import com.android.launcher3.uioverrides.ApiWrapper;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.DisplayController.NavigationMode;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.util.MultiValueAlpha.AlphaProperty;
 import com.android.quickstep.TaskOverlayFactory.OverlayUICallbacks;
@@ -117,7 +118,7 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         findViewById(R.id.action_screenshot).setOnClickListener(this);
         findViewById(R.id.action_clear_all).setOnClickListener(this);
         findViewById(R.id.kill_app).setOnClickListener(this);
-        if (getContext().getPackageManager().getLaunchIntentForPackage("com.google.ar.lens") != null) {
+        if (Utilities.isGSAEnabled(getContext())) {
             View lens = findViewById(R.id.action_lens);
             findViewById(R.id.action_lens).setOnClickListener(this);
             lens.setVisibility(VISIBLE);
