@@ -66,6 +66,7 @@ import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.IconLabelDotView;
+import com.android.launcher3.Utilities;
 
 import java.text.NumberFormat;
 
@@ -156,16 +157,23 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private boolean mEnableIconUpdateAnimation = false;
 
+    private boolean mUseThemedIconsInsideDrawer = false;
+
     public BubbleTextView(Context context) {
         this(context, null, 0);
+        mUseThemedIconsInsideDrawer = Utilities.isThemedIconsEnabledForAppDrawer(context);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        mUseThemedIconsInsideDrawer = Utilities.isThemedIconsEnabledForAppDrawer(context);
     }
 
     public BubbleTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mUseThemedIconsInsideDrawer = Utilities.isThemedIconsEnabledForAppDrawer(context);
+
         mActivity = ActivityContext.lookupContext(context);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
@@ -321,7 +329,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     @UiThread
     protected void applyIconAndLabel(ItemInfoWithIcon info) {
-        FastBitmapDrawable iconDrawable = info.newIcon(getContext(), true);
+        boolean useTheme = mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_FOLDER;
+        FastBitmapDrawable iconDrawable = info.newIcon(getContext(), useTheme | mUseThemedIconsInsideDrawer);
         mDotParams.color = IconPalette.getMutedColor(iconDrawable.getIconColor(), 0.54f);
 
         setIcon(iconDrawable);

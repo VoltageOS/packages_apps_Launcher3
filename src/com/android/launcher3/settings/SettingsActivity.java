@@ -56,6 +56,7 @@ import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.model.WidgetsModel;
 import com.android.launcher3.settings.preference.CustomSeekBarPreference;
 import com.android.launcher3.uioverrides.plugins.PluginManagerWrapper;
+import com.android.launcher3.util.Themes;
 
 import java.util.Collections;
 import java.util.List;
@@ -145,6 +146,7 @@ public class SettingsActivity extends FragmentActivity
             case Utilities.KEY_DT_GESTURE:
             case Utilities.KEY_DOCK_SEARCH:
             case Utilities.KEY_DOCK_THEME:
+            case Utilities.KEY_DRAWER_THEME:
                 LauncherAppState.getInstanceNoCreate().setNeedsRestart();
                 break;
             default:
@@ -317,6 +319,8 @@ public class SettingsActivity extends FragmentActivity
                     mShowGoogleBarPref = preference;
                     updateIsGoogleAppEnabled();
                     return true;
+		case Utilities.KEY_DRAWER_THEME:
+		    return Themes.isThemedIconEnabled(getContext());
             }
 
             return true;
