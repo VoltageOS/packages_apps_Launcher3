@@ -155,6 +155,8 @@ public final class Utilities {
     public static final String KEY_DOCK_THEME = "pref_dock_theme";
     public static final String KEY_SEARCH_RADIUS = "pref_search_radius_size";
     public static final String KEY_STATUS_BAR = "pref_show_statusbar";
+    public static final String KEY_DRAWER_THEME = "pref_drawer_theme";
+
 
     /**
      * Returns true if theme is dark.
@@ -945,4 +947,10 @@ public final class Utilities {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getBoolean(KEY_STATUS_BAR, true);
     }
+
+    public static boolean isThemedIconsEnabledForAppDrawer(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_DRAWER_THEME, false);
+    }
+
 }

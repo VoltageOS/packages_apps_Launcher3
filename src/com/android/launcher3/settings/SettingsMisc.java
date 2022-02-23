@@ -53,6 +53,7 @@ import com.android.launcher3.Utilities;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.plugins.PluginManagerWrapper;
+import com.android.launcher3.util.Themes;
 
 import java.util.Collections;
 import java.util.List;
@@ -259,6 +260,10 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                 case DEVELOPER_OPTIONS_KEY:
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
+
+		case Utilities.KEY_DRAWER_THEME:
+		    return Themes.isThemedIconEnabled(getContext());
+
             }
 
             return true;

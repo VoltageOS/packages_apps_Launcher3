@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+* Copyright (C) 2016 The Android Open Source Project
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+-->
+
+<resources>
+
+    <string name="state_loading">Applying\u2026</string>
+
+    <!-- Settings title to show Google Now at -1 screen on launcher. [CHAR LIMIT=50] -->
+    <string name="title_show_google_app">Swipe to access Google app</string>
+    <!-- Settings message explaining when the -1 screen is available on an LTR device. [CHAR LIMIT=100] -->
+    <string name="msg_minus_one_on_left">From Home screen, swipe left to open Google app</string>
+    <!-- Settings message explaining when the -1 screen is available on an RTL device. [CHAR LIMIT=100] -->
+    <string name="msg_minus_one_on_right">From Home screen, swipe right to open Google app</string>
+    <string name="pref_show_google_now_summary" translatable="false">@string/msg_minus_one_on_left</string>
+
+    <!-- Folder titles -->
+    <string name="google_folder_title" translatable="false">Google</string>
+
+    <!-- Gestures -->
+    <string name="pref_dt_gesture_title">Double tap gesture</string>
+    <string name="pref_dt_gesture_summary">Double tap on empty space for power-off</string>
+
+    <!-- Icon size -->
+    <string name="icon_size_title">Icon size</string>
+
+    <!-- Font size -->
+    <string name="font_size_title">Font size</string>
+
+    <!-- Edit workspace -->
+    <string name="settings_lock_layout_title">Lock layout</string>
+    <string name="settings_lock_layout_summary_on">Icons and widgets can\'t be added, removed and moved on the homescreen</string>
+    <string name="settings_lock_layout_summary_off">Icons and widgets can be added, removed and moved on the homescreen</string>
+    <string name="settings_edit_widgets_error">It\'s not possible to add widgets to the home screen</string>
+
+    <!-- Default home page -->
+    <string name="set_default_home_page">Set default page</string>
+
+    <!-- Hotseat searchbar -->
+    <string name="label_search">Search</string>
+    <string name="label_lens">Google Lens</string>
+    <string name="label_voice_search">Voice search</string>
+
+    <string name="dock_search_title">Google search bar</string>
+    <string name="dock_search_summary">Show search bar in the bottom dock</string>
+    <string name="dock_theme_title">Themed icons</string>
+    <string name="dock_theme_summary">Use themed icons for search bar</string>
+
+    <!-- Recents -->
+    <string name="action_lens">Lens</string>
+
+    <!-- Drawer Themed Icons -->
+    <string name="drawer_theme_title">Themed Icons inside drawer</string>
+    <string name="drawer_theme_summary">Show themed icons inside app drawer</string>
+
+</resources>

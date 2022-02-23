@@ -45,6 +45,7 @@ import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+import com.android.launcher3.util.Themes;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 
@@ -98,6 +99,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         switch (key) {
             case Utilities.KEY_DOCK_SEARCH:
             case Utilities.KEY_DOCK_THEME:
+            case Utilities.KEY_DRAWER_THEME:
             case Utilities.KEY_SEARCH_RADIUS:
             case Utilities.KEY_STATUS_BAR:
                 LauncherAppState.getInstanceNoCreate().setNeedsRestart();
