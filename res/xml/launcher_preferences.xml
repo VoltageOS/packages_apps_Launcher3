@@ -104,6 +104,12 @@
         android:summary="@string/dock_theme_summary"
         android:dependency="pref_dock_search" />
 
+    <SwitchPreference
+        android:key="pref_drawer_theme"
+        android:title="@string/drawer_theme_title"
+        android:summary="@string/drawer_theme_summary"
+        android:defaultValue="false" />
+
     <androidx.preference.PreferenceScreen
         android:key="pref_developer_options"
         android:persistent="false"
