@@ -336,6 +336,10 @@ public class TaskThumbnailViewDeprecated extends View implements ViewPool.Reusab
         }
     }
 
+    public TaskView getTaskView() {
+         return (TaskView) getParent();
+     }
+
     public void setOverlayEnabled(boolean overlayEnabled) {
         if (mOverlayEnabled != overlayEnabled) {
             mOverlayEnabled = overlayEnabled;
