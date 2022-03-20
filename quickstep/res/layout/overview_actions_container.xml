@@ -33,12 +33,12 @@
 
         <Button
             android:id="@+id/action_screenshot"
-            style="@style/OverviewActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_screenshot"
-            android:text="@string/action_screenshot"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor" />
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:background="@drawable/recent_button_bg"
+            android:backgroundTint="@color/recent_button_bg_color"
+            android:foreground="@drawable/ic_screenshot"
+            android:foregroundGravity="center"/>
 
         <Space
             android:layout_width="0dp"
@@ -47,12 +47,12 @@
 
         <Button
             android:id="@+id/action_clear_all"
-            style="@style/OverviewActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_clear_all"
-            android:text="@string/recents_clear_all"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor" />
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:background="@drawable/recent_button_bg"
+            android:backgroundTint="@color/recent_button_bg_color"
+            android:foreground="@drawable/ic_close_all"
+            android:foregroundGravity="center"/>
 
         <Space
             android:id="@+id/lens_space"
@@ -62,14 +62,14 @@
             android:visibility="gone" />
 
         <Button
-            android:drawableStart="@drawable/ic_lens"
-            style="@style/OverviewActionButton"
             android:id="@+id/action_lens"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_lens"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor"
-            android:visibility="gone" />
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:background="@drawable/recent_button_bg"
+            android:backgroundTint="@color/recent_button_bg_color"
+            android:foreground="@drawable/ic_lens"
+            android:foregroundGravity="center"
+            android:visibility="gone"/>
 
         <Space
             android:id="@+id/action_split_space"

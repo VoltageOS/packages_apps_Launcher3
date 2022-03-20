@@ -79,4 +79,7 @@
 
     <color name="all_set_page_background">#FFFFFFFF</color>
 
+    <color name="recent_button_bg_color">#FFFFFF</color>
+    <color name="recents_button_fg_color">#000000</color>
+    <color name="recent_button_ripple_color">#D0D0D0</color>
 </resources>

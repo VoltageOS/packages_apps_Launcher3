@@ -24,4 +24,6 @@
 
     <color name="all_set_page_background">#FF000000</color>
 
+    <color name="recent_button_bg_color">#353535</color>
+    <color name="recents_button_fg_color">#FFFFFF</color>
 </resources>
