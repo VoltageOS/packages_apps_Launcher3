@@ -116,6 +116,7 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         super.onFinishInflate();
         findViewById(R.id.action_screenshot).setOnClickListener(this);
         findViewById(R.id.action_clear_all).setOnClickListener(this);
+        findViewById(R.id.kill_app).setOnClickListener(this);
         if (getContext().getPackageManager().getLaunchIntentForPackage("com.google.ar.lens") != null) {
             View lens = findViewById(R.id.action_lens);
             findViewById(R.id.action_lens).setOnClickListener(this);
@@ -150,6 +151,8 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
             mCallbacks.onClearAllTasksRequested();
         } else if (id == R.id.action_lens) {
             mCallbacks.onLens();
+        } else if (id == R.id.kill_app) {
+            mCallbacks.onKillApp();
         }
     }
 
