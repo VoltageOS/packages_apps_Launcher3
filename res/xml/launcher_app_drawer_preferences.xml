@@ -1,3 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:launcher="http://schemas.android.com/apk/res-auto"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
+
+    <SwitchPreferenceCompat
+        android:key="pref_allapps_themed_icons"
+        android:title="@string/pref_themed_icons_title"
+        android:summary="@string/pref_themed_icons_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
+
+</androidx.preference.PreferenceScreen>
