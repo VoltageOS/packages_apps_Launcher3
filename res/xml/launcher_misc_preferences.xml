@@ -33,4 +33,9 @@
         android:key="pref_trust_apps"
         android:title="@string/trust_apps_manager_name" />
 
+    <com.android.launcher3.settings.preference.RestartPreference
+        android:key="pref_restart"
+        android:title="@string/pref_restart_title"
+        android:summary="@string/pref_restart_summary" />
+
 </androidx.preference.PreferenceScreen>
