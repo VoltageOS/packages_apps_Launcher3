@@ -67,6 +67,13 @@
             android:title="@string/desktop_show_labels"
             android:defaultValue="true"
             android:persistent="true" />
+
+        <SwitchPreference
+            android:key="pref_show_top_shadow"
+            android:title="@string/show_top_shadow"
+            android:defaultValue="true"
+            android:persistent="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
