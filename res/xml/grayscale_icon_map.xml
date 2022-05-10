@@ -197,6 +197,7 @@
     <icon drawable="@drawable/reddit" package="com.reddit.frontpage" />
     <icon drawable="@drawable/redlime" package="mendeleev.redlime" />
     <icon drawable="@drawable/retro_music" package="code.name.monkey.retromusic" />
+    <icon drawable="@drawable/retro_music" package="org.lineageos.eleven" />
     <icon drawable="@drawable/safety" package="com.google.android.apps.safetyhub" />
     <icon drawable="@drawable/santander" package="com.santander.app" />
     <icon drawable="@drawable/santander" package="pl.bzwbk.bzwbk24" />
