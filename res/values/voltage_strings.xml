@@ -354,4 +354,9 @@
     <string name="recents_kill_app">Kill app</string>
 
     <string name="intent_no_app_clock_found">Unable to find calendar or clock activity</string>
+
+    <!-- Dark Status Bar -->
+    <string name="perf_dark_status_bar_title">Dark status bar</string>
+    <string name="perf_dark_status_bar_summary">Use dark status bar on Home screen</string>
+
 </resources>
