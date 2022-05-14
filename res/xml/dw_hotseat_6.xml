@@ -89,6 +89,9 @@
             launcher:packageName="com.android.camera2"
             launcher:className="com.android.camera.CameraActivity" />
         <favorite
+            launcher:packageName="app.grapheneos.camera"
+            launcher:className="app.grapheneos.camera.ui.activities.MainActivity" />
+        <favorite
             launcher:packageName="com.android.camera"
             launcher:className="com.android.camera.Camera" />
         <favorite
