@@ -113,4 +113,9 @@
     <!-- Recent Grid -->
     <string name="pref_allow_phone_overview_grid">Show grid of recent apps</string>
     <string name="pref_allow_phone_overview_grid_desc">More recent apps in overview</string>
+
+    <!-- Scroll Vibration -->
+    <string name="pref_scroll_vibration_title">Scroll Vibration</string>
+    <string name="pref_scroll_vibration_summary">Haptic feedback while scrolling through recent apps, if supported</string>
+
 </resources>
