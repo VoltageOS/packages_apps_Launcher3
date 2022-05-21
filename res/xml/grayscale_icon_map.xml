@@ -29,7 +29,7 @@
     <icon drawable="@drawable/c6_bank" package="com.c6bank.app" />
     <icon drawable="@drawable/caixa" package="br.com.gabba.Caixa" />
     <icon drawable="@drawable/calculator" package="com.google.android.calculator" />
-    <icon drawable="@drawable/calendar_30" package="com.android.calendar" />
+    <icon drawable="@array/grayscale_calendar_icons" package="com.android.calendar" />
     <icon drawable="@drawable/camera" package="com.google.android.GoogleCamera" />
     <icon drawable="@drawable/camera" package="org.codeaurora.snapcam" />
     <icon drawable="@drawable/camera" package="com.google.android.GoogleCameraEng" />
@@ -658,7 +658,7 @@
     <icon drawable="@drawable/tachiyomi" package="eu.kanade.tachiyomi" />
     <icon drawable="@drawable/photon_camera" package="com.particlesdevs.photoncamera" />
     <icon drawable="@drawable/calculator" package="com.android.calculator2" />
-    <icon drawable="@drawable/clock" package="com.android.deskclock " />
+    <icon drawable="@array/grayscale_clock_icons" package="com.android.deskclock " />
     <icon drawable="@drawable/messages" package="com.android.messaging" />
     <icon drawable="@drawable/contacts" package="com.android.contacts" />
     <icon drawable="@drawable/egov" package="kz.mobile.mgov" />
