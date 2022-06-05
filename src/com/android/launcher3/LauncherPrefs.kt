@@ -267,6 +267,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField val ALLAPPS_THEMED_ICONS = backedUpItem("pref_allapps_themed_icons", false)
         @JvmField val FONT_SIZE = backedUpItem("pref_custom_font_size", 100)
         @JvmField val ICON_SIZE = backedUpItem("pref_custom_icon_size", 100)
+        @JvmField val ROW_HEIGHT = backedUpItem("pref_row_height", 100)
         @JvmField
         val PROMISE_ICON_IDS = nonRestorableItem(InstallSessionHelper.PROMISE_ICON_IDS, "")
         @JvmField val WORK_EDU_STEP = backedUpItem("showed_work_profile_edu", 0)
