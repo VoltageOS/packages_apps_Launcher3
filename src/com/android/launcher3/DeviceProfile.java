@@ -123,6 +123,7 @@ public class DeviceProfile {
     private FolderProfile mFolderProfile;
     private AllAppsProfile mAllAppsProfile;
     private final OverviewProfile overviewProfile;
+    private final float mAllAppsCellHeightMultiplier;
 
     // Hotseat
     private HotseatProfile mHotseatProfile;
@@ -192,6 +193,7 @@ public class DeviceProfile {
         mViewScaleProvider = null;
         mAllAppsProfile = new AllAppsProfile(new Point(0, 0), 0, 0, 0f, 0, 0, 0, 0, 0, 0,
                 new Rect(), 0, 0);
+        mAllAppsCellHeightMultiplier = 1f;
         mSysuiProfile = new SysuiProfile(0, 0, false);
     }
 
@@ -231,6 +233,8 @@ public class DeviceProfile {
                 mDeviceProperties.createWindowBounds());
 
         final Resources res = context.getResources();
+
+        mAllAppsCellHeightMultiplier = LauncherPrefs.ROW_HEIGHT.get(context) / 100f;
 
         overviewProfile = OverviewProfile.Factory.createOverviewProfile(res);
 
@@ -419,7 +423,8 @@ public class DeviceProfile {
                 && !(mIsResponsiveGrid && getAllAppsProfile().getMaxAllAppsTextLineCount() == 2)) {
             // Add extra textHeight to the existing allAppsCellHeight.
             mAllAppsProfile = getAllAppsProfile().copyWithCellHeightPx(
-                    getAllAppsProfile().getCellHeightPx()
+                    (int) (getAllAppsProfile().getCellHeightPx()
+                            * mAllAppsCellHeightMultiplier)
                             + Utilities.calculateTextHeight(getAllAppsProfile().getIconTextSizePx())
             );
         }
@@ -506,7 +511,8 @@ public class DeviceProfile {
     public int getMaxAllAppsRowCount() {
         return (int) (Math.ceil(
                 (mDeviceProperties.getAvailableHeightPx() - mAllAppsProfile.getPadding().top)
-                        / (float) getAllAppsProfile().getCellHeightPx()));
+                        / ((float) getAllAppsProfile().getCellHeightPx()
+                                * mAllAppsCellHeightMultiplier)));
     }
 
     /**
