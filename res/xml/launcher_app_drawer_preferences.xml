@@ -40,4 +40,10 @@
         settings:units="%"
         android:defaultValue="100" />
 
+    <SwitchPreference
+        android:key="pref_show_search_bar"
+        android:title="@string/search_bar_enabled_title"
+        android:summary="@string/search_bar_enabled_summary"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>

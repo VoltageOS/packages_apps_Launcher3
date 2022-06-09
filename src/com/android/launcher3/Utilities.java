@@ -157,6 +157,7 @@ public final class Utilities {
     public static final String KEY_STATUS_BAR = "pref_show_statusbar";
     public static final String KEY_DRAWER_THEME = "pref_drawer_theme";
     public static final String SHOW_HOTSEAT_BG = "show_hotseat_bg";
+    public static final String KEY_SHOW_SEARCH_BAR = "pref_show_search_bar";
 
     /**
      * Returns true if theme is dark.
@@ -959,4 +960,8 @@ public final class Utilities {
         return prefs.getBoolean(KEY_DRAWER_THEME, false);
     }
 
+    public static boolean showSearchbarEnabled(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_SHOW_SEARCH_BAR, true);
+    }
 }
