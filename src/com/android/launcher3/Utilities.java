@@ -927,7 +927,7 @@ public final class Utilities {
 
     public static boolean isDockBgEnabled(Context context) {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
-        return prefs.getBoolean(SHOW_HOTSEAT_BG, true);
+        return prefs.getBoolean(SHOW_HOTSEAT_BG, false);
     }
 
     public static boolean showQSB(Context context) {
