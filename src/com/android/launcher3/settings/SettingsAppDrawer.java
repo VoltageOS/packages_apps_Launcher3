@@ -99,6 +99,7 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case Utilities.KEY_SHOW_SEARCH_BAR:
+            case Utilities.KEY_DRAWER_THEME:
                 LauncherAppState.getInstanceNoCreate().setNeedsRestart();
                 break;
             default:
