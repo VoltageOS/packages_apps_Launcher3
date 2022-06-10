@@ -442,4 +442,8 @@
     <string name="search_pref_screen_title_tablet">Search your tablet</string>
     <!-- Failed action error message: e.g. Failed: Pause -->
     <string name="remote_action_failed">Failed: <xliff:g id="what" example="Pause">%1$s</xliff:g></string>
+
+    <!-- Taskbar -->
+    <string name="pref_allow_phone_taskbar_title">Use taskbar</string>
+    <string name="pref_allow_phone_taskbar_summary">For opening and switching apps anywhere</string>
 </resources>
