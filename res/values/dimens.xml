@@ -21,30 +21,30 @@
     <!-- Dynamic Grid -->
     <dimen name="dynamic_grid_edge_margin">8dp</dimen>
     <dimen name="dynamic_grid_left_right_margin">8dp</dimen>
-    <dimen name="dynamic_grid_icon_drawable_padding">4dp</dimen>
+    <dimen name="dynamic_grid_icon_drawable_padding">7dp</dimen>
     <!-- Minimum space between workspace and hotseat in spring loaded mode -->
     <dimen name="dynamic_grid_min_spring_loaded_space">8dp</dimen>
 
     <dimen name="dynamic_grid_cell_border_spacing">16dp</dimen>
     <dimen name="dynamic_grid_cell_layout_padding">5.5dp</dimen>
-    <dimen name="dynamic_grid_cell_padding_x">8dp</dimen>
+    <dimen name="dynamic_grid_cell_padding_x">7dp</dimen>
 
     <!-- Hotseat -->
-    <dimen name="dynamic_grid_hotseat_top_padding">8dp</dimen>
-    <dimen name="dynamic_grid_hotseat_bottom_padding">2dp</dimen>
+    <dimen name="dynamic_grid_hotseat_top_padding">15dp</dimen>
+    <dimen name="dynamic_grid_hotseat_bottom_padding">0dp</dimen>
     <!-- Extra bottom padding for non-tall devices. -->
-    <dimen name="dynamic_grid_hotseat_bottom_non_tall_padding">0dp</dimen>
-    <dimen name="dynamic_grid_hotseat_extra_vertical_size">34dp</dimen>
+    <dimen name="dynamic_grid_hotseat_bottom_non_tall_padding">15dp</dimen>
+    <dimen name="dynamic_grid_hotseat_extra_vertical_size">24dp</dimen>
     <dimen name="dynamic_grid_hotseat_side_padding">0dp</dimen>
 
-    <dimen name="dynamic_grid_hotseat_top_padding_widget">0dp</dimen>
-    <dimen name="dynamic_grid_hotseat_bottom_padding_widget">60dp</dimen>
+    <dimen name="dynamic_grid_hotseat_top_padding_widget">15dp</dimen>
+    <dimen name="dynamic_grid_hotseat_bottom_padding_widget">62dp</dimen>
     <dimen name="dynamic_grid_hotseat_bottom_non_tall_padding_widget">15dp</dimen>
     <dimen name="dynamic_grid_hotseat_extra_vertical_size_widget">24dp</dimen>
 
-    <dimen name="qsb_widget_height">61dp</dimen>
+    <dimen name="qsb_widget_height">64dp</dimen>
     <dimen name="qsb_icon_width">56dp</dimen>
-    <dimen name="qsb_icon_padding">10dp</dimen>
+    <dimen name="qsb_icon_padding">12dp</dimen>
     <dimen name="qsb_widget_vertical_padding">6dp</dimen>
 
     <!-- Scalable Grid -->
@@ -53,7 +53,7 @@
     <!-- Workspace page indicator -->
     <dimen name="workspace_page_indicator_height">24dp</dimen>
     <dimen name="workspace_page_indicator_line_height">1dp</dimen>
-    <dimen name="workspace_page_indicator_overlap_workspace">0dp</dimen>
+    <dimen name="workspace_page_indicator_overlap_workspace">12dp</dimen>
 
 <!-- Drop target bar -->
     <dimen name="dynamic_grid_drop_target_size">52dp</dimen>
@@ -96,16 +96,16 @@
     <!-- All Apps -->
     <dimen name="all_apps_open_vertical_translate">320dp</dimen>
     <dimen name="all_apps_search_bar_field_height">48dp</dimen>
-    <dimen name="all_apps_search_bar_bottom_padding">30dp</dimen>
+    <dimen name="all_apps_search_bar_bottom_padding">36dp</dimen>
     <dimen name="all_apps_empty_search_message_top_offset">40dp</dimen>
     <dimen name="all_apps_empty_search_bg_top_offset">144dp</dimen>
     <dimen name="all_apps_background_canvas_width">700dp</dimen>
     <dimen name="all_apps_background_canvas_height">475dp</dimen>
     <dimen name="all_apps_header_pill_height">48dp</dimen>
-    <dimen name="all_apps_header_pill_corner_radius">12dp</dimen>
+    <dimen name="all_apps_header_pill_corner_radius">18dp</dimen>
     <dimen name="all_apps_header_tab_height">48dp</dimen>
     <dimen name="all_apps_tabs_indicator_height">2dp</dimen>
-    <dimen name="all_apps_header_top_padding">30dp</dimen>
+    <dimen name="all_apps_header_top_padding">36dp</dimen>
     <dimen name="all_apps_header_bottom_padding">6dp</dimen>
     <dimen name="all_apps_work_profile_tab_footer_top_padding">16dp</dimen>
     <dimen name="all_apps_work_profile_tab_footer_bottom_padding">20dp</dimen>
