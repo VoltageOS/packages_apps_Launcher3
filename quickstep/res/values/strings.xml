@@ -236,4 +236,6 @@
     <string name="taskbar_edu_close">Close</string>
     <!-- Text on button to finish a tutorial [CHAR_LIMIT=16] -->
     <string name="taskbar_edu_done">Done</string>
+    <string name="recents_close_all">Close all</string>
+    <string name="recents_empty_message_custom">No recent tasks</string>
 </resources>

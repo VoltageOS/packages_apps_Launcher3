@@ -26,6 +26,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import com.android.launcher3.anim.AlphaUpdateListener;
 import com.android.launcher3.DeviceProfile;
@@ -41,7 +42,7 @@ public class MemInfoView extends TextView {
     // When to show GB instead of MB
     private static final int UNIT_CONVERT_THRESHOLD = 1024; /* MiB */
 
-    private static final BigDecimal GB2MB = new BigDecimal(1024);
+    private static final BigDecimal GB2MB = new BigDecimal(1000);
 
     private static final int ALPHA_STATE_CTRL = 0;
     public static final int ALPHA_FS_PROGRESS = 1;
@@ -134,6 +135,8 @@ public class MemInfoView extends TextView {
         String text = String.format(mMemInfoText,
             unitConvert(availMemMiB, false), unitConvert(totalMemMiB, true));
         setText(text);
+        setTextColor(Color.parseColor("#FFFFFF"));
+        setTextSize(13);
     }
 
     private class MemInfoWorker implements Runnable {

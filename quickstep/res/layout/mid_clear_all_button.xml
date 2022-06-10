@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.quickstep.views.MidClearAllButton xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mid_clear_all"
-    android:layout_width="@dimen/mid_clear_all_radius"
-    android:layout_height="@dimen/mid_clear_all_radius"
-    android:background="@drawable/bg_ripple_circle"
-    android:backgroundTint="@color/mid_clear_all_background_color"
-    android:foreground="@drawable/ic_clear_all"
-    android:foregroundGravity="center"
+    style="@style/OverviewClearAllButton"
+    android:layout_width="164dp"
+    android:layout_height="48dp"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:text="@string/recents_close_all"
+    android:textColor="@*android:color/white"
     android:visibility="gone"/>

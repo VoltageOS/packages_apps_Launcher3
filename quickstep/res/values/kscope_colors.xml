@@ -16,7 +16,7 @@
 <resources>
 
     <!-- Mid clear all button -->
-    <color name="mid_clear_all_background_color">@android:color/system_accent1_50</color>
+    <color name="mid_clear_all_background_color">@android:color/system_accent1_0</color>
     <color name="mid_clear_all_foreground_color">@android:color/system_neutral1_900</color>
     <color name="mid_clear_all_ripple_color">@android:color/system_neutral1_300</color>
 
