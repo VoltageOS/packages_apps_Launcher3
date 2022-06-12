@@ -121,4 +121,7 @@
     <!-- Wallpaper scrolling -->
     <string name="allow_wallpaper_scrolling">Wallpaper scrolling</string>
     <string name="allow_wallpaper_scrolling_desc">Wallpaper scrolling effect for multiple screens</string>
+
+    <!-- Recents -->
+    <string name="action_lens">Lens</string>
 </resources>

@@ -115,6 +115,12 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
     protected void onFinishInflate() {
         super.onFinishInflate();
         findViewById(R.id.action_screenshot).setOnClickListener(this);
+        if (getContext().getPackageManager().getLaunchIntentForPackage("com.google.ar.lens") != null) {
+            View lens = findViewById(R.id.action_lens);
+            findViewById(R.id.action_lens).setOnClickListener(this);
+            lens.setVisibility(VISIBLE);
+            findViewById(R.id.lens_space).setVisibility(VISIBLE);
+        }
 
         mSplitButton = findViewById(R.id.action_split);
         mSplitButton.setOnClickListener(this);
@@ -139,6 +145,8 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
             mCallbacks.onScreenshot();
         } else if (id == R.id.action_split) {
             mCallbacks.onSplit();
+        } else if (id == R.id.action_lens) {
+            mCallbacks.onLens();
         }
     }
 
