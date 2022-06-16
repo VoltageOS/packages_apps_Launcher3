@@ -55,23 +55,6 @@
             android:foregroundGravity="center"/>
 
         <Space
-            android:id="@+id/lens_space"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/action_lens"
-            android:layout_width="60dp"
-            android:layout_height="48dp"
-            android:background="@drawable/recent_button_bg"
-            android:backgroundTint="@color/recent_button_bg_color"
-            android:foreground="@drawable/ic_lens"
-            android:foregroundGravity="center"
-            android:visibility="gone"/>
-
-        <Space
             android:id="@+id/action_split_space"
             android:layout_width="@dimen/overview_actions_button_spacing"
             android:layout_height="1dp"

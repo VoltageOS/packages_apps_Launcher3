@@ -77,9 +77,6 @@
     <string name="dock_theme_summary">Use themed icons for search bar</string>
     <string name="search_radius_title">Corner radius</string>
 
-    <!-- Recents -->
-    <string name="action_lens">Lens</string>
-
     <!-- Homescreen Statusbar -->
     <string name="show_statusbar_title">Status Bar</string>
 
