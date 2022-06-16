@@ -45,7 +45,6 @@
     <!-- for rotating surface by arbitrary degree -->
     <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.DEVICE_POWER" />
-    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
     <uses-permission android:name="android.permission.REGISTER_STATS_PULL_ATOM" />
     
     <!--
