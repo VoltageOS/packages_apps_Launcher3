@@ -397,6 +397,6 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
     }
 
     private boolean isTargetPackage(String packageName) {
-        return packageName.equals(Utilities.GSA_PACKAGE);
+        return packageName.equals("com.google.ar.lens") || packageName.equals("com.google.android.googlequicksearchbox");
     }
 }
