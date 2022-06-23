@@ -247,6 +247,7 @@
     <icon drawable="@drawable/vanced_manager" package="com.vanced.manager" />
     <icon drawable="@drawable/vanced_music" package="com.vanced.android.apps.youtube.music" />
     <icon drawable="@drawable/vanced_youtube" package="com.vanced.android.youtube" />
+    <icon drawable="@drawable/vanced_youtube" package="app.revanced.android.youtube" />
     <icon drawable="@drawable/venmo" package="com.venmo" />
     <icon drawable="@drawable/via_browser" package="mark.via.gp" />
     <icon drawable="@drawable/viber" package="com.viber.voip" />
