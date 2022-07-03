@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 
 import com.android.app.animation.Interpolators;
 import com.android.launcher3.Flags;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.AnimatedFloat;
@@ -233,7 +234,8 @@ public class BaseDepthControllerImpl<
         }
 
         if (windowToken != null) {
-            mWallpaperManager.setWallpaperZoomOut(windowToken, wallpaperZoom);
+                mWallpaperManager.setWallpaperZoomOut(windowToken,
+                        LauncherPrefs.ALLOW_WALLPAPER_ZOOMING.get(mContainer) ? wallpaperZoom : 1);
         }
 
         if (!BlurUtils.supportsBlursOnWindows()) {
