@@ -399,7 +399,7 @@ public class DeviceProfile {
                 res.getDimensionPixelSize(R.dimen.task_thumbnail_icon_drawable_size);
         overviewTaskIconDrawableSizeGridPx =
                 res.getDimensionPixelSize(R.dimen.task_thumbnail_icon_drawable_size_grid);
-        overviewTaskThumbnailTopMarginPx = overviewTaskIconSizePx + overviewTaskMarginPx * 2;
+        overviewTaskThumbnailTopMarginPx = overviewTaskMarginPx;
         if (overviewShowAsGrid) {
             if (isLandscape) {
                 overviewActionsTopMarginGesturePx = res.getDimensionPixelSize(
