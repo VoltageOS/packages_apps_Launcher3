@@ -1134,4 +1134,12 @@ public final class Utilities {
     public static int getBlurRadius(Context context) {
         return LauncherPrefs.BLUR_DEPTH.get(context);
     }
+
+    public static int getRecentsOpacity(Context context) {
+        return LauncherPrefs.RECENTS_OPACITY.get(context);
+    }
+
+    public static int getAllAppsOpacity(Context context) {
+        return LauncherPrefs.APP_DRAWER_OPACITY.get(context);
+    }
 }
