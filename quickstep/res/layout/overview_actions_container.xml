@@ -34,8 +34,9 @@
             android:layout_marginStart="@dimen/overview_actions_button_spacing"
             android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_screenshot"
-            android:text="@string/action_screenshot"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor" />
+            android:text="@string/recents_screenshot_title"
+            android:theme="@style/ThemeControlHighlightWorkspaceColor"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/action_split"
@@ -56,7 +57,7 @@
             android:layout_marginStart="@dimen/overview_actions_button_spacing"
             android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_lens"
-            android:text="@string/action_lens"
+            android:text="@string/recents_lens_title"
             android:theme="@style/ThemeControlHighlightWorkspaceColor"
             android:visibility="gone" />
 
@@ -68,8 +69,9 @@
             android:layout_marginStart="@dimen/overview_actions_button_spacing"
             android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_clear_all"
-            android:text="@string/recents_clear_all"
-            android:theme="@style/ThemeControlHighlightWorkspaceColor" />
+            android:text="@string/recents_clear_all_title"
+            android:theme="@style/ThemeControlHighlightWorkspaceColor"
+            android:visibility="gone" />
 
     </LinearLayout>
 
