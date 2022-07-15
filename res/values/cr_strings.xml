@@ -138,4 +138,6 @@
     <string name="enable_wallpaper_zoom_title">Enable wallpaper zooming</string>
     <string name="enable_wallpaper_zoom_summary">Zoom in or out the wallpaper when using drawer or recent apps</string>
 
+    <!-- Background opacity -->
+    <string name="background_opacity_title">Background opacity</string>
 </resources>
