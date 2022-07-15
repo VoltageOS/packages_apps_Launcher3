@@ -19,6 +19,19 @@
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
 
+  <PreferenceCategory
+        android:title="@string/general_category_title">
+
+        <com.android.launcher3.settings.preferences.CustomSeekBarPreference
+            android:key="pref_recents_opacity"
+            android:title="@string/background_opacity_title"
+            android:persistent="true"
+            android:max="100"
+            android:min="0"
+            settings:units="%"
+            android:defaultValue="40" />
+   </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/actions_category_title">
 
@@ -47,5 +60,4 @@
             android:persistent="true" />
 
     </PreferenceCategory>
-
 </androidx.preference.PreferenceScreen>
