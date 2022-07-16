@@ -160,6 +160,7 @@ public final class Utilities {
     public static final String KEY_ALLOW_WALLPAPER_ZOOM = "pref_allow_wallpaper_zoom";
     public static final String KEY_RECENTS_OPACITY = "pref_recents_opacity";
     public static final String KEY_APP_DRAWER_OPACITY = "pref_app_drawer_opacity";
+    public static final String KEY_BLUR_DEPTH = "pref_blur_depth";
 
     /**
      * Returns true if theme is dark.
@@ -980,5 +981,11 @@ public final class Utilities {
     public static int getAllAppsOpacity(Context context) {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getInt(KEY_APP_DRAWER_OPACITY, 80);
+    }
+
+    public static int getBlurRadius(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getInt(KEY_BLUR_DEPTH,
+                (int) context.getResources().getDimension(R.dimen.max_depth_blur_radius));
     }
 }
