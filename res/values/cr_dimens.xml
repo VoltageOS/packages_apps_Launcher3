@@ -25,12 +25,12 @@
     <!-- Mid clear all button -->
     <dimen name="mid_clear_all_radius">1000dp</dimen>
     <dimen name="mid_clear_all_ic_size">24dp</dimen>
-    <dimen name="mid_clear_all_bottom_margin_gesture">46dp</dimen>
-    <dimen name="mid_clear_all_bottom_margin_three_button">46dp</dimen>
+    <dimen name="mid_clear_all_bottom_margin_gesture">54dp</dimen>
+    <dimen name="mid_clear_all_bottom_margin_three_button">54dp</dimen>
 
      <!-- Meminfo in overview -->
-    <dimen name="meminfo_bottom_margin_gesture">24dp</dimen>
-    <dimen name="meminfo_bottom_margin_three_button">24dp</dimen>
+    <dimen name="meminfo_bottom_margin_gesture">32dp</dimen>
+    <dimen name="meminfo_bottom_margin_three_button">32dp</dimen>
 
     <!-- Extra bottom margin for overview TaskViews -->
     <dimen name="overview_task_extra_top_margin">105dp</dimen>
