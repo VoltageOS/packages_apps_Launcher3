@@ -276,4 +276,9 @@
     <!-- Kill App recents action shortcut -->
     <string name="recent_task_option_kill_app">Kill</string>
     <string name="recents_app_killed">App killed</string>
+
+    <!-- Background blur -->
+    <string name="background_blur_title">Background blur depth</string>
+    <string name="background_blur_summary">Set blur depth level for recents and app drawer</string>
+
 </resources>

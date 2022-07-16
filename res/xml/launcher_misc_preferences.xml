@@ -36,7 +36,17 @@
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
     </Preference>
     
-    <Preference
+     <com.android.launcher3.settings.preferences.CustomSeekBarPreference
+        android:key="pref_blur_depth"
+        android:title="@string/background_blur_title"
+        android:summary="@string/background_blur_summary"
+        android:persistent="true"
+        android:max="175"
+        android:min="0"
+        settings:units="px"
+        android:defaultValue="23" />
+
+    <androidx.preference.PreferenceScreen
         android:key="pref_developer_options"
         android:persistent="false"
         android:title="@string/dev_options_title"
