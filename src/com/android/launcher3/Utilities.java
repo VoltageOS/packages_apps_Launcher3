@@ -1098,6 +1098,7 @@ public final class Utilities {
         return isGSAEnabled(context) && LauncherPrefs.DOCK_MUSIC_SEARCH.get(context);
     }
 
+<<<<<<< HEAD
     public static boolean isResizeableActivity(Context context, ComponentName activity) {
         if (activity == null) return false;
         final ActivityInfo info;
@@ -1127,5 +1128,10 @@ public final class Utilities {
 
     public static void startLmoFreeform(Context context, ComponentName activity) {
         startLmoFreeform(context, activity, UserHandle.myUserId());
+
+    }
+
+    public static int getBlurRadius(Context context) {
+        return LauncherPrefs.BLUR_DEPTH.get(context);
     }
 }
