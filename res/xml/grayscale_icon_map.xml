@@ -101,6 +101,7 @@
     <icon drawable="@drawable/freefire" package="com.dts.freefireth" />
     <icon drawable="@drawable/ftx" package="com.blockfolio.blockfolio" />
     <icon drawable="@drawable/g_translate" package="com.google.android.apps.translate" />
+    <icon drawable="@drawable/gamespace" package="io.chaldeaprjkt.gamespace" />
     <icon drawable="@drawable/gapo" package="vn.gapo.app" />
     <icon drawable="@drawable/gboard" package="com.google.android.inputmethod.latin" />
     <icon drawable="@drawable/genius" package="com.genius.android" />
