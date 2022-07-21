@@ -130,8 +130,8 @@
     <dimen name="all_apps_divider_margin_vertical">8dp</dimen>
 
 <!-- Floating action button inside work tab to toggle work profile -->
-    <dimen name="work_fab_height">56dp</dimen>
-    <dimen name="work_fab_radius">28dp</dimen>
+    <dimen name="work_fab_height">48dp</dimen>
+    <dimen name="work_fab_radius">24dp</dimen>
     <dimen name="work_card_padding_horizontal">24dp</dimen>
     <dimen name="work_card_button_height">52dp</dimen>
     <dimen name="work_fab_margin">16dp</dimen>
