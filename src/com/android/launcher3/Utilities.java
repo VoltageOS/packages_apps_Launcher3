@@ -195,6 +195,7 @@ public final class Utilities {
     public static final String KEY_SHOW_QUICKSPACE_WEATHER = "pref_quickspace_weather";
     public static final String KEY_SHOW_QUICKSPACE_WEATHER_CITY = "pref_quickspace_weather_city";
     public static final String KEY_SHOW_QUICKSPACE_WEATHER_TEXT = "pref_quickspace_weather_text";
+    public static final String KEY_RECENTS_MEMINFO = "pref_recents_meminfo";
 
     /**
      * Returns true if theme is dark.
@@ -1175,5 +1176,11 @@ public final class Utilities {
     public static boolean QuickSpaceShowWeatherText(Context context) {
         SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
         return prefs.getBoolean(KEY_SHOW_QUICKSPACE_WEATHER_TEXT, true);
+
+    }
+
+    public static boolean isShowMeminfo(Context context) {
+        SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_RECENTS_MEMINFO, false);
     }
 }

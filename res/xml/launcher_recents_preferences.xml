@@ -50,5 +50,13 @@
             android:defaultValue="true"
             android:persistent="true"
             launcher:iconSpaceReserved="false" />
-    </PreferenceCategory>
+
+        <SwitchPreferenceCompat
+            android:key="pref_recents_meminfo"
+            android:title="@string/recents_meminfo_title"
+            android:defaultValue="false"
+            android:persistent="true"
+            launcher:iconSpaceReserved="false" />
+   </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>
