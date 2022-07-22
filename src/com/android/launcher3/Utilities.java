@@ -175,6 +175,7 @@ public final class Utilities {
     public static final String KEY_SHOW_ALT_QUICKSPACE = "pref_show_alt_quickspace";
     public static final String KEY_SHOW_QUICKSPACE_PSONALITY = "pref_quickspace_psonality";
     public static final String KEY_SHOW_QUICKSPACE_NOWPLAYING = "pref_quickspace_np";
+    public static final String KEY_RECENTS_MEMINFO = "pref_recents_meminfo";
 
     /**
      * Returns true if theme is dark.
@@ -1063,4 +1064,9 @@ public final class Utilities {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getBoolean(KEY_SHOW_QUICKSPACE_NOWPLAYING, true);
     }
+
+    public static boolean isShowMeminfo(Context context) {
+    	SharedPreferences prefs = getPrefs(context.getApplicationContext());
+    	return prefs.getBoolean(KEY_RECENTS_MEMINFO, false);
+   }
 }

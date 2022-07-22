@@ -256,4 +256,9 @@
         <item>Winner Winner ....?</item>
         <item>rm -rf \/</item>
     </string-array>
+
+    <!-- Memory info -->
+    <string name="meminfo_text">%1$s Available | %2$s Total</string>
+    <string name="recents_meminfo_title">Memory info</string>
+
 </resources>

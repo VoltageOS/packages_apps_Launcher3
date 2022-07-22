@@ -46,5 +46,11 @@
             android:defaultValue="true"
             android:persistent="true" />
 
+        <SwitchPreference
+            android:key="pref_recents_meminfo"
+            android:title="@string/recents_meminfo_title"
+            android:defaultValue="false"
+            android:persistent="true" />
+
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>
