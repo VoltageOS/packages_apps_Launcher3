@@ -1,3 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:launcher="http://schemas.android.com/apk/res-auto"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
+
+    <PreferenceCategory
+        android:title="@string/general_category_title">
+
+        <SwitchPreferenceCompat
+            android:key="pref_recents_meminfo"
+            android:title="@string/recents_meminfo_title"
+            android:defaultValue="false"
+            android:persistent="true"
+            launcher:iconSpaceReserved="false" />
+   </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
