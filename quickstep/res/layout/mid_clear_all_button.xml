@@ -7,5 +7,5 @@
     android:textSize="18sp"
     android:textStyle="bold"
     android:text="@string/recents_close_all"
-    android:textColor="@*android:color/white"
+    android:textColor="@color/mid_clear_all_foreground_color"
     android:visibility="gone"/>
