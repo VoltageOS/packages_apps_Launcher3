@@ -28,10 +28,6 @@
     <dimen name="mid_clear_all_bottom_margin_gesture">86dp</dimen>
     <dimen name="mid_clear_all_bottom_margin_three_button">86dp</dimen>
 
-    <!-- Meminfo in overview -->
-    <dimen name="meminfo_bottom_margin_gesture">15dp</dimen>
-    <dimen name="meminfo_bottom_margin_three_button">15dp</dimen>
-
     <!-- Extra bottom margin for overview TaskViews -->
     <dimen name="overview_task_extra_top_margin">88dp</dimen>
     <dimen name="overview_task_extra_bottom_margin">72dp</dimen>
@@ -39,4 +35,9 @@
     <!-- QuickSpace -->
     <dimen name="quickspace_title_size">24dp</dimen>
     <dimen name="quickspace_alternate_title_size">22dp</dimen>
+
+     <!-- Meminfo in overview -->
+    <dimen name="meminfo_bottom_margin_gesture">15dp</dimen>
+    <dimen name="meminfo_bottom_margin_three_button">15dp</dimen>
+    <dimen name="meminfo_top_margin">18dp</dimen>
 </resources>

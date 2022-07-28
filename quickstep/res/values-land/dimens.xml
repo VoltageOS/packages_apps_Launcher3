@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 <resources>
-    <dimen name="overview_task_margin">8dp</dimen>
+    <dimen name="overview_task_margin">45dp</dimen>
 
     <!-- Tips Gesture Tutorial -->
     <dimen name="gesture_tutorial_feedback_margin_start_end">126dp</dimen>
