@@ -430,4 +430,9 @@
 
     <!-- State transition -->
     <item name="workspace_content_scale" format="float" type="dimen">0.97</item>
+
+     <!-- Meminfo in overview -->
+    <dimen name="meminfo_bottom_margin_gesture">15dp</dimen>
+    <dimen name="meminfo_bottom_margin_three_button">15dp</dimen>
+    <dimen name="meminfo_top_margin">18dp</dimen>
 </resources>
