@@ -32,8 +32,6 @@
     android:paddingVertical="12dp"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    android:drawablePadding="8dp"
-    android:drawableStart="@drawable/ic_allapps_search"
     android:saveEnabled="false"
     android:scrollHorizontally="true"
     android:singleLine="true"
