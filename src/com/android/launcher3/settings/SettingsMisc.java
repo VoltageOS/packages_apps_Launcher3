@@ -55,6 +55,8 @@ import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.plugins.PluginManagerWrapper;
 import com.android.launcher3.util.Themes;
 
+import com.android.systemui.shared.system.BlurUtils;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -275,9 +277,11 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
 
-		case Utilities.KEY_DRAWER_THEME:
-		    return Themes.isThemedIconEnabled(getContext());
+		        case Utilities.KEY_DRAWER_THEME:
+		            return Themes.isThemedIconEnabled(getContext());
 
+                case Utilities.KEY_BLUR_DEPTH:
+                    return BlurUtils.supportsBlursOnWindows();
             }
 
             return true;
