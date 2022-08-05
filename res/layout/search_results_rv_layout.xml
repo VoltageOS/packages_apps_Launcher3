@@ -21,4 +21,5 @@
     android:layout_height="wrap_content"
     android:clipToPadding="false"
     android:descendantFocusability="afterDescendants"
+    android:layout_marginTop="12dp"
     android:focusable="true" />
