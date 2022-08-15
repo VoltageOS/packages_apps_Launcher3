@@ -15,11 +15,5 @@
      limitations under the License.
 -->
 <resources>
-
-    <color name="disabled_text_color">#66000000</color> <!-- 38% black -->
-    
-    <!-- Appseat -->
-    <color name="appseat_color">#50181c1f</color>
-
-    <color name="gicon_mask">#14000000</color>
+    <color name="gicon_mask">#1AFFFFFF</color>
 </resources>
