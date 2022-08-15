@@ -168,6 +168,12 @@ public class ActivityAllAppsContainerView<T extends Context & AppLauncher
             mSearchContainer.setVisibility(View.GONE);
         }
 
+        if (!Utilities.isThemedIconsEnabled(getContext())) {
+          getSearchView().setBackgroundResource(R.drawable.bg_all_apps_searchbox_google);
+        } else {
+          getSearchView().setBackgroundResource(R.drawable.bg_all_apps_searchbox_google_themed);
+        }
+        
         mSearchUiManager = (SearchUiManager) mSearchContainer;
         mSearchUiManager.initializeSearch(this);
     }
@@ -253,7 +259,11 @@ public class ActivityAllAppsContainerView<T extends Context & AppLauncher
     @Override
     protected void updateHeaderScroll(int scrolledOffset) {
         super.updateHeaderScroll(scrolledOffset);
-        getSearchView().setBackgroundResource(R.drawable.bg_all_apps_searchbox);
+        if (!Utilities.isThemedIconsEnabled(getContext())) {
+          getSearchView().setBackgroundResource(R.drawable.bg_all_apps_searchbox_google);
+        } else {
+          getSearchView().setBackgroundResource(R.drawable.bg_all_apps_searchbox_google_themed);
+        }
         if (mSearchUiManager.getEditText() == null) {
             return;
         }
@@ -266,13 +276,6 @@ public class ActivityAllAppsContainerView<T extends Context & AppLauncher
             bgVisible = false;
         }
         mSearchUiManager.setBackgroundVisibility(bgVisible, 1 - prog);
-    }
-
-    @Override
-    protected int getHeaderColor(float blendRatio) {
-        return ColorUtils.setAlphaComponent(
-                super.getHeaderColor(blendRatio),
-                (int) (mSearchContainer.getAlpha() * 255));
     }
 
     @Override
