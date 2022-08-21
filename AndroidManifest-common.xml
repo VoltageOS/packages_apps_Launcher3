@@ -56,6 +56,10 @@
     <uses-permission android:name="lineageos.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_CONTEXTUAL_SEARCH"/>
 
+    <!-- for parallel spaces -->
+    <uses-permission android:name="com.android.permission.MANAGE_PARALLEL_SPACES" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
     <!--
     Permissions required for read/write access to the workspace data. These permission name
     should not conflict with that defined in other apps, as such an app should embed its package

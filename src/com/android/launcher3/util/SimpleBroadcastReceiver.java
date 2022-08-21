@@ -56,12 +56,8 @@ public class SimpleBroadcastReceiver extends BroadcastReceiver {
         register(context, null, actions);
     }
 
-    /**
-     * Calls {@link #register(Context, Runnable, int, String...)} with null completionCallback.
-     */
-    @AnyThread
     public void register(Context context, int flags, String... actions) {
-        register(context, null, flags, actions);
+        context.registerReceiver(this, getFilter(actions), flags);
     }
 
     /**
