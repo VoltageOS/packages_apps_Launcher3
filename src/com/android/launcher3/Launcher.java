@@ -61,6 +61,7 @@ import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
 import static com.android.launcher3.popup.SystemShortcut.PAUSE_APPS;
 import static com.android.launcher3.popup.SystemShortcut.UNINSTALL;
+import static com.android.launcher3.popup.SystemShortcut.STORAGE_SCOPES;
 import static com.android.launcher3.popup.SystemShortcut.WIDGETS;
 import static com.android.launcher3.states.RotationHelper.REQUEST_LOCK;
 import static com.android.launcher3.states.RotationHelper.REQUEST_NONE;
@@ -3212,7 +3213,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     public Stream<SystemShortcut.Factory> getSupportedShortcuts() {
-        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL);
+        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL, STORAGE_SCOPES);
     }
 
     protected LauncherAccessibilityDelegate createAccessibilityDelegate() {
