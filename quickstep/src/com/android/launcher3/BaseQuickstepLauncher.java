@@ -343,7 +343,7 @@ public abstract class BaseQuickstepLauncher extends Launcher {
         overviewPanel.init(mActionsView, controller, mMemInfoView);
         mActionsView.updateDimension(getDeviceProfile(), overviewPanel.getLastComputedTaskSize());
         mActionsView.updateVerticalMargin(DisplayController.getNavigationMode(this));
-        mMemInfoView.updateDimension(getDeviceProfile(), overviewPanel.getLastComputedTaskSize());
+        mMemInfoView.setDp(getDeviceProfile());
         mMemInfoView.updateVerticalMargin(DisplayController.getNavigationMode(this));
         mAppTransitionManager = new QuickstepTransitionManager(this);
         mAppTransitionManager.registerRemoteAnimations();

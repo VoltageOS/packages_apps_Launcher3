@@ -32,7 +32,8 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
-import com.android.quickstep.SysUINavigationMode.Mode;
+import com.android.launcher3.util.DisplayController;
+import com.android.launcher3.util.DisplayController.NavigationMode;
 
 import java.lang.Runnable;
 import java.math.BigDecimal;
@@ -111,12 +112,12 @@ public class MemInfoView extends TextView {
         return mAlpha.getProperty(alphaType).getValue();
     }
 
-    public void updateVerticalMargin(Mode mode) {
+    public void updateVerticalMargin(NavigationMode mode) {
         LayoutParams lp = (LayoutParams)getLayoutParams();
         int bottomMargin;
         int topMargin;
 
-        if (mode == Mode.THREE_BUTTONS)
+        if (mode == NavigationMode.THREE_BUTTONS)
             bottomMargin = mDp.memInfoMarginThreeButtonPx;
         else
             bottomMargin = mDp.memInfoMarginGesturePx;

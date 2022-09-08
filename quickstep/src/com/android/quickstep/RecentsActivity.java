@@ -86,6 +86,7 @@ import com.android.quickstep.views.TaskView;
 import com.android.systemui.shared.system.ActivityOptionsCompat;
 import com.android.systemui.shared.system.RemoteAnimationAdapterCompat;
 import com.android.systemui.shared.system.RemoteAnimationTargetCompat;
+import com.android.launcher3.util.DisplayController;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -146,7 +147,7 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> {
         mFallbackRecentsView.init(mActionsView, controller, mMemInfoView);
 
         mMemInfoView.setDp(mDeviceProfile);
-        mMemInfoView.updateVerticalMargin(SysUINavigationMode.getMode(this));
+        mMemInfoView.updateVerticalMargin(DisplayController.getNavigationMode(this));
 
         mTISBindHelper = new TISBindHelper(this, this::onTISConnected);
     }
