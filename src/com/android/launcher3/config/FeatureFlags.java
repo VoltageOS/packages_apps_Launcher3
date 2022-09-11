@@ -213,7 +213,7 @@ public final class FeatureFlags {
             "ENABLE_SPLIT_SELECT", true, "Uses new split screen selection overview UI");
 
     public static final BooleanFlag ENABLE_ENFORCED_ROUNDED_CORNERS = new DeviceFlag(
-            "ENABLE_ENFORCED_ROUNDED_CORNERS", true, "Enforce rounded corners on all App Widgets");
+            "ENABLE_ENFORCED_ROUNDED_CORNERS", false, "Enforce rounded corners on all App Widgets");
 
     public static final BooleanFlag ENABLE_LOCAL_RECOMMENDED_WIDGETS_FILTER = new DeviceFlag(
             "ENABLE_LOCAL_RECOMMENDED_WIDGETS_FILTER", true,
