@@ -290,7 +290,7 @@ public class DepthController implements StateHandler<LauncherState>,
      * If we're launching an app from the home screen.
      */
     public void setIsInLaunchTransition(boolean inLaunchTransition) {
-        boolean blurEnabled = SystemProperties.getBoolean("ro.launcher.blur.appLaunch", true);
+        boolean blurEnabled = SystemProperties.getBoolean("ro.launcher.blur.appLaunch", false);
         mBlurDisabledForAppLaunch = inLaunchTransition && !blurEnabled;
         if (!inLaunchTransition) {
             // Reset depth at the end of the launch animation, so the wallpaper won't be
