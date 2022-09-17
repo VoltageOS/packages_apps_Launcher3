@@ -31,4 +31,8 @@
     <!-- Preference style -->
     <dimen name="card_margin_start_aqua">20dp</dimen>
     <dimen name="card_margin_end_aqua">20dp</dimen>
+
+    <!-- QuickSpace -->
+    <dimen name="quickspace_title_size">24dp</dimen>
+    <dimen name="quickspace_alternate_title_size">22dp</dimen>
 </resources>
