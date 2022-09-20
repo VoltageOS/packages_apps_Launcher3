@@ -126,7 +126,7 @@ public class DepthController implements StateHandler<LauncherState>,
     /**
      * Blur radius when completely zoomed out, in pixels.
      */
-    private float mMaxBlurRadius;
+    private int mMaxBlurRadius;
     private boolean mCrossWindowBlursEnabled;
     private WallpaperManager mWallpaperManager;
     private SurfaceControl mSurface;

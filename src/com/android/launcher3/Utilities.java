@@ -1031,7 +1031,7 @@ public final class Utilities {
     public static int getBlurRadius(Context context) {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getInt(KEY_BLUR_DEPTH,
-                (int) context.getResources().getDimension(R.dimen.max_depth_blur_radius));
+                (int) context.getResources().getInteger(R.integer.max_depth_blur_radius));
     }
 
     public static boolean isThemedIconsEnabledForAppDrawer(Context context) {
