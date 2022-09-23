@@ -40,4 +40,10 @@
         android:summary="@string/drawer_theme_summary"
         android:defaultValue="false" />
 
+    <SwitchPreference
+        android:key="pref_show_search_bar"
+        android:title="@string/search_bar_enabled_title"
+        android:summary="@string/search_bar_enabled_summary"
+        android:defaultValue="true" />
+
 </androidx.preference.PreferenceScreen>

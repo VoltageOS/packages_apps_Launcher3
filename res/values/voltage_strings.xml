@@ -140,4 +140,9 @@
     <!-- Drawer Themed Icons -->
     <string name="drawer_theme_title">Themed Icons inside drawer</string>
     <string name="drawer_theme_summary">Show themed icons inside app drawer</string>
+
+     <!-- Search Bar Enabled -->
+    <string name="search_bar_enabled_title">Enable Search bar</string>
+    <string name="search_bar_enabled_summary">Show search bar in App Drawer</string>
+    
 </resources>
