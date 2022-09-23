@@ -137,4 +137,7 @@
     <string name="action_lens">Lens</string>
     <string name="recents_kill_app">Kill app</string>
 
+    <!-- Drawer Themed Icons -->
+    <string name="drawer_theme_title">Themed Icons inside drawer</string>
+    <string name="drawer_theme_summary">Show themed icons inside app drawer</string>
 </resources>

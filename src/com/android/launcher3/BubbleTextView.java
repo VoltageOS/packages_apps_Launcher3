@@ -76,6 +76,7 @@ import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.util.ShortcutUtil;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.IconLabelDotView;
+import com.android.launcher3.Utilities;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -182,6 +183,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     private boolean mEnableIconUpdateAnimation = false;
 
+    private boolean mUseThemedIconsInsideDrawer = false;
+
     public BubbleTextView(Context context) {
         this(context, null, 0);
     }
@@ -192,6 +195,9 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     public BubbleTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        mUseThemedIconsInsideDrawer = Utilities.isThemedIconsEnabledForAppDrawer(context);
+
         mActivity = ActivityContext.lookupContext(context);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
@@ -385,6 +391,9 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     protected void applyIconAndLabel(ItemInfoWithIcon info) {
         boolean useTheme = mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_FOLDER
                 || mDisplay == DISPLAY_TASKBAR;
+        if(mUseThemedIconsInsideDrawer){
+            useTheme = useTheme || mDisplay == DISPLAY_ALL_APPS; 
+        }
         int flags = useTheme ? FLAG_THEMED : 0;
         if (mHideBadge) {
             flags |= FLAG_NO_BADGE;

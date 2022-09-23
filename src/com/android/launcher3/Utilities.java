@@ -166,6 +166,7 @@ public final class Utilities {
     public static final String KEY_ALLOW_WALLPAPER_ZOOMING = "pref_allow_wallpaper_zooming";
     public static final String KEY_STATUS_BAR = "pref_show_statusbar";
     public static final String KEY_BLUR_DEPTH = "pref_blur_depth";
+    public static final String KEY_DRAWER_THEME = "pref_drawer_theme";
 
     /**
      * Returns true if theme is dark.
@@ -1010,5 +1011,10 @@ public final class Utilities {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getInt(KEY_BLUR_DEPTH,
                 (int) context.getResources().getDimension(R.dimen.max_depth_blur_radius));
+    }
+
+    public static boolean isThemedIconsEnabledForAppDrawer(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_DRAWER_THEME, false);
     }
 }
