@@ -137,8 +137,7 @@ public class MemInfoView extends TextView {
         String text = String.format(mMemInfoText,
             unitConvert(availMemMiB, false), unitConvert(totalMemMiB, true));
         setText(text);
-        setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
-        setTextColor(Color.WHITE);
+        setTextColor(0xFFFFFFFF);
     }
 
     private class MemInfoWorker implements Runnable {
