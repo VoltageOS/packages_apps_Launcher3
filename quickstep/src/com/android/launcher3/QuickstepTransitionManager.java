@@ -900,11 +900,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
 
         // If app targets are translucent, do not animate the background as it causes a visible
         // flicker when it resets itself at the end of its animation.
-        if (appTargetsAreTranslucent) {
-            animatorSet.play(appAnimator);
-        } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
-        }
+        animatorSet.play(appAnimator);
         return animatorSet;
     }
 
@@ -1043,69 +1039,8 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
 
         // If app targets are translucent, do not animate the background as it causes a visible
         // flicker when it resets itself at the end of its animation.
-        if (appTargetsAreTranslucent) {
-            animatorSet.play(appAnimator);
-        } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
-        }
+        animatorSet.play(appAnimator);
         return animatorSet;
-    }
-
-    /**
-     * Returns animator that controls depth/blur of the background.
-     */
-    private ObjectAnimator getBackgroundAnimator() {
-        // When launching an app from overview that doesn't map to a task, we still want to just
-        // blur the wallpaper instead of the launcher surface as well
-        boolean allowBlurringLauncher = mLauncher.getStateManager().getState() != OVERVIEW;
-        DepthController depthController = mLauncher.getDepthController();
-        ObjectAnimator backgroundRadiusAnim = ObjectAnimator.ofFloat(depthController, DEPTH,
-                BACKGROUND_APP.getDepth(mLauncher))
-                .setDuration(APP_LAUNCH_DURATION);
-        if (allowBlurringLauncher) {
-            final SurfaceControl dimLayer;
-            if (BlurUtils.supportsBlursOnWindows()) {
-                // Create a temporary effect layer, that lives on top of launcher, so we can apply
-                // the blur to it. The EffectLayer will be fullscreen, which will help with caching
-                // optimizations on the SurfaceFlinger side:
-                // - Results would be able to be cached as a texture
-                // - There won't be texture allocation overhead, because EffectLayers don't have
-                //   buffers
-                ViewRootImpl viewRootImpl = mLauncher.getDragLayer().getViewRootImpl();
-                SurfaceControl parent = viewRootImpl != null
-                        ? viewRootImpl.getSurfaceControl()
-                        : null;
-                dimLayer = new SurfaceControl.Builder()
-                        .setName("Blur layer")
-                        .setParent(parent)
-                        .setOpaque(false)
-                        .setHidden(false)
-                        .setEffectLayer()
-                        .build();
-            } else {
-                dimLayer = null;
-            }
-
-            depthController.setSurface(dimLayer);
-            backgroundRadiusAnim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    depthController.setIsInLaunchTransition(true);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    depthController.setIsInLaunchTransition(false);
-                    depthController.setSurface(null);
-                    if (dimLayer != null) {
-                        new SurfaceControl.Transaction()
-                                .remove(dimLayer)
-                                .apply();
-                    }
-                }
-            });
-        }
-        return backgroundRadiusAnim;
     }
 
     /**
