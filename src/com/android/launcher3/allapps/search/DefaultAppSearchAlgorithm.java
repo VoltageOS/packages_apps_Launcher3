@@ -44,8 +44,6 @@ import java.util.List;
  */
 public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
 
-    private static final int MAX_RESULTS_COUNT = 5;
-
     private final Context mContext;
     private final LauncherAppState mAppState;
     private final UserCache mUserCache;
@@ -82,9 +80,6 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
             ArrayList<AdapterItem> result = getTitleMatchResult(
                     apps.data.stream().filter(this::isSearchableApp).toList(), query);
             if (isPrivateSpaceQuery(query) && isPrivateSpaceAvailable()) {
-                if (result.size() == MAX_RESULTS_COUNT) {
-                    result.remove(result.size() - 1);
-                }
                 result.add(0, new AdapterItem(VIEW_TYPE_PRIVATE_SPACE_RESULT));
             }
             if (mAddNoResultsMessage && result.isEmpty()) {
@@ -119,13 +114,11 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm<AdapterItem> {
         StringMatcherUtility.StringMatcher matcher =
                 StringMatcherUtility.StringMatcher.getInstance();
 
-        int resultCount = 0;
         int total = apps.size();
-        for (int i = 0; i < total && resultCount < MAX_RESULTS_COUNT; i++) {
+        for (int i = 0; i < total; i++) {
             AppInfo info = apps.get(i);
             if (StringMatcherUtility.matches(queryTextLower, info.title.toString(), matcher)) {
                 result.add(AdapterItem.asApp(info));
-                resultCount++;
             }
         }
         return result;
