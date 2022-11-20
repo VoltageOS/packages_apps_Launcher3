@@ -182,6 +182,7 @@ public final class Utilities {
     public static final String KEY_SHOW_QUICKSPACE_NOWPLAYING = "pref_quickspace_np";
     public static final String KEY_SHOW_QUICKSPACE_WEATHER = "pref_quickspace_weather";
     public static final String KEY_DRAWER_SEARCHBAR = "pref_drawer_searchbar";
+    public static final String KEY_SHOW_MEM_INFO = "pref_show_meminfo";
 
     /**
      * Returns true if theme is dark.
@@ -1022,6 +1023,11 @@ public final class Utilities {
     public static boolean isHotseatBgEnabled(Context context) {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getBoolean(KEY_SHOW_HOTSEAT_BG, false);
+    }
+
+    public static boolean showMemInfo(Context context) {
+        SharedPreferences prefs = getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_SHOW_MEM_INFO, true);
     }
 
     public static boolean canZoomWallpaper(Context context) {
