@@ -18,11 +18,13 @@ package com.android.launcher3.allapps.search;
 import static android.view.View.MeasureSpec.EXACTLY;
 import static android.view.View.MeasureSpec.getSize;
 import static android.view.View.MeasureSpec.makeMeasureSpec;
+import static com.android.launcher3.InvariantDeviceProfile.KEY_ALLAPPS_THEMED_ICONS;
 
 import static com.android.launcher3.Utilities.prefixTextWithIcon;
 import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.graphics.Rect;
 import android.text.Selection;
@@ -58,6 +60,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     private final AllAppsSearchBarController mSearchBarController;
     private final SpannableStringBuilder mSearchQueryBuilder;
 
+    private boolean mThemeAllAppsIcons;
+
     private ActivityAllAppsContainerView<?> mAppsView;
 
     // The amount of pixels to shift down and overlap with the rest of the content.
@@ -74,6 +78,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     public AppsSearchContainerLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        SharedPreferences prefs = Utilities.getPrefs(context.getApplicationContext());
+
         mLauncher = ActivityContext.lookupContext(context);
         mSearchBarController = new AllAppsSearchBarController();
 
@@ -82,6 +88,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
+
+        mThemeAllAppsIcons = prefs.getBoolean(KEY_ALLAPPS_THEMED_ICONS, false);
     }
 
     @Override
@@ -119,9 +127,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        Drawable gIcon = getContext().getDrawable(R.drawable.ic_super_g_color);
-        Drawable gIconThemed = getContext().getDrawable(R.drawable.ic_super_g_themed);
-        Drawable sIcon = getContext().getDrawable(R.drawable.ic_allapps_search);
+        Drawable sIcon = getContext().getDrawable(R.drawable.ic_search_color);
+        Drawable sIconThemed = getContext().getDrawable(R.drawable.ic_search_themed);
         
         // Shift the widget horizontally so that its centered in the parent (b/63428078)
         View parent = (View) getParent();
@@ -131,12 +138,10 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         int shift = expectedLeft - left;
         setTranslationX(shift);
 
-        if (Utilities.showQSB(getContext()) && !Utilities.isThemedIconsEnabled(getContext())) {
-          setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, null, null);
-        } else if (Utilities.showQSB(getContext()) && Utilities.isThemedIconsEnabled(getContext())) {
-          setCompoundDrawablesRelativeWithIntrinsicBounds(gIconThemed, null, null, null);
-        } else {
+        if (Utilities.showSearchBar(getContext()) && mThemeAllAppsIcons == false) {
           setCompoundDrawablesRelativeWithIntrinsicBounds(sIcon, null, null, null);
+        } else if (Utilities.showSearchBar(getContext()) && mThemeAllAppsIcons == true) {
+          setCompoundDrawablesRelativeWithIntrinsicBounds(sIconThemed, null, null, null);
         }
 
         offsetTopAndBottom(mContentOverlap);

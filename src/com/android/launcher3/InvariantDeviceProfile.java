@@ -330,9 +330,13 @@ public class InvariantDeviceProfile implements OnSharedPreferenceChangeListener 
             case KEY_FONT_SIZE:
             case KEY_MAX_LINES:
             case DeviceProfile.KEY_ROW_HEIGHT:
-            case KEY_ALLAPPS_THEMED_ICONS:
             case IconDatabase.KEY_ICON_PACK:
                 onConfigChanged(mContext);
+                break;
+            case KEY_ALLAPPS_THEMED_ICONS:
+                LauncherAppState.getInstanceNoCreate().setNeedsRestart();
+                break;
+            default:
                 break;
         }
     }
