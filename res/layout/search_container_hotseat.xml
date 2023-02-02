@@ -36,13 +36,13 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_mic_color" />
-    
+	    
             <ImageView
                 android:id="@+id/lens_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="14dp"
                 android:clickable="true"
                 android:contentDescription="@string/label_lens"
                 android:focusable="false"
@@ -53,12 +53,23 @@
 
         </LinearLayout>
 
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="start|center"
+               android:gravity="start|center"
+               android:padding="@dimen/qsb_icon_padding"
+               android:layout_marginStart="51dp"
+               android:textSize="14sp"
+               android:textColor="?searchHintHighlight"
+               android:text="@string/qsb_search_hint" />
+               
         <ImageView
             android:id="@+id/g_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="8dp"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="14dp"
             android:gravity="start|center"
             android:clipToPadding="false"
             android:clickable="true"
