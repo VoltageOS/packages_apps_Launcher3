@@ -42,9 +42,9 @@
         android:title="@string/actions_category_title">
 
         <SwitchPreference
-            android:key="pref_recents_screenshot"
-            android:title="@string/recents_screenshot_title"
-            android:defaultValue="true"
+            android:key="pref_recents_kill_app"
+            android:title="@string/recents_kill_app"
+            android:defaultValue="false"
             android:persistent="true" />
 
         <SwitchPreference
@@ -56,6 +56,12 @@
         <SwitchPreference
             android:key="pref_recents_clear_all"
             android:title="@string/recents_clear_all_title"
+            android:defaultValue="true"
+            android:persistent="true" />
+            
+        <SwitchPreference
+            android:key="pref_recents_screenshot"
+            android:title="@string/recents_screenshot_title"
             android:defaultValue="true"
             android:persistent="true" />
     </PreferenceCategory>
