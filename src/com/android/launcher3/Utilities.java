@@ -188,6 +188,7 @@ public final class Utilities {
     public static final String KEY_RECENTS_OPACITY = "pref_recents_opacity";
     public static final String KEY_APP_DRAWER_OPACITY = "pref_app_drawer_opacity";
     public static final String KEY_BLUR_DEPTH = "pref_blur_depth";
+    public static final String KEY_ACTION_TOAST_ENABLED = "pref_action_toast_enabled";
     public static final String KEY_SHORT_PARALLAX = "pref_short_parallax";
     public static final String KEY_SINGLE_PAGE_CENTER = "pref_single_page_center";
     public static final String KEY_DRAWER_SEARCH = "pref_drawer_search";
@@ -1016,6 +1017,11 @@ public final class Utilities {
         SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
         return prefs.getInt(KEY_BLUR_DEPTH,
                 (int) context.getResources().getDimension(R.dimen.max_depth_blur_radius));
+    }
+
+    public static boolean isActionToastEnabled(Context context) {
+        SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
+        return prefs.getBoolean(KEY_ACTION_TOAST_ENABLED, true);
     }
 
     public static boolean isShortParallax(Context context) {
