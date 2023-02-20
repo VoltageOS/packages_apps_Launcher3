@@ -16,8 +16,6 @@
 
 package com.android.quickstep.views;
 
-import static com.android.launcher3.util.NavigationMode.THREE_BUTTONS;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
@@ -115,17 +113,9 @@ public class MemInfoView extends TextView {
     public void updateVerticalMargin(NavigationMode mode) {
         LayoutParams lp = (LayoutParams)getLayoutParams();
         int bottomMargin;
-        int topMargin;
-
-        if (mode == THREE_BUTTONS)
-            bottomMargin = mDp.memInfoMarginThreeButtonPx;
-        else
-            bottomMargin = mDp.memInfoMarginGesturePx;
-
-        topMargin = mDp.memInfoMarginTop;
-
-        lp.setMargins(lp.leftMargin, topMargin, lp.rightMargin, bottomMargin);
-        lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+        bottomMargin = mDp.memInfoMarginPx;
+        lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, bottomMargin);
+        lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
     }
 
     private String unitConvert(long valueMiB, boolean alignToGB) {
