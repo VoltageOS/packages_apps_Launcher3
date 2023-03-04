@@ -1107,6 +1107,7 @@ public final class Utilities {
     public static int getHotseatOpacity(Context context) {
         SharedPreferences prefs = getPrefs(context.getApplicationContext());
         return prefs.getInt(KEY_HOTSEAT_OPACITY, 40);
+    }
 
     /**
      * Shows authentication screen to confirm credentials (pin, pattern or password) for the current
