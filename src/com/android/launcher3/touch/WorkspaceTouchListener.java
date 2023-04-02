@@ -29,6 +29,7 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WORKSPACE_LONGPRESS;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.PowerManager;
@@ -52,6 +53,7 @@ import com.android.launcher3.logger.LauncherAtom;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.TouchUtil;
+import com.android.launcher3.util.VibratorWrapper;
 
 /**
  * Helper class to handle touch on empty space in workspace and show options popup on long press
@@ -240,8 +242,12 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-        if (LauncherPrefs.SLEEP_GESTURE.get(mWorkspace.getContext()))
+        Context context = mWorkspace.getContext();
+        if (LauncherPrefs.SLEEP_GESTURE.get(context)) {
+            if (LauncherPrefs.SLEEP_GESTURE_HAPTIC.get(context))
+                VibratorWrapper.INSTANCE.get(context).vibrate(VibratorWrapper.EFFECT_CLICK);
             mPm.goToSleep(event.getEventTime());
+        }
         return true;
     }
 }
