@@ -74,6 +74,7 @@ public class MemInfoView extends TextView {
     private String mMemInfoText;
     
     private MemInfoReader mMemInfoReader;
+    private ActivityManager.MemoryInfo memInfo;
 
     public MemInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -87,6 +88,7 @@ public class MemInfoView extends TextView {
         mMemInfoText = context.getResources().getString(R.string.meminfo_text);
 
         mMemInfoReader = new MemInfoReader();
+        memInfo = new ActivityManager.MemoryInfo();
     }
 
     /* Hijack this method to detect visibility rather than
@@ -153,12 +155,11 @@ public class MemInfoView extends TextView {
     private class MemInfoWorker implements Runnable {
         @Override
         public void run() {
-            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
             mActivityManager.getMemoryInfo(memInfo);
             mMemInfoReader.readMemInfo();
             long totalMem = mMemInfoReader.getTotalSize();
-            long usedZramMem = (mMemInfoReader.getSwapTotalSizeKb() * 1024) - (mMemInfoReader.getSwapFreeSizeKb() * 1024);
-            long availMem = mMemInfoReader.getFreeSize() + mMemInfoReader.getKernelUsedSize() + mMemInfoReader.getCachedSize() + usedZramMem - memInfo.secondaryServerThreshold;
+            long totalUsed = totalMem - memInfo.availMem;
+            long availMem = totalMem - totalUsed;
             long availMemMiB = availMem / (1024 * 1024);
             long totalMemMiB = totalMem / (1024 * 1024);
             updateMemInfoText(availMemMiB, totalMemMiB);
