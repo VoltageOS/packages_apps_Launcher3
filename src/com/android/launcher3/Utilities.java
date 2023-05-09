@@ -185,6 +185,7 @@ public final class Utilities {
     public static final String KEY_SHAKE_GESTURES_INTENSITY = "shake_gestures_actions_intensity";
     public static final String KEY_SHAKE_CLEAR_GESTURES_INTENSITY = "shake_clear_intensity";
     public static final String KEY_FORCE_MONOCHROME_ICONS = "pref_forced_monochrome_icons";
+    public static final String KEY_LENS = "pref_recents_lens";
 
     /**
      * Returns true if theme is dark.
