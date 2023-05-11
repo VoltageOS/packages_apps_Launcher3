@@ -195,4 +195,9 @@
     <string name="restarting_launcher">Restarting launcher...</string>
     <string name="restarting_launcher_changes">Restarting launcher to apply changes...</string>
     <string name="updating_launcher_components">Restarting launcher to update launcher components...</string>
+
+    <!-- Force monochrome icons -->
+    <string name="pref_force_monochrome_themed_icons_title">Force Monochrome themed icons</string>
+    <string name="pref_force_monochrome_themed_icons_summary">Generate monochromatic icons, if it is not provided by the app (requires re-toggling of themed icons)</string>
+
 </resources>
