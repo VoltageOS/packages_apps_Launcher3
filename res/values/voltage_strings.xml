@@ -341,4 +341,5 @@
     
     <string name="recents_kill_app">Kill app</string>
 
+    <string name="intent_no_app_clock_found">Unable to find calendar or clock activity</string>
 </resources>
