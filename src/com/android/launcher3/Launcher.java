@@ -58,6 +58,7 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.model.ItemInstallQueue.FLAG_ACTIVITY_PAUSED;
 import static com.android.launcher3.model.ItemInstallQueue.FLAG_DRAG_AND_DROP;
 import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
+import static com.android.launcher3.popup.SystemShortcut.CONTACT_SCOPES;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
 import static com.android.launcher3.popup.SystemShortcut.PAUSE_APPS;
 import static com.android.launcher3.popup.SystemShortcut.UNINSTALL;
@@ -3213,7 +3214,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     public Stream<SystemShortcut.Factory> getSupportedShortcuts() {
-        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL, STORAGE_SCOPES);
+        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL, STORAGE_SCOPES, CONTACT_SCOPES);
     }
 
     protected LauncherAccessibilityDelegate createAccessibilityDelegate() {
