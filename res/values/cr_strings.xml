@@ -268,14 +268,6 @@
     <string name="pref_themed_icons_title">Themed icons</string>
     <string name="pref_themed_icons_summary">Follow themed icons used on home screen</string>
 
-    <!-- AppInfo -->
-    <string name="app_info_version_value" translatable="false">%1$s (%2$d)</string>
-    <string name="app_info_source">Source</string>
-    <string name="app_info_source_system">System</string>
-    <string name="app_info_last_update">Last update</string>
-    <string name="app_info_version">Version</string>
-    <string name="app_info_more">More</string>
-
     <!-- Force monochrome icons -->
     <string name="pref_force_monochrome_themed_icons_title">Force Monochrome themed icons</string>
     <string name="pref_force_monochrome_themed_icons_summary">Generate monochromatic icons, if it is not provided by the app (requires re-toggling of themed icons)</string>
@@ -327,5 +319,4 @@
     <string name="shake_gestures_torch">Shake device to enable/disable torch</string>
     <string name="shake_gestures_music">Shake device to play/pause/skip music (depends on playback device)</string>
     
-
 </resources>
