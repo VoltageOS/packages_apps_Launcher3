@@ -45,6 +45,7 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.popup.QuickstepSystemShortcut.getSplitSelectShortcutByPosition;
 import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
 import static com.android.launcher3.popup.SystemShortcut.BUBBLE_SHORTCUT;
+import static com.android.launcher3.popup.SystemShortcut.CONTACT_SCOPES;
 import static com.android.launcher3.popup.SystemShortcut.DONT_SUGGEST_APP;
 import static com.android.launcher3.popup.SystemShortcut.FREE_FORM;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
@@ -494,6 +495,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         shortcuts.add(WIDGETS);
         shortcuts.add(KILL_APP);
         shortcuts.add(STORAGE_SCOPES);
+        shortcuts.add(CONTACT_SCOPES);
         shortcuts.add(INSTALL);
         if (Flags.enablePrivateSpaceInstallShortcut()) {
             shortcuts.add(PRIVATE_PROFILE_INSTALL);
