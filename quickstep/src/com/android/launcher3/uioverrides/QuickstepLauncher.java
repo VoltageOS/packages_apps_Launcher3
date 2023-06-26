@@ -41,6 +41,7 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.model.data.ItemInfo.NO_MATCHING_ID;
 import static com.android.launcher3.popup.QuickstepSystemShortcut.getSplitSelectShortcutByPosition;
 import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
+import static com.android.launcher3.popup.SystemShortcut.CONTACT_SCOPES;
 import static com.android.launcher3.popup.SystemShortcut.INSTALL;
 import static com.android.launcher3.popup.SystemShortcut.PAUSE_APPS;
 import static com.android.launcher3.popup.SystemShortcut.UNINSTALL;
@@ -438,6 +439,7 @@ public class QuickstepLauncher extends Launcher {
         shortcuts.add(WIDGETS);
         shortcuts.add(INSTALL);
         shortcuts.add(STORAGE_SCOPES);
+        shortcuts.add(CONTACT_SCOPES);
         return shortcuts.stream();
     }
 
