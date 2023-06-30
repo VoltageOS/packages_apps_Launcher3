@@ -58,12 +58,12 @@ public class LauncherIconProvider extends IconProvider {
     public void setIconThemeSupported(boolean isSupported) {
         mSupportsIconTheme = isSupported;
         mThemedIconMap = isSupported && FeatureFlags.USE_LOCAL_ICON_OVERRIDES.get()
-                ? getThemedIconMap() : DISABLED_MAP;
+                ? null : DISABLED_MAP;
     }
 
     @Override
     protected ThemeData getThemeDataForPackage(String packageName) {
-        return mThemedIconMap.get(packageName);
+        return getThemedIconMap().get(packageName);
     }
 
     @Override
@@ -73,6 +73,9 @@ public class LauncherIconProvider extends IconProvider {
     }
 
     private Map<String, ThemeData> getThemedIconMap() {
+        if (mThemedIconMap != null) {
+            return mThemedIconMap;
+        }
         ArrayMap<String, ThemeData> map = new ArrayMap<>();
         Resources res = mContext.getResources();
         try (XmlResourceParser parser = res.getXml(R.xml.grayscale_icon_map)) {
