@@ -20,4 +20,6 @@
     <color name="appseat_color">@*android:color/system_neutral2_900</color>
 
     <color name="gicon_mask">#1AFFFFFF</color>
+
+    <color name="monochrome_icon_color">@*android:color/system_accent1_100</color>
 </resources>
