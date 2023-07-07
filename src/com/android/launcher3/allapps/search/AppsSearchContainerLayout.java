@@ -128,6 +128,14 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        Drawable gIcon = getContext().getDrawable(R.drawable.ic_super_g_color);
+        Drawable gIconThemed = getContext().getDrawable(R.drawable.ic_super_g_themed);
+        Drawable sIcon = getContext().getDrawable(R.drawable.ic_allapps_search);
+        Drawable lens = getContext().getDrawable(R.drawable.ic_lens_color);
+        Drawable lensThemed = getContext().getDrawable(R.drawable.ic_lens_themed);
+        Drawable gIconThemedMono = getContext().getDrawable(R.drawable.ic_super_g_themed_mono);
+        Drawable lensThemedMono = getContext().getDrawable(R.drawable.ic_lens_themed_mono);
+
         // Shift the widget horizontally so that its centered in the parent (b/63428078)
         View parent = (View) getParent();
         int availableWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
@@ -137,17 +145,15 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         setTranslationX(shift);
 
         boolean showQSB = Utilities.showQSB(getContext());
-        boolean isThemed = Utilities.isThemedIconsEnabled(getContext());
+        boolean isThemedIconsEnabled = Utilities.isThemedIconsEnabled(getContext());
+        boolean isMonoThemed = Utilities.isMonoChromeSearchThemeEnabled(getContext());
 
-        if (showQSB && !isThemed) {
-            Drawable gIcon = getContext().getDrawable(R.drawable.ic_super_g_color);
-            setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, null, null);
-        } else if (showQSB && isThemed) {
-            Drawable gIconThemed = getContext().getDrawable(R.drawable.ic_super_g_themed);
-            setCompoundDrawablesRelativeWithIntrinsicBounds(gIconThemed, null, null, null);
-        } else {
-            Drawable sIcon = getContext().getDrawable(R.drawable.ic_allapps_search);
-            setCompoundDrawablesRelativeWithIntrinsicBounds(sIcon, null, null, null);
+        if (showQSB) {
+            if (!isThemedIconsEnabled) {
+                setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, lens, null);
+            } else {
+                setCompoundDrawablesRelativeWithIntrinsicBounds(isMonoThemed ? gIconThemedMono : gIconThemed, null, isMonoThemed ? lensThemedMono : lensThemed, null);
+            }
         }
 
         setOnTouchListener(new OnTouchListener() {

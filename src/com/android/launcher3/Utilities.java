@@ -195,6 +195,7 @@ public final class Utilities {
     public static final String KEY_SINGLE_PAGE_CENTER = "pref_single_page_center";
     public static final String KEY_QUICKSPACE_SHOW_CITY = "pref_quickspace_city";
     public static final String KEY_FORCE_MONOCHROME_ICONS = "pref_forced_monochrome_icons";
+    public static final String KEY_MONOCHROME_SEARCH_THEME = "pref_monochrome_search_theme";
 
     /**
      * Returns true if theme is dark.
@@ -1055,5 +1056,10 @@ public final class Utilities {
     public static boolean enableMonoChromeThemedIcons(Context context) {
     	SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
     	return prefs.getBoolean(KEY_FORCE_MONOCHROME_ICONS, false);
+   }
+
+    public static boolean isMonoChromeSearchThemeEnabled(Context context) {
+    	SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
+    	return prefs.getBoolean(KEY_MONOCHROME_SEARCH_THEME, false);
    }
 }
