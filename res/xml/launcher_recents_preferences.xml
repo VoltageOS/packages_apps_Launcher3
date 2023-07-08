@@ -60,12 +60,6 @@
             android:persistent="true" />
             
         <SwitchPreference
-            android:key="pref_recents_shake_clear_all"
-            android:title="@string/recents_shake_clear_all_title"
-            android:defaultValue="true"
-            android:persistent="true" />
-
-        <SwitchPreference
             android:key="pref_recents_screenshot"
             android:title="@string/recents_screenshot_title"
             android:defaultValue="true"
