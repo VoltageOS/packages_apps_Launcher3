@@ -185,4 +185,8 @@
     <string name="recents_screenshot_title">Screenshot</string>
     <string name="recents_clear_all_title">Clear all</string>
     <string name="recents_lens_title">Lens</string>
+
+    <!-- Force monochrome icons -->
+    <string name="force_monochrome_icons_title">Force themed icons</string>
+    <string name="force_monochrome_icons_summary">Generate monochromatic icons, if not supported by the app (requires re-toggling of themed icons)</string>
 </resources>
