@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.android.internal.util.MemInfoReader;
 import com.android.launcher3.anim.AlphaUpdateListener;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.util.MultiValueAlpha;
@@ -71,6 +72,9 @@ public class MemInfoView extends TextView {
     private MemInfoWorker mWorker;
 
     private String mMemInfoText;
+    
+    private MemInfoReader mMemInfoReader;
+    private ActivityManager.MemoryInfo memInfo;
 
     public MemInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,6 +86,9 @@ public class MemInfoView extends TextView {
         mWorker = new MemInfoWorker();
 
         mMemInfoText = context.getResources().getString(R.string.meminfo_text);
+
+        mMemInfoReader = new MemInfoReader();
+        memInfo = new ActivityManager.MemoryInfo();
     }
 
     /* Hijack this method to detect visibility rather than
@@ -148,10 +155,13 @@ public class MemInfoView extends TextView {
     private class MemInfoWorker implements Runnable {
         @Override
         public void run() {
-            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
             mActivityManager.getMemoryInfo(memInfo);
-            long availMemMiB = memInfo.availMem / (1024 * 1024);
-            long totalMemMiB = memInfo.totalMem / (1024 * 1024);
+            mMemInfoReader.readMemInfo();
+            long totalMem = mMemInfoReader.getTotalSize();
+            long totalUsed = totalMem - memInfo.availMem;
+            long availMem = totalMem - totalUsed;
+            long availMemMiB = availMem / (1024 * 1024);
+            long totalMemMiB = totalMem / (1024 * 1024);
             updateMemInfoText(availMemMiB, totalMemMiB);
 
             mHandler.postDelayed(this, 1000);
