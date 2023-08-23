@@ -35,11 +35,8 @@
 
         <Button
             android:id="@+id/action_screenshot"
-            style="@style/OverviewActionButton"
-            android:layout_width="60dp"
-            android:layout_height="36dp"
-            android:foreground="@drawable/ic_screenshot"
-            android:foregroundGravity="center" />
+            style="@style/OverviewActionChip"
+            android:foreground="@drawable/ic_screenshot" />
 
         <Space
             android:id="@+id/action_split_space"
@@ -50,11 +47,7 @@
 
         <Button
             android:id="@+id/action_split"
-            style="@style/OverviewActionButton"
-            android:layout_width="60dp"
-            android:layout_height="36dp"
-            android:foreground="@drawable/ic_caption_desktop_button_foreground"
-            android:foregroundGravity="center"
+            style="@style/OverviewActionChip"
             android:visibility="gone" />
 
         <Space
@@ -83,11 +76,8 @@
 
         <Button
             android:id="@+id/action_clear_all"
-            style="@style/OverviewActionButton"
-            android:layout_width="60dp"
-            android:layout_height="36dp"
-            android:foreground="@drawable/ic_clear_all"
-            android:foregroundGravity="center" />
+            style="@style/OverviewActionChip"
+            android:foreground="@drawable/ic_clear_all" />
 
         <Space
             android:id="@+id/end_space"
