@@ -25,6 +25,7 @@ import android.os.SystemProperties;
 
 import androidx.core.graphics.ColorUtils;
 
+import android.content.Context;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
@@ -121,6 +122,7 @@ public class OverviewState extends LauncherState {
     int elements = OVERVIEW_ACTIONS | MEMINFO | ADD_DESK_BUTTON;
         boolean showFloatingSearch;
         DeviceProfile dp = launcherUiState.getDeviceProfileRef().getValue();
+        Context context = dp.getDisplayInfo().context;
         if (dp.getDeviceProperties().isPhone()) {
             // Only show search in phone overview in portrait mode.
             showFloatingSearch = !dp.getDeviceProperties().isLandscape();
@@ -134,6 +136,11 @@ public class OverviewState extends LauncherState {
         if (showFloatingSearch) {
             elements |= FLOATING_SEARCH_BAR;
         }
+
+        if (!LauncherPrefs.RECENTS_CLEAR_ALL.get(context)) {
+            elements |= CLEAR_ALL_BUTTON;
+        }
+
         if (launcherUiState.getSplitScreenUiState().isSplitSelectActive()) {
             elements &= ~CLEAR_ALL_BUTTON & ~ADD_DESK_BUTTON;
         }
