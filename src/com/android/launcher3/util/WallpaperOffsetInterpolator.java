@@ -53,7 +53,7 @@ public class WallpaperOffsetInterpolator implements
         mIsRtl = Utilities.isRtl(workspace.getResources());
         mHandler = new OffsetHandler(workspace.getContext());
         SharedPreferences prefs = LauncherPrefs.getPrefs(workspace.getContext());
-        mAllowScrolling = prefs.getBoolean(KEY_WALLPAPER_SCROLLING, true);
+        mAllowScrolling = prefs.getBoolean(KEY_WALLPAPER_SCROLLING, false);
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 

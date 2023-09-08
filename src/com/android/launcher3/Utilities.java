@@ -969,7 +969,7 @@ public final class Utilities {
 
     public static boolean canZoomWallpaper(Context context) {
         SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
-        return prefs.getBoolean(KEY_ALLOW_WALLPAPER_ZOOMING, true);
+        return prefs.getBoolean(KEY_ALLOW_WALLPAPER_ZOOMING, false);
     }
 
     public static boolean showStatusbarEnabled(Context context) {
