@@ -1,6 +1,7 @@
 package com.android.launcher3.popup;
 
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_DISMISS_PREDICTION_UNDO;
+import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM;
 import static android.content.pm.SuspendDialogInfo.BUTTON_ACTION_UNSUSPEND;
 
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_SYSTEM_SHORTCUT_TAP;
@@ -12,6 +13,8 @@ import static com.android.launcher3.widget.picker.model.data.WidgetPickerDataUti
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK;
 
+import android.app.Activity;
+import android.app.ActivityManagerNative;
 import android.app.AlertDialog;
 import android.app.AppGlobals;
 import android.content.ComponentName;
@@ -30,6 +33,7 @@ import android.os.Process;
 import android.os.UserHandle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -522,6 +526,41 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
             } catch (URISyntaxException e) {
                 // Do nothing.
             }
+        }
+    }
+
+    public static final Factory<ActivityContext> FREE_FORM = (activity, itemInfo, originalView) -> 
+        new FreeForm(activity, itemInfo, originalView);
+
+    public static class FreeForm<T extends ActivityContext> extends SystemShortcut<T> { 
+        private final String mPackageName;
+        
+        public FreeForm(T target, ItemInfo itemInfo, View originalView) {
+            super(R.drawable.ic_caption_desktop_button_foreground, R.string.recent_task_option_freeform, target, itemInfo, originalView);
+            mPackageName = itemInfo.getTargetComponent().getPackageName();
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mPackageName != null) {
+                Intent intent = ((Context) mTarget).getPackageManager().getLaunchIntentForPackage(mPackageName);
+                if (intent != null) {
+                    ActivityOptions options = makeLaunchOptions(((Activity) mTarget));
+                    ((Context) mTarget).startActivity(intent, options.toBundle());
+                    AbstractFloatingView.closeAllOpenViews(((ActivityContext) mTarget));
+                }
+            }
+        }
+
+        private ActivityOptions makeLaunchOptions(Activity activity) {
+            ActivityOptions activityOptions = ActivityOptions.makeBasic();
+            activityOptions.setLaunchWindowingMode(WINDOWING_MODE_FREEFORM);
+            final View decorView = activity.getWindow().getDecorView();
+            final WindowInsets insets = decorView.getRootWindowInsets();
+            final Rect r = new Rect(0, 0, decorView.getWidth() / 2, decorView.getHeight() / 2);
+            r.offsetTo(insets.getSystemWindowInsetLeft() + 50, insets.getSystemWindowInsetTop() + 50);
+            activityOptions.setLaunchBounds(r);
+            return activityOptions;
         }
     }
 
