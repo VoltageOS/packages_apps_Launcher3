@@ -57,7 +57,7 @@ public class QuickEventsController {
     private String mGreetings;
     private String mClockExt;
     private OnClickListener mEventTitleSubAction = null;
-    private int mEventSubIcon;
+    private int mEventSubIcon = 0;
 
     private boolean mIsQuickEvent = false;
     private boolean mRunning = true;
@@ -318,10 +318,11 @@ public class QuickEventsController {
         } else if (getLuckyNumber(13) == 7) {
             psaLength = mPSARandomStr.length - 1;
             mEventTitleSub = mPSARandomStr[getLuckyNumber(0, psaLength)];
-            mEventSubIcon = R.drawable.ic_quickspace_crdroid;
             mIsQuickEvent = true;
             return;
         }
+
+        mEventSubIcon = 0;
 
         switch (hourOfDay) {
             case 5: case 6: case 7: case 8: case 9:
