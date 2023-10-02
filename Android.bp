@@ -507,7 +507,7 @@ android_library {
         "androidx.room_room-compiler-plugin",
         "dagger2-compiler",
     ],
-    manifest: "quickstep/AndroidManifest.xml",
+    manifest: "go/AndroidManifest-launcher.xml",
     additional_manifests: [
         "go/AndroidManifest.xml",
         "AndroidManifest-common.xml",
