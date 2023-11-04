@@ -246,6 +246,14 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
             }
         }
 
+        private void launchLens() {
+            final RecentsView recentsView = mThumbnailView.getTaskView().getRecentsView();
+            if (recentsView != null) {
+                recentsView.startHome();
+                mImageApi.startLensActivity();
+            }
+        }
+
         /**
          * Called when the overlay is no longer used.
          */
@@ -374,7 +382,7 @@ public class TaskOverlayFactory implements ResourceBasedOverride {
             @Override
             public void onLens() {
                 if (mIsAllowedByPolicy) {
-                    endLiveTileMode(() -> mImageApi.startLensActivity());
+                    endLiveTileMode(TaskOverlay.this::launchLens);
                 } else {
                     showBlockedByPolicyMessage();
                 }
