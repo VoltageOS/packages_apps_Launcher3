@@ -91,25 +91,14 @@
     </resolve>
 
     <!-- Screen 1 -->
-    <appwidget
-        launcher:packageName="org.lineageos.twelve"
-        launcher:className="org.lineageos.twelve.ui.widgets.NowPlayingAppWidgetProvider"
-        launcher:screen="1"
-        launcher:x="0"
-        launcher:y="0"
-        launcher:spanX="4"
-        launcher:spanY="1" />
 
     <resolve
         launcher:screen="1"
         launcher:x="0"
         launcher:y="-1" >
         <favorite
-            launcher:packageName="com.google.android.GoogleCamera"
-            launcher:className="com.android.camera.CameraLauncher" />
-        <favorite
             launcher:packageName="org.lineageos.aperture"
-            launcher:className="org.lineageos.aperture.CameraLauncher" />
+            launcher:className="com.android.camera.CameraLauncher" />
         <favorite
             launcher:packageName="com.android.camera2"
             launcher:className="com.android.camera.CameraActivity" />
@@ -122,34 +111,6 @@
         <favorite
             launcher:packageName="com.oplus.camera"
             launcher:className="com.oplus.camera.Camera" />
-        <favorite
-            launcher:packageName="com.motorola.camera2"
-            launcher:className="com.motorola.camera.Camera" />
-        <favorite
-            launcher:packageName="com.motorola.camera3"
-            launcher:className="com.motorola.camera.Camera" />
     </resolve>
-
-    <resolve
-        launcher:screen="1"
-        launcher:x="1"
-        launcher:y="-1" >
-        <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_GALLERY;end" />
-        <favorite launcher:uri="#Intent;type=images/*;end" />
-    </resolve>
-
-    <favorite
-        launcher:packageName="org.lineageos.twelve"
-        launcher:className="org.lineageos.twelve.MainActivity"
-        launcher:screen="1"
-        launcher:x="2"
-        launcher:y="-1" />
-
-    <favorite
-        launcher:packageName="com.android.settings"
-        launcher:className="com.android.settings.Settings"
-        launcher:screen="1"
-        launcher:x="3"
-        launcher:y="-1" />
 
 </favorites>
