@@ -22,24 +22,17 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
 import static com.android.launcher3.Utilities.prefixTextWithIcon;
 import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.graphics.Rect;
 import android.text.Selection;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.SpannableStringBuilder;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.MarginLayoutParams;
 
 import com.android.launcher3.DeviceProfile;
@@ -72,8 +65,6 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     // The amount of pixels to shift down and overlap with the rest of the content.
     private final int mContentOverlap;
-    private final int searchtopMargin;
-    private final int searchSideMargin;
 
     public AppsSearchContainerLayout(Context context) {
         this(context, null);
@@ -94,23 +85,19 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
-        searchtopMargin =
-                getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_margin_top);
-        searchSideMargin =
-                getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_margin_side);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mAppsView != null)
+        if(mAppsView != null)
             mAppsView.getAppsStore().addUpdateListener(this);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mAppsView != null)
+        if(mAppsView != null)
             mAppsView.getAppsStore().removeUpdateListener(this);
     }
 
@@ -138,11 +125,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         Drawable gIcon = getContext().getDrawable(R.drawable.ic_super_g_color);
         Drawable gIconThemed = getContext().getDrawable(R.drawable.ic_super_g_themed);
         Drawable sIcon = getContext().getDrawable(R.drawable.ic_allapps_search);
-        Drawable lens = getContext().getDrawable(R.drawable.ic_lens_color);
-        Drawable lensThemed = getContext().getDrawable(R.drawable.ic_lens_themed);
-        Drawable gIconThemedMono = getContext().getDrawable(R.drawable.ic_super_g_themed_mono);
-        Drawable lensThemedMono = getContext().getDrawable(R.drawable.ic_lens_themed_mono);
-
+        
         // Shift the widget horizontally so that its centered in the parent (b/63428078)
         View parent = (View) getParent();
         int availableWidth = parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight();
@@ -151,75 +134,13 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         int shift = expectedLeft - left;
         setTranslationX(shift);
 
-        boolean showQSB = Utilities.showQSB(getContext());
-        boolean isThemedIconsEnabled = Utilities.isThemedIconsEnabled(getContext());
-        boolean isMonoThemed = Utilities.isMonoChromeSearchThemeEnabled(getContext());
-
-        if (showQSB) {
-            if (!isThemedIconsEnabled) {
-                setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, lens, null);
-            } else {
-                setCompoundDrawablesRelativeWithIntrinsicBounds(isMonoThemed ? gIconThemedMono : gIconThemed, null, isMonoThemed ? lensThemedMono : lensThemed, null);
-            }
+        if (Utilities.showQSB(getContext()) && !Utilities.isThemedIconsEnabled(getContext())) {
+          setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, null, null);
+        } else if (Utilities.showQSB(getContext()) && Utilities.isThemedIconsEnabled(getContext())) {
+          setCompoundDrawablesRelativeWithIntrinsicBounds(gIconThemed, null, null, null);
         } else {
-            setCompoundDrawablesRelativeWithIntrinsicBounds(sIcon, null, lens, null);
+          setCompoundDrawablesRelativeWithIntrinsicBounds(sIcon, null, null, null);
         }
-
-        setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    float touchX = event.getRawX();
-                    int rightDrawableWidth = getCompoundDrawables()[2].getBounds().width();
-                    int leftDrawableWidth = getCompoundDrawables()[0].getBounds().width();
-                    int paddingEnd = getPaddingEnd();
-                    int paddingLeft = getPaddingLeft();
-                
-                    // Check if the touch is outside the bounds of the right drawable
-                    if (touchX >= (getWidth() - rightDrawableWidth - paddingEnd)) {
-                        // Handle touch on the right drawable (lens icon)
-                        // launch lens app
-                        Intent lensIntent = new Intent();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("caller_package", Utilities.GSA_PACKAGE);
-                        bundle.putLong("start_activity_time_nanos", SystemClock.elapsedRealtimeNanos());
-                        lensIntent.setComponent(new ComponentName(Utilities.GSA_PACKAGE, Utilities.LENS_ACTIVITY))
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .setPackage(Utilities.GSA_PACKAGE)
-                                .setData(Uri.parse(Utilities.LENS_URI))
-                                .putExtra("lens_activity_params", bundle);
-                        getContext().startActivity(lensIntent);
-                        return true;
-                    }
-                    // Check if the touch is outside the bounds of the left drawable
-                    // TODO: fix this for drawable detection for tablets/large screen devices
-                    else if (touchX <= (leftDrawableWidth + paddingLeft + searchSideMargin)) {
-                        // Handle touch on the left drawable (Google icon)
-                        // launch google app
-                        Intent gIntent = getContext().getPackageManager().getLaunchIntentForPackage(Utilities.GSA_PACKAGE);
-                        gIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        getContext().startActivity(gIntent);
-                        return true;
-                    }
-                    // Check if the touch is in the middle part of the Search bar
-                    else if (touchX > (leftDrawableWidth + paddingLeft) && touchX < (getWidth() - rightDrawableWidth - paddingEnd)) {
-                        // Launch Pixel search directly if installed 
-                        // to produce a similar search experience like pixel launcher
-                        Intent pixelSearchIntent = getContext().getPackageManager().getLaunchIntentForPackage("rk.android.app.pixelsearch");
-                        if (pixelSearchIntent != null) {
-                            // The app is installed, launch it
-                            pixelSearchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            getContext().startActivity(pixelSearchIntent);
-                            return true;
-                        } else {
-                            // Use normal behavior if pixel search is not installed.
-                            return false;
-                        }
-                    }
-                }
-                return false;
-            }
-        });
 
         offsetTopAndBottom(mContentOverlap);
 
@@ -243,7 +164,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         float qsbWidgetHeight = res.getDimension(R.dimen.qsb_widget_height);
         float qsbWidgetPadding = res.getDimension(R.dimen.qsb_widget_vertical_padding);
         float innerHeight = qsbWidgetHeight - 2 * qsbWidgetPadding;
-        return (innerHeight / 2) * ((float) Utilities.getCornerRadius(context) / 100f);
+        return (innerHeight / 2) * ((float)Utilities.getCornerRadius(context) / 100f);
     }
 
     @Override
@@ -266,8 +187,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     @Override
     public void preDispatchKeyEvent(KeyEvent event) {
-        // Determine if the key event was actual text, if so, focus the search bar and
-        // then dispatch
+        // Determine if the key event was actual text, if so, focus the search bar and then dispatch
         // the key normally so that it can process this key event
         if (!mSearchBarController.isSearchFieldFocused() &&
                 event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -303,7 +223,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public void setInsets(Rect insets) {
         MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();
-        mlp.topMargin = searchtopMargin;
+        mlp.topMargin = insets.top;
         requestLayout();
     }
 
