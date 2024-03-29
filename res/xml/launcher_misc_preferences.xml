@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:launcher="http://schemas.android.com/apk/res-auto"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
 
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:key="pref_fixed_landscape_mode"
         android:title="@string/landscape_mode_title"
         android:summary="@string/landscape_mode_desc"
         android:defaultValue="false"
-        android:persistent="true" />
+        android:persistent="true"
+        launcher:iconSpaceReserved="false" />
+
 </androidx.preference.PreferenceScreen>
+
