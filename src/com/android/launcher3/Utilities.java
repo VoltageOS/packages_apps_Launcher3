@@ -193,6 +193,7 @@ public final class Utilities {
     public static final String KEY_HOTSEAT_QSB_OPACITY = "pref_hotseat_qsb_opacity";
     public static final String KEY_HOTSEAT_QSB_STROKE_WIDTH = "pref_hotseat_qsb_stroke_width";
     public static final String KEY_FORCE_MONOCHROME_ICON = "pref_force_monochrome_icon";
+    public static final String KEY_RECENTS_CHIPS = "pref_recents_chips";
 
     /**
      * Returns true if theme is dark.
