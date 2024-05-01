@@ -21,7 +21,7 @@
     <uses-sdk android:targetSdkVersion="29" android:minSdkVersion="25"
               tools:overrideLibrary="android.support.test.uiautomator.v18"/>
 
-    <application android:debuggable="true">
+    <application android:debuggable="false">
         <uses-library android:name="android.test.runner" />
     </application>
 

@@ -123,7 +123,7 @@ public class LoaderTask implements Runnable {
     private static final String TAG = "LoaderTask";
     public static final String SMARTSPACE_ON_HOME_SCREEN = "pref_smartspace_home_screen";
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     @NonNull
     protected final LauncherAppState mApp;
