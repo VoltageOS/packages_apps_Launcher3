@@ -79,7 +79,7 @@ public class PackageUpdatedTask implements ModelUpdateTask {
 
     // TODO(b/290090023): Set to false after root causing is done.
     private static final String TAG = "PackageUpdatedTask";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public static final int OP_NONE = 0;
     public static final int OP_ADD = 1;
