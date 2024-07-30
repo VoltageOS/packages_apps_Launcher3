@@ -200,7 +200,7 @@ public class ItemInstallQueue implements SafeCloseable {
                 FileLog.d(LOG,
                         "Adding PendingInstallShortcutInfo with no attached info to queue.");
             } else {
-                FileLog.d(LOG,
+                Log.d(LOG,
                         "Adding PendingInstallShortcutInfo to queue."
                                 + " Attached info: " + itemInfo.first);
             }
