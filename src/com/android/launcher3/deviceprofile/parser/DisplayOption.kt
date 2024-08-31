@@ -165,7 +165,12 @@ private constructor(@JvmField val grid: GridOption, context: Context, ta: TypedA
                 R.styleable.ProfileDisplayOption_allAppsIconSizeTwoPanelPortrait,
                 R.styleable.ProfileDisplayOption_allAppsIconSizeTwoPanelLandscape,
             ) { i, v ->
-                getFloat(i, v)
+                getFloat(i, v) *
+                    if (i == R.styleable.ProfileDisplayOption_allAppsIconSize) {
+                        iconSizeModifier
+                    } else {
+                        1f
+                    }
             }
             .toFloatArray()
 
