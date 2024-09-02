@@ -3224,7 +3224,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     public Stream<SystemShortcut.Factory> getSupportedShortcuts() {
-        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL);
+        return Stream.of(APP_INFO, PAUSE_APPS, WIDGETS, INSTALL, UNINSTALL
+                , com.android.launcher3.popup.SystemShortcut.STORAGE_SCOPES
+        );
     }
 
     /**
