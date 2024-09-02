@@ -282,6 +282,30 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
         protected abstract Intent getIntent(String targetPkg);
     }
 
+    public static final Factory<BaseActivity> STORAGE_SCOPES = StorageScopes::maybeGet;
+
+    public static class StorageScopes<T extends ActivityContext> extends ScopesShortcut<T> {
+
+        private StorageScopes(T target, ItemInfo itemInfo, View originalView) {
+            super(R.drawable.ic_sscopes_add_file, R.string.storage_scopes_drop_target_label, target,
+                    itemInfo, originalView);
+        }
+
+        @Nullable
+        public static <T extends ActivityContext> StorageScopes<T> maybeGet(T target, ItemInfo itemInfo, View originalView) {
+            if (hasGosPackageStateFlag(itemInfo, GosPackageState.FLAG_STORAGE_SCOPES_ENABLED)) {
+                return new StorageScopes<>(target, itemInfo, originalView);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected Intent getIntent(String targetPkg) {
+            return android.app.StorageScope.createConfigActivityIntent(targetPkg);
+        }
+    }
+
     public static final Factory<ActivityContext> PRIVATE_PROFILE_INSTALL =
             (context, itemInfo, originalView) -> {
                 if (originalView == null) {
