@@ -121,10 +121,7 @@ public class TrustAppsActivity extends Activity implements
 
     @Override
     public void onUpdated(boolean result) {
-        LauncherAppState state = LauncherAppState.getInstanceNoCreate();
-        if (state != null) {
-            state.getModel().forceReload();
-        }
+        LauncherAppState.INSTANCE.executeIfCreated(app -> app.getModel().forceReload());
     }
 
     @Override
