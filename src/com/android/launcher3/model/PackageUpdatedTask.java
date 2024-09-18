@@ -186,6 +186,7 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                 flagOp = FlagOp.NO_OP.setFlag(
                         WorkspaceItemInfo.FLAG_DISABLED_QUIET_USER, isUserQuiet);
                 appsList.updateDisabledFlags(matcher, flagOp);
+                appsList.setFlags(FLAG_HAS_MULTIPLE_PROFILES, ums.hasMultipleProfiles());
 
                 if (Flags.enablePrivateSpace()) {
                     UserCache userCache = UserCache.INSTANCE.get(context);
@@ -197,7 +198,6 @@ public class PackageUpdatedTask implements ModelUpdateTask {
                 } else {
                     // We are not synchronizing here, as int operations are atomic
                     appsList.setFlags(FLAG_QUIET_MODE_ENABLED, ums.isAllProfilesQuietModeEnabled());
-                    appsList.setFlags(FLAG_HAS_MULTIPLE_PROFILES, ums.hasMultipleProfiles());
                 }
                 break;
             }
