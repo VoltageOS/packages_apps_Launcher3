@@ -31,6 +31,8 @@
             style="@style/OverviewActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/overview_actions_button_spacing"
+            android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_screenshot"
             android:text="@string/action_screenshot"
             android:theme="@style/ThemeControlHighlightWorkspaceColor" />
@@ -41,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/overview_actions_button_spacing"
+            android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:text="@string/action_split"
             android:theme="@style/ThemeControlHighlightWorkspaceColor"
             android:visibility="gone" />
@@ -50,6 +53,8 @@
             style="@style/OverviewActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/overview_actions_button_spacing"
+            android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_lens"
             android:text="@string/action_lens"
             android:theme="@style/ThemeControlHighlightWorkspaceColor"
@@ -60,6 +65,8 @@
             style="@style/OverviewActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/overview_actions_button_spacing"
+            android:layout_marginEnd="@dimen/overview_actions_button_spacing"
             android:drawableStart="@drawable/ic_clear_all"
             android:text="@string/recents_clear_all"
             android:theme="@style/ThemeControlHighlightWorkspaceColor" />
