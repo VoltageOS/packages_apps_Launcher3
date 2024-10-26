@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Project Kaleidoscope
+ *               2023-2024 the risingOS Android Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,9 @@ import static com.android.launcher3.util.NavigationMode.THREE_BUTTONS;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Debug;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.format.Formatter;
 import android.util.AttributeSet;
@@ -31,6 +34,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.android.internal.util.MemInfoReader;
+import com.android.internal.os.BackgroundThread;
+
+import com.android.settingslib.utils.ThreadUtils;
 
 import com.android.launcher3.anim.AlphaUpdateListener;
 import com.android.launcher3.DeviceProfile;
@@ -42,6 +50,9 @@ import com.android.launcher3.Utilities;
 import java.lang.Runnable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 public class MemInfoView extends TextView {
 
@@ -70,14 +81,19 @@ public class MemInfoView extends TextView {
     private MultiValueAlpha mAlpha;
     private ActivityManager mActivityManager;
 
+    private final Object mLock = new Object();
     private Handler mHandler;
-    private MemInfoWorker mWorker;
+    private HandlerThread mHandlerThread;
 
     private String mMemInfoText;
 
     private ActivityManager.MemoryInfo memInfo;
+    private MemInfoReader mMemInfoReader;
+    private ListenableFuture<?> mFuture;
 
     private Context mContext;
+
+    String mTotalResult;
 
     public MemInfoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,9 +102,11 @@ public class MemInfoView extends TextView {
         mAlpha = new MultiValueAlpha(this, 2);
         mAlpha.setUpdateVisibility(true);
         mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        // make sure updates won't block the UI thread
+        mHandler = new Handler(BackgroundThread.get().getLooper());
         memInfo = new ActivityManager.MemoryInfo();
-        mHandler = new Handler(Looper.getMainLooper());
-        mWorker = new MemInfoWorker();
+        mMemInfoReader = new MemInfoReader();
+        mTotalResult = formatTotalMemory();
 
         mMemInfoText = context.getResources().getString(R.string.meminfo_text);
         setListener(context);
@@ -107,9 +125,9 @@ public class MemInfoView extends TextView {
         super.setVisibility(visibility);
 
         if (visibility == VISIBLE)
-            mHandler.post(mWorker);
+            startMemoryMonitoring();
         else
-            mHandler.removeCallbacks(mWorker);
+            stopMemoryMonitoring();
     }
 
     public void setDp(DeviceProfile dp) {
@@ -139,8 +157,9 @@ public class MemInfoView extends TextView {
         lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
     }
 
-    private String formatTotalMemory(long totalMemoryBytes) {
-        double totalMemoryGB = totalMemoryBytes / (1024.0 * 1024.0 * 1024.0);
+    private String formatTotalMemory() {
+        mActivityManager.getMemoryInfo(memInfo);
+        double totalMemoryGB = memInfo.totalMem / (1024.0 * 1024.0 * 1024.0);
         int roundedMemoryGB = roundToNearestKnownRamSize(totalMemoryGB);
         return roundedMemoryGB + " GB";
     }
@@ -163,16 +182,54 @@ public class MemInfoView extends TextView {
         });
     }
 
-    private class MemInfoWorker implements Runnable {
-        @Override
-        public void run() {
-            mActivityManager.getMemoryInfo(memInfo);
-            String availResult = Formatter.formatShortFileSize(mContext, memInfo.availMem);
-            long totalMemoryBytes = memInfo.totalMem;
-            String totalResult = formatTotalMemory(totalMemoryBytes);
-            String text = String.format(mMemInfoText, availResult, totalResult);
-            setText(text);
-            mHandler.postDelayed(this, 1000);
+    private long getTotalBackgroundMemory() {
+        long totalBackgroundMemory = 0;
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = mActivityManager.getRunningAppProcesses();
+        if (runningProcesses != null) {
+            int[] pids = new int[runningProcesses.size()];
+            for (int i = 0; i < runningProcesses.size(); i++) {
+                pids[i] = runningProcesses.get(i).pid;
+            }
+            Debug.MemoryInfo[] memoryInfos = mActivityManager.getProcessMemoryInfo(pids);
+            for (int i = 0; i < memoryInfos.length; i++) {
+                ActivityManager.RunningAppProcessInfo info = runningProcesses.get(i);
+                if (info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND) {
+                    long memorySize = memoryInfos[i].getTotalPss() * 1024L;
+                    totalBackgroundMemory += memorySize;
+                }
+            }
+        }
+        return totalBackgroundMemory;
+    }
+
+    private void startMemoryMonitoring() {
+        mFuture = ThreadUtils.postOnBackgroundThread(mWorker);
+    }
+
+    private void stopMemoryMonitoring() {
+        if (mFuture != null && !mFuture.isCancelled()) {
+            mFuture.cancel(true);
+        }
+        mFuture = null;
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
         }
     }
+
+    private final Runnable mWorker = new Runnable() {
+        @Override
+        public void run() {
+            synchronized (mLock) {
+                mMemInfoReader.readMemInfo();
+                long freeMemory = mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize() + getTotalBackgroundMemory();  
+                String availResult = Formatter.formatShortFileSize(mContext, freeMemory);
+                String text = String.format(mMemInfoText, availResult, mTotalResult);
+                ThreadUtils.postOnMainThread(() -> {
+                    setText(text);
+                    setTextColor(0xFFFFFFFF);
+                });
+                mHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 }
