@@ -78,9 +78,7 @@ public class MemInfoView extends TextView {
     private MultiValueAlpha mAlpha;
     private ActivityManager mActivityManager;
 
-    private final Object mLock = new Object();
     private Handler mHandler;
-    private HandlerThread mHandlerThread;
 
     private String mMemInfoText;
 
@@ -99,14 +97,13 @@ public class MemInfoView extends TextView {
         mAlpha = new MultiValueAlpha(this, 2);
         mAlpha.setUpdateVisibility(true);
         mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        // make sure updates won't block the UI thread
-        mHandler = new Handler(BackgroundThread.get().getLooper());
         memInfo = new ActivityManager.MemoryInfo();
         mMemInfoReader = new MemInfoReader();
         mTotalResult = formatTotalMemory();
 
         mMemInfoText = context.getResources().getString(R.string.meminfo_text);
         setListener(context);
+        setTextColor(0xFFFFFFFF);
     }
 
     /* Hijack this method to detect visibility rather than
@@ -193,33 +190,41 @@ public class MemInfoView extends TextView {
     }
 
     private void startMemoryMonitoring() {
+        stopMemoryMonitoring();
+        if (mHandler == null) {
+            mHandler = new Handler(BackgroundThread.get().getLooper());
+        }
         mFuture = ThreadUtils.postOnBackgroundThread(mWorker);
     }
 
     private void stopMemoryMonitoring() {
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
         if (mFuture != null && !mFuture.isCancelled()) {
             mFuture.cancel(true);
         }
         mFuture = null;
-        if (mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null);
-        }
     }
 
     private final Runnable mWorker = new Runnable() {
         @Override
         public void run() {
-            synchronized (mLock) {
-                mMemInfoReader.readMemInfo();
-                long freeMemory = mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize() + getTotalBackgroundMemory();  
-                String availResult = Formatter.formatShortFileSize(mContext, freeMemory);
-                String text = String.format(mMemInfoText, availResult, mTotalResult);
-                ThreadUtils.postOnMainThread(() -> {
-                    setText(text);
-                    setTextColor(0xFFFFFFFF);
-                });
+            mMemInfoReader.readMemInfo();
+            long freeMemory = mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize() + getTotalBackgroundMemory();
+            String availResult = Formatter.formatShortFileSize(mContext, freeMemory);
+            String text = String.format(mMemInfoText, availResult, mTotalResult);
+            ThreadUtils.postOnMainThread(() -> setText(text));
+            if (mHandler != null) {
                 mHandler.postDelayed(this, 1000);
             }
         }
     };
+    
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        stopMemoryMonitoring();
+    }
 }
