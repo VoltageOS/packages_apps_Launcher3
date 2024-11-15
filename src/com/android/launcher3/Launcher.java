@@ -1847,7 +1847,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         mOverlayManager.onActivityDestroyed();
         PillColorProvider.getInstance(mWorkspace.getContext()).unregisterObserver();
         if (mQuickSpace != null) {
-            mQuickSpace.onPause();
+            mQuickSpace.onDestroy();
         }
     }
 
