@@ -21,5 +21,6 @@
         <permission name="android.permission.INTERACT_ACROSS_USERS"/>
         <permission name="android.permission.FORCE_STOP_PACKAGES"/>
         <permission name="android.permission.MANAGE_APP_LOCK"/>
+        <permission name="android.permission.REGISTER_STATS_PULL_ATOM"/>
     </privapp-permissions>
 </permissions>
