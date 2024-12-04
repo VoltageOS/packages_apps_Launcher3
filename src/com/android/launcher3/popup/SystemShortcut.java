@@ -536,35 +536,31 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
     public static class FreeForm<T extends ActivityContext> extends SystemShortcut<T> { 
         private final String mPackageName;
+        private final ComponentName mComponentName;
+        private final int mUserId;
         
         public FreeForm(T target, ItemInfo itemInfo, View originalView) {
             super(R.drawable.ic_caption_desktop_button_foreground, R.string.recent_task_option_freeform, target, itemInfo, originalView);
             mPackageName = itemInfo.getTargetComponent().getPackageName();
+            mComponentName = itemInfo.getTargetComponent();
+            mUserId = originalView.getContext().getUserId();
         }
 
         @Override
         public void onClick(View view) {
             if (mPackageName != null) {
-                Intent intent = ((Context) mTarget).getPackageManager().getLaunchIntentForPackage(mPackageName);
-                if (intent != null) {
-                    ActivityOptions options = makeLaunchOptions(((Activity) mTarget));
-                    ((Context) mTarget).startActivity(intent, options.toBundle());
-                    AbstractFloatingView.closeAllOpenViews(((ActivityContext) mTarget));
-                }
+                startLmoFreeform(view.getContext());
+                AbstractFloatingView.closeAllOpenViews(((ActivityContext) mTarget));
             }
         }
 
-        private ActivityOptions makeLaunchOptions(Activity activity) {
-            ActivityOptions activityOptions = ActivityOptions.makeBasic();
-            activityOptions.setLaunchWindowingMode(WINDOWING_MODE_FREEFORM);
-            final View decorView = activity.getWindow().getDecorView();
-            final WindowInsets insets = decorView.getRootWindowInsets();
-            final Rect r = new Rect(0, 0, decorView.getWidth() / 2, decorView.getHeight() / 2);
-            r.offsetTo(insets.getSystemWindowInsetLeft() + 50, insets.getSystemWindowInsetTop() + 50);
-            activityOptions.setLaunchBounds(r);
-            activityOptions.setSplashScreenStyle(SplashScreen.SPLASH_SCREEN_STYLE_ICON);
-            activityOptions.setTaskOverlay(true /* taskOverlay */, true /* canResume */);
-            return activityOptions;
+        private void startLmoFreeform(Context context) {
+            final Intent intent = new Intent("com.libremobileos.freeform.START_FREEFORM")
+                    .setPackage("com.libremobileos.freeform")
+                    .putExtra("packageName", mPackageName)
+                    .putExtra("activityName", mComponentName.getClassName())
+                    .putExtra("userId", mUserId);
+            context.sendBroadcast(intent);
         }
     }
 
