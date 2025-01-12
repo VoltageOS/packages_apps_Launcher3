@@ -318,7 +318,7 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
         @Nullable
         public static <T extends ActivityContext> ContactScopes<T> maybeGet(T target, ItemInfo itemInfo, View originalView) {
-            if (hasGosPackageStateFlag(itemInfo, GosPackageState.FLAG_CONTACT_SCOPES_ENABLED)) {
+            if (hasGosPackageStateFlag(itemInfo, GosPackageStateFlag.CONTACT_SCOPES_ENABLED)) {
                 return new ContactScopes<>(target, itemInfo, originalView);
             }
 
