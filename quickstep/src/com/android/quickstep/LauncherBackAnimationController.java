@@ -378,6 +378,9 @@ public class LauncherBackAnimationController {
     }
 
     void addScrimLayer() {
+        if (!Utilities.blurBackgroundAtAppLaunch(mLauncher.getApplicationContext())) {
+            return;
+        }
         SurfaceControl parent = mLauncherTarget != null ? mLauncherTarget.leash : null;
         if (parent == null || !parent.isValid()) {
             // Parent surface is not ready at the moment. Retry later.

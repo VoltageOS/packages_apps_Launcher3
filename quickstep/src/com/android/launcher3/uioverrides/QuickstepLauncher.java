@@ -1055,7 +1055,8 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                     /* siblingAnimation= */ null,
                     /* windowTargetRect= */ null,
                     /* playAlphaReveal= */ true,
-                    /* playBlur= */ true).start();
+                    /* playBlur= */ Utilities.blurBackgroundAtAppLaunch(
+                        getApplicationContext())).start();
         }
     }
 

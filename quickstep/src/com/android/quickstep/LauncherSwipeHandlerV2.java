@@ -39,6 +39,7 @@ import com.android.app.animation.Interpolators;
 import com.android.launcher3.Flags;
 import com.android.launcher3.LauncherAnimUtils;
 import com.android.launcher3.LauncherState;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.AnimatorPlaybackController;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.statehandlers.DesktopVisibilityController;
@@ -419,7 +420,7 @@ public class LauncherSwipeHandlerV2 extends AbsSwipeUpHandler<
             if (mContainer != null) {
                 new ScalingWorkspaceRevealAnim(mContainer, mSiblingAnimation,
                         getWindowTargetRect(), true /* playAlphaReveal */,
-                        true /* playBlur */).start();
+                        Utilities.blurBackgroundAtAppLaunch(mContainer.getApplicationContext())).start();
             }
         }
 
@@ -463,7 +464,8 @@ public class LauncherSwipeHandlerV2 extends AbsSwipeUpHandler<
             if (mContainer != null) {
                 new ScalingWorkspaceRevealAnim(
                         mContainer, null /* siblingAnimation */, null /* windowTargetRect */,
-                        true /* playAlphaReveal */, true /* playBlur */).start();
+                        true /* playAlphaReveal */,
+                        Utilities.blurBackgroundAtAppLaunch(mContainer.getApplicationContext())).start();
             }
         }
     }

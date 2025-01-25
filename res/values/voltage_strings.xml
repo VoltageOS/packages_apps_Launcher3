@@ -329,4 +329,8 @@
     <string name="navbar_burn_in_protection_title">Navbar burn-in protection</string>
     <string name="navbar_burn_in_protection_summary">Periodically shift the navigation handle to prevent display burn-in</string>
     <string name="navbar_burn_in_interval_title">Shift interval</string>
+
+    <!-- Background blur at app launch/close-->
+    <string name="pref_blur_background_at_app_launch_title">Background blur at app launch/close</string>
+    <string name="pref_blur_background_at_app_launch_summary">Blur the background during app launch and close animations</string>
 </resources>
