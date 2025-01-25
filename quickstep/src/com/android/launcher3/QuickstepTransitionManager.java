@@ -345,7 +345,8 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                                 new ScalingWorkspaceRevealAnim(
                                         mLauncher, null /* siblingAnimation */,
                                         null /* windowTargetRect */, true /* playAlphaReveal */,
-                                        true /* playBlur */);
+                                        Utilities.blurBackgroundAtAppLaunch(
+                                                mLauncher.getApplicationContext()) /* playBlur */);
                         mFallbackRevealAnimation.getAnimators().addListener(
                                 new AnimatorListenerAdapter() {
                                     @Override
@@ -1154,13 +1155,14 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
         appAnimator.addUpdateListener(listener);
         // Since we added a start delay, call update here to init the FloatingIconView properly.
         listener.onUpdate(0, true /* initOnly */);
-
         // If app targets are translucent, do not animate the background as it causes a visible
         // flicker when it resets itself at the end of its animation.
         if (appTargetsAreTranslucent || !launcherClosing) {
             animatorSet.play(appAnimator);
+        } else if (Utilities.blurBackgroundAtAppLaunch(mLauncher.getApplicationContext())) {
+             animatorSet.playTogether(appAnimator, getBackgroundAnimator());
         } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
+            animatorSet.play(appAnimator);
         }
         return animatorSet;
     }
@@ -1308,20 +1310,22 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                 surfaceApplier.scheduleApply(transaction);
             }
         });
-
         // If app targets are translucent, do not animate the background as it causes a visible
         // flicker when it resets itself at the end of its animation.
         if (appTargetsAreTranslucent || !launcherClosing) {
             animatorSet.play(appAnimator);
+        } else if (Utilities.blurBackgroundAtAppLaunch(mLauncher.getApplicationContext())) {
+             animatorSet.playTogether(appAnimator, getBackgroundAnimator());
         } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
+            animatorSet.play(appAnimator);
         }
         return animatorSet;
     }
 
     private SurfaceControl addScrimLayer(SurfaceTransactionApplier applier,
             AnimatedSurfaces surfaces) {
-        if (!mIsAppLaunchBlurEnabled) {
+        if (!mIsAppLaunchBlurEnabled
+                || !Utilities.blurBackgroundAtAppLaunch(mLauncher.getApplicationContext())) {
             return null;
         }
 
@@ -2059,7 +2063,9 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                         new ScalingWorkspaceRevealAnim(mLauncher, rectFSpringAnim,
                                 rectFSpringAnim.getTargetRect(),
                                 !fromPredictiveBack /* playAlphaReveal */,
-                                true /* playBlur */).getAnimators());
+                                Utilities.blurBackgroundAtAppLaunch(
+                                        mLauncher.getApplicationContext())
+                                        /* playBlur */).getAnimators());
 
                 // We play StaggeredWorkspaceAnim as a part of the closing window animation.
                 playWorkspaceReveal = false;

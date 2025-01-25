@@ -43,6 +43,14 @@
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
     </androidx.preference.PreferenceScreen>
 
+    <SwitchPreferenceCompat
+        android:key="pref_blur_background_at_app_launch"
+        android:title="@string/pref_blur_background_at_app_launch_title"
+        android:summary="@string/pref_blur_background_at_app_launch_summary"
+        android:defaultValue="true"
+        android:persistent="true"
+        launcher:iconSpaceReserved="false" />
+
     <com.android.launcher3.settings.preference.RestartPreference
         android:key="pref_restart"
         android:title="@string/pref_restart_title"
