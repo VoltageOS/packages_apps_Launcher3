@@ -1142,4 +1142,8 @@ public final class Utilities {
     public static int getAllAppsOpacity(Context context) {
         return LauncherPrefs.APP_DRAWER_OPACITY.get(context);
     }
+
+    public static boolean blurBackgroundAtAppLaunch(Context context) {
+        return LauncherPrefs.BLUR_BACKGROUND_AT_APP_LAUNCH.get(context);
+    }
 }
