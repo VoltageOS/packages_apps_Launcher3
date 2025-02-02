@@ -142,9 +142,14 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
-            case DeviceProfile.KEY_PHONE_TASKBAR:
-                LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
-                break;
+        case DeviceProfile.KEY_PHONE_TASKBAR:
+            // Skip processing on tablets
+            DeviceProfile dp = LauncherAppState.getIDP(mContext).getDeviceProfile(mContext);
+            if (dp.isTaskbarPresent) {
+                return; // Ignore changes on tablets
+            }
+            LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
+            break;
             case Utilities.KEY_BLUR_DEPTH:
                 LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
                 break;
@@ -255,6 +260,12 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                 getPreferenceScreen().removePreference(mCtsPref);
             } else {
                 mCtsPref.setChecked(mCtsEnabled);
+            }
+
+            Preference phoneTaskbarPref = findPreference(DeviceProfile.KEY_PHONE_TASKBAR);
+            if (phoneTaskbarPref != null) {
+                DeviceProfile dp = LauncherAppState.getIDP(getContext()).getDeviceProfile(getContext());
+                phoneTaskbarPref.setVisible(!dp.isTaskbarPresent); // Hide on tablets
             }
         }
 
