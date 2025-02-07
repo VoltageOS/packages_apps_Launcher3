@@ -281,6 +281,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField val HOTSEAT_OPACITY = backedUpItem("pref_hotseat_opacity", 40)
         @JvmField val ICON_SIZE = backedUpItem("pref_custom_icon_size", 100)
         @JvmField val RECENTS_MEMINFO = backedUpItem("pref_recents_meminfo", false)
+        @JvmField val RECENTS_MEMINFO_ZRAM = backedUpItem("pref_recents_meminfo_zram", false)
         @JvmField val ROW_HEIGHT = backedUpItem("pref_row_height", 100)
         @JvmField
         val PROMISE_ICON_IDS = nonRestorableItem(InstallSessionHelper.PROMISE_ICON_IDS, "")
