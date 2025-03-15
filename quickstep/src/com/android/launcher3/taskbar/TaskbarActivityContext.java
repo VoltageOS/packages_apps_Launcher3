@@ -235,6 +235,8 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
     private static final Uri URI_NAV_BAR_KIDS_MODE = Secure.getUriFor(Secure.NAV_BAR_KIDS_MODE);
     private static final Uri URI_ENABLE_TASKBAR = Settings.System.getUriFor(
             Settings.System.ENABLE_TASKBAR);
+    private static final Uri URI_NAVIGATION_BAR_HINT = Settings.System.getUriFor(
+            Settings.System.NAVIGATION_BAR_HINT);
 
     private static final String TAG = "TaskbarActivityContext";
 
@@ -292,6 +294,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
     private final boolean mIsUserSetupComplete;
     private final boolean mIsNavBarKidsMode;
     private final boolean mIsTaskbarEnabled;
+    private final boolean mIsNavbarHintEnabled;
 
     private boolean mIsDestroyed = false;
 
@@ -356,6 +359,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
         mIsUserSetupComplete = settingsCache.getValue(URI_USER_SETUP_COMPLETE);
         mIsNavBarKidsMode = settingsCache.getValue(URI_NAV_BAR_KIDS_MODE);
         mIsTaskbarEnabled = settingsCache.getValue(URI_ENABLE_TASKBAR);
+        mIsNavbarHintEnabled = settingsCache.getValue(URI_NAVIGATION_BAR_HINT);
         mBubbleFeatureConfig =
                 new BubbleFeatureConfigImpl(mWindowContext, getDesktopState(mWindowContext));
 
@@ -1613,6 +1617,10 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
     public int getDefaultTaskbarWindowSize() {
         Resources resources = getResources();
 
+        if (isGestureNav() && !mIsNavbarHintEnabled) {
+            return 0;
+        }
+
         if (isPhoneMode()) {
             return isThreeButtonNav() ?
                     resources.getDimensionPixelSize(R.dimen.taskbar_phone_size) :
@@ -2470,6 +2478,10 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
 
     public boolean isTaskbarEnabled() {
         return mIsTaskbarEnabled;
+    }
+
+    public boolean isNavbarHintEnabled() {
+        return mIsNavbarHintEnabled;
     }
 
     /**

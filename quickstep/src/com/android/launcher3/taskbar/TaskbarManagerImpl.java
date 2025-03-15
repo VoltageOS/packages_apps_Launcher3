@@ -141,6 +141,9 @@ public class TaskbarManagerImpl {
     public static final Uri ENABLE_TASKBAR_URI = Settings.System.getUriFor(
             Settings.System.ENABLE_TASKBAR);
 
+    public static final Uri NAVIGATION_BAR_HINT_URI = Settings.System.getUriFor(
+            Settings.System.NAVIGATION_BAR_HINT);
+
     private final Context mBaseContext;
     private final int mPrimaryDisplayId;
     private final TaskbarNavButtonCallbacks mNavCallbacks;
@@ -352,6 +355,11 @@ public class TaskbarManagerImpl {
                 getTaskbarUiThread(),
                 v -> onTaskbarChanged(v, TaskbarActivityContext::isTaskbarEnabled));
         cleanupTasks.addCloseable(getTaskbarUiThread(), enableTaskbarSafeCloseable);
+
+        var enableNavbarHintSafeCloseable = settingsCache.getListenableRef(NAVIGATION_BAR_HINT_URI)
+                .forEach(getTaskbarUiThread(),
+                        v -> onTaskbarChanged(v, TaskbarActivityContext::isNavbarHintEnabled));
+        cleanupTasks.addCloseable(getTaskbarUiThread(), enableNavbarHintSafeCloseable);
 
         SimpleBroadcastReceiver shutdownReceiver = new SimpleBroadcastReceiver(
                 mBaseContext,
