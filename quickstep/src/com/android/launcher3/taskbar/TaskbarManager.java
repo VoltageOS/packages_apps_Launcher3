@@ -119,6 +119,9 @@ public class TaskbarManager {
     public static final Uri ENABLE_TASKBAR = Settings.System.getUriFor(
             Settings.System.ENABLE_TASKBAR);
 
+    public static final Uri NAVIGATION_BAR_HINT = Settings.System.getUriFor(
+            Settings.System.NAVIGATION_BAR_HINT);
+
     private final Context mWindowContext;
     private final @Nullable Context mNavigationBarPanelContext;
     private WindowManager mWindowManager;
@@ -260,6 +263,8 @@ public class TaskbarManager {
                 .register(NAV_BAR_INVERSE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .register(ENABLE_TASKBAR, mOnTaskBarChangeListener);
+        SettingsCache.INSTANCE.get(mWindowContext)
+                .register(NAVIGATION_BAR_HINT, mOnTaskBarChangeListener);
         Log.d(TASKBAR_NOT_DESTROYED_TAG, "registering component callbacks from constructor.");
         mWindowContext.registerComponentCallbacks(mDefaultComponentCallbacks);
         mShutdownReceiver.register(mWindowContext, Intent.ACTION_SHUTDOWN);
@@ -736,6 +741,8 @@ public class TaskbarManager {
                 .unregister(NAV_BAR_INVERSE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .unregister(ENABLE_TASKBAR, mOnTaskBarChangeListener);
+        SettingsCache.INSTANCE.get(mWindowContext)
+                .unregister(NAVIGATION_BAR_HINT, mOnTaskBarChangeListener);
         Log.d(TASKBAR_NOT_DESTROYED_TAG, "unregistering component callbacks from destroy().");
         mWindowContext.unregisterComponentCallbacks(mDefaultComponentCallbacks);
         mShutdownReceiver.unregisterReceiverSafely(mWindowContext);
