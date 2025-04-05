@@ -122,6 +122,9 @@ public class TaskbarManager {
     public static final Uri ENABLE_TASKBAR = Settings.System.getUriFor(
             Settings.System.ENABLE_TASKBAR);
 
+    public static final Uri NAV_BAR_LAYOUT = Settings.Secure.getUriFor(
+            Settings.Secure.NAVBAR_LAYOUT_MODE);
+
     public static final Uri NAVIGATION_BAR_HINT = Settings.System.getUriFor(
             Settings.System.NAVIGATION_BAR_HINT);
 
@@ -270,6 +273,8 @@ public class TaskbarManager {
                 .register(NAV_BAR_KIDS_MODE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .register(NAV_BAR_INVERSE, mOnSettingsChangeListener);
+        SettingsCache.INSTANCE.get(mWindowContext)
+                .register(NAV_BAR_LAYOUT, mOnTaskBarChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .register(ENABLE_TASKBAR, mOnTaskBarChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
@@ -752,6 +757,8 @@ public class TaskbarManager {
                 .unregister(NAV_BAR_KIDS_MODE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .unregister(NAV_BAR_INVERSE, mOnSettingsChangeListener);
+        SettingsCache.INSTANCE.get(mWindowContext)
+                .unregister(NAV_BAR_LAYOUT, mOnTaskBarChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
                 .unregister(ENABLE_TASKBAR, mOnTaskBarChangeListener);
         SettingsCache.INSTANCE.get(mWindowContext)
