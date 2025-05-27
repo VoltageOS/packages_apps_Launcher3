@@ -5957,7 +5957,8 @@ public abstract class RecentsView<
                     finishRecentsAnimation(false /* toRecents */, null);
                     onTaskLaunchAnimationEnd(true /* success */);
                 } else {
-                    taskView.launchWithoutAnimation(this::onTaskLaunchAnimationEnd);
+                    finishRecentsAnimation(true /* toRecents */,
+                            () -> taskView.launchWithoutAnimation(this::onTaskLaunchAnimationEnd));
                 }
                 mContainer.getStatsLogManager().logger().withItemInfo(taskView.getItemInfo())
                         .log(LAUNCHER_TASK_LAUNCH_SWIPE_DOWN);
