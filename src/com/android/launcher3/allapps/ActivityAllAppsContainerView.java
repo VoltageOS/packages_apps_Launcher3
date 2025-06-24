@@ -116,7 +116,6 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         OnDeviceProfileChangeListener, PersonalWorkSlidingTabStrip.OnActivePageChangedListener,
         ScrimView.ScrimDrawingController {
 
-
     private static final String TAG = "ActivityAllAppsContainerView";
     public static final float PULL_MULTIPLIER = .02f;
     public static final float FLING_VELOCITY_MULTIPLIER = 1200f;
@@ -504,6 +503,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (isSearching()) {
             mWorkManager.reset();
         }
+        // Remove the scrim drawing controller to:
+        // 1) clean up its reference to this class; and
+        // 2) avoid using the unfolded version of this class for the folded screen or vice-versa
+        mScrimView.setDrawingController(null);
     }
 
     /**
