@@ -80,7 +80,7 @@ public class WallpaperOffsetInterpolator implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (LauncherPrefs.WALLPAPER_SCROLLING.getSharedPrefKey().equals(key)) {
-            mAllowScrolling = prefs.getBoolean(key, true);
+            mAllowScrolling = prefs.getBoolean(key, false);
         }
     }
 
