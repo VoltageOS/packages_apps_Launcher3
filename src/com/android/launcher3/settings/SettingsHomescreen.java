@@ -25,6 +25,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartFragmentCallback;
@@ -114,7 +115,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 LauncherPrefs.SINGLE_PAGE_CENTER.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.DARK_STATUS_BAR.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE.getSharedPrefKey().equals(key) ||
-                LauncherPrefs.SHOW_QUICKSPACE_ALT.getSharedPrefKey().equals(key) ||
+                LauncherPrefs.QUICKSPACE_UI_STYLE.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_NOWPLAYING.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER.getSharedPrefKey().equals(key) ||
@@ -162,7 +163,8 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class HomescreenSettingsFragment extends SettingsBasePreferenceFragment {
+    public static class HomescreenSettingsFragment extends SettingsBasePreferenceFragment implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
 
         private @Nullable SafeCloseable mSettingCacheSafeCloseable;
 
@@ -173,6 +175,12 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private String mHighLightKey;
 
         private boolean mPreferenceHighlighted = false;
+
+        private static final String KEY_QUICKSPACE_STYLE = "pref_quickspace_style";
+        private static final String KEY_VOLTAGE_ACCENT = "pref_quickspace_voltage_accent";
+
+        private ListPreference mQuickspaceStyle;
+        private Preference mVoltageAccent;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
 
@@ -211,6 +219,12 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             initPreferences(screen);
 
             mShowGoogleAppPref = screen.findPreference(KEY_MINUS_ONE);
+
+            mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
+            mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
+
+            updateVoltageAccentVisibility();
+
             updateIsGoogleAppEnabled();
 
             if (mHighLightKey != null
@@ -312,7 +326,9 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                     getView().postDelayed(highlighter, DELAY_HIGHLIGHT_DURATION_MILLIS);
                     mPreferenceHighlighted = true;
                 }
-            }
+             }
+            getPreferenceManager().getSharedPreferences()
+                    .registerOnSharedPreferenceChangeListener(this);
             updateIsGoogleAppEnabled();
 
             if (mRestartOnResume) {
@@ -327,6 +343,13 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 mSettingCacheSafeCloseable.close();
                 mSettingCacheSafeCloseable = null;
             }
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            getPreferenceManager().getSharedPreferences()
+                    .unregisterOnSharedPreferenceChangeListener(this);
         }
 
         protected void tryRecreateActivity() {
@@ -360,6 +383,22 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             return position >= 0 ? new PreferenceHighlighter(
                     list, position, screen.findPreference(mHighLightKey))
                     : null;
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (KEY_QUICKSPACE_STYLE.equals(key)) {
+                updateVoltageAccentVisibility();
+            }
+        }
+
+        private void updateVoltageAccentVisibility() {
+            if (mVoltageAccent == null || mQuickspaceStyle == null) {
+                return;
+            }
+            // The "Voltage" style has a value of "2" in your arrays.xml
+            boolean isVoltageStyle = "2".equals(mQuickspaceStyle.getValue());
+            mVoltageAccent.setVisible(isVoltageStyle);
         }
     }
 }
