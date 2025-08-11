@@ -19,7 +19,7 @@
     <dimen name="click_shadow_elevation">4dp</dimen>
 
     <!-- Dynamic Grid -->
-    <dimen name="dynamic_grid_edge_margin">10.77dp</dimen>
+    <dimen name="dynamic_grid_edge_margin">21px</dimen>
     <dimen name="dynamic_grid_left_right_margin">8dp</dimen>
     <!-- Minimum amount of next page visible in spring loaded mode -->
     <dimen name="dynamic_grid_spring_loaded_min_next_space_visible">48dp</dimen>
@@ -35,7 +35,7 @@
 
     <!-- Hotseat -->
     <dimen name="dynamic_grid_hotseat_bottom_tall_padding">0dp</dimen>
-    <dimen name="spring_loaded_hotseat_top_margin">76dp</dimen>
+    <dimen name="spring_loaded_hotseat_top_margin">16dp</dimen>
     <dimen name="spring_loaded_hotseat_top_margin_wide_portrait">64dp</dimen>
 
     <dimen name="dynamic_grid_hotseat_side_padding">0dp</dimen>
