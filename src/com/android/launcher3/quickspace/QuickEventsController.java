@@ -75,6 +75,11 @@ public class QuickEventsController {
 
     // PSA + Personality
     private String[] mPSAStr;
+    
+    // Cache for PSA messages to prevent random switching
+    private String mCachedPSAMessage = null;
+    private int mCachedPSAHour = -1;
+    private boolean mCachedPSAIsRandom = false;
 
     // NowPlaying
     private boolean mEventNowPlaying = false;
@@ -97,8 +102,31 @@ public class QuickEventsController {
         psonalityEvent();
     }
 
-    public void updatePsonality() {
+    public void forceUpdatePsonality() {
+        // Force clear cache and regenerate PSA - used for scheduled updates
+        clearCachedPSA();
         psonalityEvent();
+    }
+
+    public void updatePsonality() {
+        // This is called from scheduled updates, should force new message
+        forceUpdatePsonality();
+    }
+
+    private void clearCachedPSA() {
+        mCachedPSAMessage = null;
+        mCachedPSAHour = -1;
+        mCachedPSAIsRandom = false;
+    }
+
+    private boolean shouldUseCachedPSA(int currentHour) {
+        if (mCachedPSAMessage == null) return false;
+        
+        // For random messages, use cache until next scheduled update
+        if (mCachedPSAIsRandom) return true;
+        
+        // For time-based messages, only use cache if same hour
+        return mCachedPSAHour == currentHour;
     }
 
     private void nowPlayingEvent() {
@@ -159,8 +187,7 @@ public class QuickEventsController {
     private void psonalityEvent() {
         if (mEventNowPlaying) return;
 
-
-	    mEventTitle = formatDateTime(mContext, Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(mContext)));
+        mEventTitle = formatDateTime(mContext, Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(mContext)));
         mEventTitleSubAction = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -218,23 +245,46 @@ public class QuickEventsController {
             return;
         }
 
+        // Check if we can use cached PSA message
+        if (shouldUseCachedPSA(hourOfDay)) {
+            mEventTitleSub = mCachedPSAMessage;
+            mIsQuickEvent = true;
+            mEventSubIcon = null;
+            return;
+        }
+
+        // Generate new PSA message
         int luckNumber = getLuckyNumber(13);
         if (luckNumber < 7) {
             mIsQuickEvent = false;
             return;
         } else if (luckNumber == 7) {
             mPSAStr = mResources.getStringArray(R.array.quickspace_psa_random);
-            mEventTitleSub = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+            
+            // Cache the random PSA message
+            mCachedPSAMessage = selectedMessage;
+            mCachedPSAHour = hourOfDay;
+            mCachedPSAIsRandom = true;
+            
+            mEventTitleSub = selectedMessage;
             mIsQuickEvent = true;
+            mEventSubIcon = null;
             return;
         }
 
         mEventSubIcon = null;
-
         mPSAStr = getPSAStr(hourOfDay);
 
         if (mPSAStr != null) {
-            mEventTitleSub = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+            
+            // Cache the time-based PSA message
+            mCachedPSAMessage = selectedMessage;
+            mCachedPSAHour = hourOfDay;
+            mCachedPSAIsRandom = false;
+            
+            mEventTitleSub = selectedMessage;
             mIsQuickEvent = true;
         } else {
             mIsQuickEvent = false;

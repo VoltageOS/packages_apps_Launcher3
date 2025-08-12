@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.widget.TextClock;
 
 import com.android.launcher3.R;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.util.Themes;
 
 public class AccentedTextClock extends TextClock {
@@ -27,6 +28,8 @@ public class AccentedTextClock extends TextClock {
         // 'workspaceAccentColor' can often be the same as the text color,
         // making the accent invisible.
         mAccentColor = Themes.getAttrColor(context, android.R.attr.colorAccent);
+
+        mAccentEnabled = LauncherPrefs.QUICKSPACE_VOLTAGE_ACCENT.get(context);
     }
 
     public void setAccentEnabled(boolean enabled) {
