@@ -185,7 +185,6 @@ import com.android.launcher3.util.SplitConfigurationOptions.SplitSelectSource;
 import com.android.launcher3.util.SplitConfigurationOptions.StagePosition;
 import com.android.launcher3.util.TraceHelper;
 import com.android.launcher3.util.TranslateEdgeEffect;
-import com.android.launcher3.util.VibratorWrapper;
 import com.android.launcher3.util.ViewPool;
 import com.android.launcher3.util.coroutines.DispatcherProvider;
 import com.android.launcher3.util.coroutines.ProductionDispatchers;
@@ -1896,21 +1895,10 @@ public abstract class RecentsView<
 
     @Override
     protected void onEdgeAbsorbingScroll() {
-        vibrateForScroll();
     }
 
     @Override
     protected void onScrollOverPageChanged() {
-        vibrateForScroll();
-    }
-
-    private void vibrateForScroll() {
-        long now = SystemClock.uptimeMillis();
-        if (now - mScrollLastHapticTimestamp > mScrollHapticMinGapMillis) {
-            mScrollLastHapticTimestamp = now;
-            VibratorWrapper.INSTANCE.get(mContext).vibrate(SCROLL_VIBRATION_PRIMITIVE,
-                    SCROLL_VIBRATION_PRIMITIVE_SCALE, SCROLL_VIBRATION_FALLBACK);
-        }
     }
 
     @Override

@@ -40,7 +40,6 @@ import com.android.launcher3.touch.SingleAxisSwipeDetector;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.FlingBlockCheck;
 import com.android.launcher3.util.TouchController;
-import com.android.launcher3.util.VibratorWrapper;
 import com.android.launcher3.views.BaseDragLayer;
 import com.android.quickstep.orientation.RecentsPagedOrientationHandler;
 import com.android.quickstep.util.VibrationConstants;
@@ -378,8 +377,6 @@ public class TaskViewTouchControllerDeprecated<
         mCurrentAnimation.startWithVelocity(mContainer, goingToEnd, Math.abs(velocity),
                 mEndDisplacement, animationDuration);
         if (goingUp && goingToEnd && !mIsDismissHapticRunning) {
-            VibratorWrapper.INSTANCE.get(mContainer).vibrate(TASK_DISMISS_VIBRATION_PRIMITIVE,
-                    TASK_DISMISS_VIBRATION_PRIMITIVE_SCALE, TASK_DISMISS_VIBRATION_FALLBACK);
             mIsDismissHapticRunning = true;
         }
 
