@@ -41,6 +41,7 @@ import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Flags;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.taskbar.TaskbarActivityContext;
 import com.android.launcher3.taskbar.TaskbarControllers;
 import com.android.systemui.shared.system.BlurUtils;
@@ -219,7 +220,7 @@ public final class TaskbarOverlayController {
      *               are unsupported on the device.
      */
     public void setBackgroundBlurRadius(int radius) {
-        if (!Flags.allAppsBlur()) {
+        if (!Utilities.shouldEnableAllAppsBlur(mTaskbarContext)) {
             return;
         }
         if (!BlurUtils.supportsBlursOnWindows()) {

@@ -210,6 +210,14 @@ public class WorkspaceStateTransitionAnimation {
         propertySetter.setViewBackgroundColor(mLauncher.getScrimView(),
                 state.getWorkspaceScrimColor(mLauncher),
                 config.getInterpolator(ANIM_SCRIM_FADE, ACCELERATE_2));
+        
+        // Set scrim view alpha to allow blur to show through when all apps blur is enabled
+        if (state == LauncherState.ALL_APPS && Utilities.shouldEnableAllAppsBlur(mLauncher)) {
+            float dynamicAlpha = Utilities.getAllAppsOpacity(mLauncher) / 100f;
+            propertySetter.setFloat(mLauncher.getScrimView(), VIEW_ALPHA, dynamicAlpha, LINEAR);
+        } else {
+            propertySetter.setFloat(mLauncher.getScrimView(), VIEW_ALPHA, 1f, LINEAR);
+        }
     }
 
     public void applyChildState(LauncherState state, CellLayout cl, int childIndex) {

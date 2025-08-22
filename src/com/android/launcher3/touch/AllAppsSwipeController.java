@@ -42,6 +42,7 @@ import com.android.app.animation.Interpolators;
 import com.android.launcher3.AbstractFloatingView;
 import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.states.StateAnimationConfig;
 
@@ -209,7 +210,7 @@ public class AllAppsSwipeController extends AbstractStateChangeTouchController {
             }
             config.setInterpolator(ANIM_WORKSPACE_SCALE, DECELERATED_EASE);
             config.setInterpolator(ANIM_DEPTH, DECELERATED_EASE);
-            if (Flags.allAppsBlur()) {
+            if (Utilities.shouldEnableAllAppsBlur(launcher)) {
                 if (!config.isUserControlled()) {
                     config.setInterpolator(ANIM_DEPTH, EMPHASIZED_DECELERATE);
                 }
@@ -264,7 +265,7 @@ public class AllAppsSwipeController extends AbstractStateChangeTouchController {
             }
             config.setInterpolator(ANIM_WORKSPACE_SCALE, DECELERATED_EASE);
             config.setInterpolator(ANIM_DEPTH, DECELERATED_EASE);
-            if (Flags.allAppsBlur()) {
+            if (Utilities.shouldEnableAllAppsBlur(launcher)) {
                 config.setInterpolator(ANIM_DEPTH, LINEAR);
                 config.setInterpolator(ANIM_WORKSPACE_FADE,
                         clampToProgress(LINEAR, 0, ALL_APPS_SCRIM_VISIBLE_THRESHOLD));

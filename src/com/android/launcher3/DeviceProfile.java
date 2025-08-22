@@ -524,7 +524,7 @@ public class DeviceProfile {
         bottomSheetCloseDuration = res.getInteger(R.integer.config_bottomSheetCloseDuration);
         if (shouldShowAllAppsOnSheet(context)) {
             bottomSheetWorkspaceScale = workspaceContentScale;
-            if (Flags.allAppsBlur()) {
+            if (Utilities.shouldEnableAllAppsBlur(context)) {
                 bottomSheetDepth = 2f;
             } else if (isMultiDisplay) {
                 // TODO(b/259893832): Revert to use maxWallpaperScale to calculate bottomSheetDepth
