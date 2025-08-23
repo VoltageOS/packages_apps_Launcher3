@@ -20,6 +20,14 @@
     xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
 
     <SwitchPreferenceCompat
+        android:key="pref_force_all_apps_on_bottom_sheet"
+        android:title="@string/force_all_apps_on_bottom_sheet_title"
+        android:summary="@string/force_all_apps_on_bottom_sheet_summary"
+        android:defaultValue="true"
+        android:persistent="true"
+        launcher:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
         android:key="pref_allapps_themed_icons"
         android:title="@string/pref_themed_icons_title"
         android:summary="@string/pref_themed_icons_summary"

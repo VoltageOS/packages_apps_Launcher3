@@ -1146,4 +1146,9 @@ public final class Utilities {
     public static boolean blurBackgroundAtAppLaunch(Context context) {
         return LauncherPrefs.BLUR_BACKGROUND_AT_APP_LAUNCH.get(context);
     }
+
+    public static boolean shouldForceAllAppsOnBottomSheet(Context context) {
+        return LauncherPrefs.KEY_FORCE_ALL_APPS_ON_BOTTOM_SHEET.get(context);
+    }
+
 }

@@ -1023,7 +1023,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
     protected void updateBackgroundVisibility(DeviceProfile deviceProfile) {
         mBottomSheetBackground.setVisibility(
-                deviceProfile.shouldShowAllAppsOnSheet() ? View.VISIBLE : View.GONE);
+                deviceProfile.shouldShowAllAppsOnSheet(getContext()) ? View.VISIBLE : View.GONE);
         // Note: The opaque sheet background and header protection are added in drawOnScrim.
         // For the taskbar entrypoint, the scrim is drawn by its abstract slide in view container,
         // so its header protection is derived from this scrim instead.

@@ -543,4 +543,8 @@
     <!-- Background blur at app launch-->
     <string name="pref_blur_background_at_app_launch_title">Background blur at app launch</string>
     <string name="pref_blur_background_at_app_launch_summary">Blur the background at app launch</string>
+
+    <!-- Force All Apps on Bottom Sheet -->
+    <string name="force_all_apps_on_bottom_sheet_title">Force all apps on bottom sheet</string>
+    <string name="force_all_apps_on_bottom_sheet_summary">Force all apps to be presented on a bottom sheet instead of full screen</string>
 </resources>

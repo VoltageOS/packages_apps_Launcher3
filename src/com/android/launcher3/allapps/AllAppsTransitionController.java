@@ -193,7 +193,7 @@ public class AllAppsTransitionController
         DeviceProfile dp = mLauncher.getDeviceProfile();
         mProgress = 1f;
         mIsVerticalLayout = dp.isVerticalBarLayout();
-        mShouldShowAllAppsOnSheet = dp.shouldShowAllAppsOnSheet();
+        mShouldShowAllAppsOnSheet = dp.shouldShowAllAppsOnSheet(mLauncher);
         mNavScrimFlag = Themes.getAttrBoolean(l, R.attr.isMainColorDark)
                 ? FLAG_DARK_NAV : FLAG_LIGHT_NAV;
 
@@ -217,7 +217,7 @@ public class AllAppsTransitionController
             mLauncher.getWorkspace().getPageIndicator().setTranslationY(0);
         }
 
-        mShouldShowAllAppsOnSheet = dp.shouldShowAllAppsOnSheet();
+        mShouldShowAllAppsOnSheet = dp.shouldShowAllAppsOnSheet(mLauncher);
     }
 
     /**

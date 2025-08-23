@@ -522,7 +522,7 @@ public class DeviceProfile {
 
         bottomSheetOpenDuration = res.getInteger(R.integer.config_bottomSheetOpenDuration);
         bottomSheetCloseDuration = res.getInteger(R.integer.config_bottomSheetCloseDuration);
-        if (shouldShowAllAppsOnSheet()) {
+        if (shouldShowAllAppsOnSheet(context)) {
             bottomSheetWorkspaceScale = workspaceContentScale;
             if (Flags.allAppsBlur()) {
                 bottomSheetDepth = 2f;
@@ -846,7 +846,7 @@ public class DeviceProfile {
             hotseatBorderSpace = cellLayoutBorderSpacePx.y;
         }
 
-        if (shouldShowAllAppsOnSheet()) {
+        if (shouldShowAllAppsOnSheet(context)) {
             allAppsPadding.top = mInsets.top;
             allAppsShiftRange = heightPx;
         } else {
@@ -1567,7 +1567,23 @@ public class DeviceProfile {
 
     /** Whether All Apps should be presented on a bottom sheet. */
     public boolean shouldShowAllAppsOnSheet() {
-        return isTablet || Flags.allAppsSheetForHandheld();
+        return shouldShowAllAppsOnSheet(null);
+    }
+
+    /** Whether All Apps should be presented on a bottom sheet. */
+    public boolean shouldShowAllAppsOnSheet(Context context) {
+        if (isTablet) {
+            return true;
+        }
+        if (isPhone) {
+            // Check if user has enabled the setting to force all apps on bottom sheet
+            if (context != null) {
+                return Utilities.shouldForceAllAppsOnBottomSheet(context);
+            }
+            // Fall back to the original behavior (Flags.allAppsSheetForHandheld() if available)
+            return false;
+        }
+        return false;
     }
 
     private void setupAllAppsStyle(Context context) {
