@@ -39,6 +39,7 @@ import com.android.launcher3.model.data.AppPairInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
+import com.android.launcher3.util.AxCpuBindController;
 import com.android.launcher3.util.TouchController;
 import com.android.launcher3.views.ActivityContext;
 
@@ -225,6 +226,7 @@ public abstract class DragController<T extends ActivityContext>
                     .start();
         }
         mDragObject.dragView.onDragStart();
+        AxCpuBindController.get().acquireDragBoost();
         for (DragListener listener : new ArrayList<>(mListeners)) {
             listener.onDragStart(mDragObject, mOptions);
         }
@@ -344,6 +346,7 @@ public abstract class DragController<T extends ActivityContext>
         }
         mIsInPreDrag = false;
         mOptions = null;
+        AxCpuBindController.get().releaseDragBoost();
         for (DragListener listener : new ArrayList<>(mListeners)) {
             listener.onDragEnd();
         }

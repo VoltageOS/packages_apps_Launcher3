@@ -57,6 +57,7 @@ import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.pageindicators.PageIndicator;
 import com.android.launcher3.touch.PagedOrientationHandler;
 import com.android.launcher3.touch.PagedOrientationHandler.ChildBounds;
+import com.android.launcher3.util.AxCpuBindController;
 import com.android.launcher3.util.EdgeEffectCompat;
 import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.Thunk;
@@ -497,6 +498,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
      * to provide custom behavior during animation.
      */
     protected void onPageBeginTransition() {
+        AxCpuBindController.get().acquirePagedViewBoost();
     }
 
     /**
@@ -513,6 +515,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
             mOnPageTransitionEndCallback.run();
             mOnPageTransitionEndCallback = null;
         }
+        AxCpuBindController.get().releasePagedViewBoost();
     }
 
     /**

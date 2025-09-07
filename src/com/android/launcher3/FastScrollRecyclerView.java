@@ -29,6 +29,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.compat.AccessibilityManagerCompat;
+import com.android.launcher3.util.AxCpuBindController;
 import com.android.launcher3.views.RecyclerViewFastScroller;
 
 
@@ -40,6 +41,8 @@ import com.android.launcher3.views.RecyclerViewFastScroller;
  * </ul>
  */
 public abstract class FastScrollRecyclerView extends RecyclerView  {
+
+    private int mScrollState;
 
     protected RecyclerViewFastScroller mScrollbar;
 
@@ -181,13 +184,22 @@ public abstract class FastScrollRecyclerView extends RecyclerView  {
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
-
         if (state == SCROLL_STATE_IDLE) {
+            if (mScrollState != state) {
+                mScrollState = state;
+                AxCpuBindController.get().releaseDrawerScrollBoost();
+            }
             AccessibilityManagerCompat.sendTestProtocolEventToTest(getContext(),
                     SCROLL_FINISHED_MESSAGE);
+            return;
         }
+        if (state != SCROLL_STATE_DRAGGING || mScrollState == state) {
+            return;
+        }
+        mScrollState = state;
+        AxCpuBindController.get().acquireDrawerScrollBoost();
     }
-
+    
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);

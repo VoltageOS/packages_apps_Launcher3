@@ -29,6 +29,7 @@ import com.android.launcher3.Utilities.debugLog
 import com.android.launcher3.Utilities.isRtl
 import com.android.launcher3.Utilities.mapToRange
 import com.android.launcher3.touch.SingleAxisSwipeDetector
+import com.android.launcher3.util.AxCpuBindController
 import com.android.launcher3.util.MSDLPlayerWrapper
 import com.android.launcher3.util.TouchController
 import com.android.quickstep.views.RecentsView
@@ -151,6 +152,7 @@ CONTAINER : RecentsViewContainer {
     override fun onDragStart(start: Boolean, startDisplacement: Float) {
         if (isBlockedDuringDismissal) return
         val taskBeingDragged = taskBeingDragged ?: return
+        AxCpuBindController.get().acquireTaskDismissBoost()
         debugLog(TAG, "Handling touch event.")
 
         initialDisplacement =
@@ -221,7 +223,7 @@ CONTAINER : RecentsViewContainer {
     override fun onDragEnd(velocity: Float) {
         if (isBlockedDuringDismissal) return
         val taskBeingDragged = taskBeingDragged ?: return
-
+        AxCpuBindController.get().releaseTaskDismissBoost()
         val currentDisplacement =
             taskBeingDragged.secondaryDismissTranslationProperty.get(taskBeingDragged)
         val isBeyondDismissThreshold =

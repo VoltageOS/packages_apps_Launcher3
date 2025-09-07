@@ -128,6 +128,7 @@ import com.android.launcher3.statemanager.StatefulContainer;
 import com.android.launcher3.taskbar.TaskbarThresholdUtils;
 import com.android.launcher3.taskbar.TaskbarUIController;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
+import com.android.launcher3.util.AxCpuBindController;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.MSDLPlayerWrapper;
 import com.android.launcher3.util.SafeCloseable;
@@ -1620,6 +1621,7 @@ public abstract class AbsSwipeUpHandler<
                     public void onAnimationStart(Animator animation) {
                         if (DisplayController.isInDesktopMode(mContext)
                                 && mGestureState.getEndTarget() == HOME) {
+                            AxCpuBindController.get().acquireHomeTransitionBoost();
                             // Set launcher animation started, so we don't notify from
                             // desktop visibility controller
                             DesktopVisibilityController.INSTANCE.get(
@@ -1633,6 +1635,7 @@ public abstract class AbsSwipeUpHandler<
                         mStateCallback.setStateOnUiThread(STATE_PARALLEL_ANIM_FINISHED);
                         // Swipe to home animation finished, notify DesktopVisibilityController
                         // to recreate Taskbar
+                        AxCpuBindController.get().releaseHomeTransitionBoost();
                         if (DisplayController.isInDesktopMode(mContext)
                                 && mGestureState.getEndTarget() == HOME) {
                             DesktopVisibilityController.INSTANCE.get(

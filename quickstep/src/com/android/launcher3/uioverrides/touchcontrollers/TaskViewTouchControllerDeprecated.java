@@ -37,6 +37,7 @@ import com.android.launcher3.anim.AnimatorPlaybackController;
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.touch.BaseSwipeDetector;
 import com.android.launcher3.touch.SingleAxisSwipeDetector;
+import com.android.launcher3.util.AxCpuBindController;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.FlingBlockCheck;
 import com.android.launcher3.util.TouchController;
@@ -273,6 +274,7 @@ public class TaskViewTouchControllerDeprecated<
     @Override
     public void onDragStart(boolean start, float startDisplacement) {
         if (!mDraggingEnabled) return;
+        AxCpuBindController.get().acquireTaskDismissBoost();
         debugLog(TAG, "Handling touch.");
 
         RecentsPagedOrientationHandler orientationHandler =
@@ -338,6 +340,7 @@ public class TaskViewTouchControllerDeprecated<
 
     @Override
     public void onDragEnd(float velocity) {
+        AxCpuBindController.get().releaseTaskDismissBoost();
         if (mOverrideVelocity != null) {
             velocity = mOverrideVelocity;
             mOverrideVelocity = null;
