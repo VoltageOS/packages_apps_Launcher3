@@ -26,7 +26,7 @@
             android:key="pref_force_all_apps_on_bottom_sheet"
             android:title="@string/force_all_apps_on_bottom_sheet_title"
             android:summary="@string/force_all_apps_on_bottom_sheet_summary"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:persistent="true"
             launcher:iconSpaceReserved="false" />
 
@@ -34,7 +34,7 @@
             android:key="pref_allapps_blur"
             android:title="@string/allapps_blur_title"
             android:summary="@string/allapps_blur_summary"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:persistent="true"
             launcher:iconSpaceReserved="false" />
 
