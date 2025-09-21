@@ -17,6 +17,7 @@
 
 package com.android.quickstep.views;
 
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 import static com.android.launcher3.util.NavigationMode.TWO_BUTTONS;
 import static com.android.launcher3.util.NavigationMode.THREE_BUTTONS;
@@ -28,7 +29,6 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Debug;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.text.format.Formatter;
 import android.util.AttributeSet;
 import android.util.FloatProperty;
@@ -39,8 +39,6 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.android.internal.util.MemInfoReader;
-
-import com.android.settingslib.utils.ThreadUtils;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Insettable;
@@ -245,19 +243,16 @@ public class MemInfoView extends TextView implements Insettable {
     }
 
     private void startMemoryMonitoring() {
-        stopMemoryMonitoring();
         if (mHandler == null) {
             mHandler = MODEL_EXECUTOR.getHandler();
+            mHandler.post(mWorker);
         }
-        mHandler.post(mWorker);
     }
 
     private void stopMemoryMonitoring() {
-        synchronized (this) {
-            if (mHandler != null) {
-                mHandler.removeCallbacksAndMessages(null);
-                mHandler = null;
-            }
+        if (mHandler != null) {
+            mHandler.removeCallbacks(mWorker);
+            mHandler = null;
         }
     }
 
@@ -290,10 +285,11 @@ public class MemInfoView extends TextView implements Insettable {
                 text = String.format(Locale.getDefault(), view.mMemInfoText, availResult, view.mTotalResult);
             }
 
-            ThreadUtils.postOnMainThread(() -> view.setText(text));
+            MAIN_EXECUTOR.getHandler().post(() -> view.setText(text));
 
             if (view.mHandler != null) {
-                view.mHandler.postDelayed(this, 1000);
+                view.mHandler.removeCallbacks(this);
+                view.mHandler.postDelayed(this, 3000);
             }
         }
     }
