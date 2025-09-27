@@ -237,8 +237,7 @@ public class ClipIconView extends View implements ClipPathView {
         mIsAdaptiveIcon = drawable instanceof AdaptiveIconDrawable;
         if (mIsAdaptiveIcon) {
             boolean isFolderIcon = drawable instanceof FolderAdaptiveIcon;
-            float inset = AdaptiveIconDrawable.getExtraInsetFraction() /
-                    (1 + 2 * AdaptiveIconDrawable.getExtraInsetFraction());
+            float inset = 0.1f;
 
             AdaptiveIconDrawable adaptiveIcon = (AdaptiveIconDrawable) drawable;
             Drawable background = adaptiveIcon.getBackground();
