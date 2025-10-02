@@ -25,9 +25,6 @@
     <!-- Meminfo in overview -->
     <dimen name="meminfo_claimed_height">16dp</dimen>
 
-    <!-- Overview scrolling scale animation -->
-    <dimen name="overview_scroll_scale">0.9</dimen>
-
     <!-- QuickSpace -->
     <dimen name="quickspace_title_size">20sp</dimen>
     <dimen name="quickspace_subtitle_size">16sp</dimen>
