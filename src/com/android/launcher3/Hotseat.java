@@ -39,6 +39,7 @@ import androidx.annotation.Nullable;
 import com.android.launcher3.ShortcutAndWidgetContainer.TranslationProvider;
 import com.android.launcher3.celllayout.CellLayoutLayoutParams;
 import com.android.launcher3.util.HorizontalInsettableView;
+import com.android.launcher3.util.LauncherStatesHelper;
 import com.android.launcher3.util.MultiPropertyFactory;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.launcher3.util.MultiTranslateDelegate;
@@ -313,6 +314,11 @@ public class Hotseat extends CellLayout implements Insettable {
         DeviceProfile dp = mActivity.getDeviceProfile();
         mQsb.measure(MeasureSpec.makeMeasureSpec(dp.hotseatQsbWidth, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(dp.hotseatQsbHeight, MeasureSpec.EXACTLY));
+
+        if (LauncherStatesHelper.shouldHideHomeElements()) {
+            setVisibility(View.GONE);
+            setAlpha(0f);
+        }
     }
 
     @Override
@@ -387,4 +393,12 @@ public class Hotseat extends CellLayout implements Insettable {
         );
     }
 
+    @Override
+    public void setVisibility(int visibility) {
+        if (LauncherStatesHelper.shouldHideHomeElements()) {
+            super.setVisibility(View.GONE);
+            return;
+        }
+        super.setVisibility(visibility);
+    }
 }

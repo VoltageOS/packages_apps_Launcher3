@@ -64,6 +64,7 @@ import com.android.launcher3.states.StateAnimationConfig;
 import com.android.launcher3.touch.AllAppsSwipeController;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.DisplayController;
+import com.android.launcher3.util.LauncherStatesHelper;
 import com.android.quickstep.util.RecentsAtomicAnimationFactory;
 import com.android.quickstep.util.SplitAnimationTimings;
 import com.android.quickstep.views.RecentsView;
@@ -96,6 +97,7 @@ public class QuickstepAtomicAnimationFactory extends
             StateAnimationConfig config) {
         RecentsView overview = mContainer.getOverviewPanel();
         boolean isPinnedTaskbar = DisplayController.isPinnedTaskbar(mContainer);
+        LauncherStatesHelper.setAnimationState(toState);
         if (toState == NORMAL) {
             com.android.launcher3.LauncherAppState.INSTANCE.executeIfCreated(app -> app.checkIfRestartNeeded());
         }

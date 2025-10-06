@@ -243,6 +243,7 @@ import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.ItemInflater;
 import com.android.launcher3.util.KeyboardShortcutsDelegate;
 import com.android.launcher3.util.LauncherBindableItemsContainer;
+import com.android.launcher3.util.LauncherStatesHelper;
 import com.android.launcher3.util.LockedUserState;
 import com.android.launcher3.util.MSDLPlayerWrapper;
 import com.android.launcher3.util.PackageUserKey;
@@ -526,6 +527,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         super.onCreate(savedInstanceState);
         setWallpaperDependentTheme(this);
+        LauncherStatesHelper.setLauncher(this);
 
         LauncherAppState app = LauncherAppState.getInstance(this);
         mModel = app.getModel();
