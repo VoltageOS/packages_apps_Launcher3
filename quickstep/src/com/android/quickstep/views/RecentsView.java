@@ -40,7 +40,6 @@ import static com.android.launcher3.Flags.enableDesktopExplodedView;
 import static com.android.launcher3.Flags.enableDesktopTaskAlphaAnimation;
 import static com.android.launcher3.Flags.enableGridOnlyOverview;
 import static com.android.launcher3.Flags.enableLargeDesktopWindowingTile;
-import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 import static com.android.launcher3.Flags.enableRefactorTaskThumbnail;
 import static com.android.launcher3.Flags.enableSeparateExternalDisplayTasks;
 import static com.android.launcher3.LauncherAnimUtils.SUCCESS_TRANSITION_PROGRESS;
@@ -1204,6 +1203,9 @@ public abstract class RecentsView<
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         updateTaskStackListenerState();
+        if (visibility != VISIBLE) {
+            mBlurUtils.setDrawLiveTileBelowRecents(false);
+        }
     }
 
     public void init(OverviewActionsView actionsView, SplitSelectStateController splitController,
@@ -6209,9 +6211,7 @@ public abstract class RecentsView<
         mRecentsAnimationController = null;
         mSplitSelectStateController.setRecentsAnimationRunning(false);
         executeSideTaskLaunchCallback();
-        if (enableOverviewBackgroundWallpaperBlur()) {
-            mBlurUtils.setDrawLiveTileBelowRecents(false);
-        }
+        mBlurUtils.setDrawLiveTileBelowRecents(false);
     }
 
     public void setDisallowScrollToClearAll(boolean disallowScrollToClearAll) {
