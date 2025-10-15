@@ -300,7 +300,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
             animateOut(mEventSubIcon);
             animateIn(mEventTitleSubColored);
             animateIn(mNowPlayingIcon);
-            mNowPlayingIcon.setOnClickListener(mController.getEventController().getAction());
 
             String nowPlayingText = getContext().getString(R.string.qe_now_playing_by);
             updateTextViewIfNeeded(mEventTitleSubColored, nowPlayingText, false);
@@ -314,8 +313,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     
     private void updateWeatherContent() {
         bindWeather(mWeatherContentSub, mWeatherTempSub, mWeatherIconSub);
-        boolean hasGoogleApp = isPackageEnabled("com.google.android.googlequicksearchbox", getContext());
-        mWeatherContentSub.setOnClickListener(hasGoogleApp ? getActionReceiver().getWeatherAction() : null);
     }
     
     private void updateTextViewIfNeeded(TextView textView, CharSequence newText, boolean setVisibility) {
@@ -466,8 +463,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         mQuickspaceDayOfWeek.setOnClickListener(openClockListener); // Both clock and day open the Clock app
         mQuickspaceDate.setOnClickListener(openCalendarListener);
 
-        boolean hasGoogleApp = isPackageEnabled("com.google.android.googlequicksearchbox", getContext());
-        mWeatherContentSub.setOnClickListener(hasGoogleApp ? getActionReceiver().getWeatherAction() : null);
 
         bindWeather(mWeatherContentSub, mWeatherTempSub, mWeatherIconSub);
 
@@ -490,7 +485,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
             String nowPlaying = mController.getEventController().getTitle() + " - " + mController.getEventController().getActionTitle();
             updateTextViewIfNeeded(mNowPlayingText, nowPlaying, false);
-            mNowPlayingContent.setOnClickListener(mController.getEventController().getAction());
             post(() -> maybeSetMarquee(mNowPlayingText));
         } else {
             if (mNowPlayingContent.getVisibility() != View.GONE) {
@@ -572,6 +566,27 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
             mNowPlayingContent = findViewById(R.id.now_playing_content);
             mNowPlayingText = findViewById(R.id.now_playing_text);
             mContextualInfoRow = findViewById(R.id.contextual_info_row);
+        }
+        boolean hasGoogleApp = isPackageEnabled("com.google.android.googlequicksearchbox", getContext());
+        if (mWeatherContentSub != null) {
+            mWeatherContentSub.setOnClickListener(hasGoogleApp ? getActionReceiver().getWeatherAction() : null);
+        }
+
+       View.OnClickListener mediaClickListener = v -> {
+            if (mController != null && mController.getEventController() != null) {
+                View.OnClickListener action = mController.getEventController().getAction();
+                if (action != null) {
+                    action.onClick(v);
+                }
+            }
+        };
+
+        if (mNowPlayingIcon != null) {
+            mNowPlayingIcon.setOnClickListener(mediaClickListener);
+        }
+
+        if (mNowPlayingContent != null) {
+            mNowPlayingContent.setOnClickListener(mediaClickListener);
         }
     }
 
@@ -658,6 +673,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
                 view.setVisibility(View.GONE);
                 view.setTranslationY(0f);
                 view.setAlpha(1f);
+                view.setOnClickListener(null);
             });
         
         mCurrentAnimateOut.start();
