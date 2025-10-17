@@ -35,15 +35,22 @@ object LauncherStatesHelper {
 
     private var currentAnimationState: LauncherState = NORMAL
 
+    private var activityResumed = false
+
     @JvmStatic
     fun setLauncher(launcher: Launcher) {
         launcherRef = WeakReference(launcher)
         Log.d(TAG, "Launcher reference set (weak)")
     }
-    
+
     @JvmStatic
     fun setAnimationState(state: LauncherState) {
         currentAnimationState = state
+    }
+
+    @JvmStatic
+    fun setActivityResumed(resumed: Boolean) {
+        activityResumed = resumed
     }
 
     @JvmStatic
@@ -57,12 +64,11 @@ object LauncherStatesHelper {
     fun shouldHideHomeElements(): Boolean {
         val state = currentAnimationState
         val hide = when (state) {
-            OVERVIEW, OVERVIEW_SPLIT_SELECT, HINT_STATE,
-            HINT_STATE_TWO_BUTTON, ALL_APPS, BACKGROUND_APP -> true
+            OVERVIEW, OVERVIEW_SPLIT_SELECT, HINT_STATE, HINT_STATE_TWO_BUTTON -> true
             else -> false
         }
-        Log.d(TAG, "shouldHideHomeElements: $hide (state=$state)")
-        return hide
+        Log.d(TAG, "shouldHideHomeElements:  hide=$hide state=$state, activityResumed=$activityResumed")
+        return hide && activityResumed
     }
 
     @JvmStatic
