@@ -82,6 +82,7 @@ public class QuickspaceController implements OmniJawsClient.OmniJawsObserver,
     private String mCachedWeatherTemp;
     private long mWeatherCacheTime = 0;
     private static final long WEATHER_CACHE_DURATION = 60 * 1000; // Cache for 1 minute
+    private static final long NOTIFICATION_THROTTLE_MS = 100; // Throttle notifications
 
     private boolean mIsResuming = false;
     private final Object mNotificationLock = new Object();
@@ -528,15 +529,22 @@ public String getWeatherTemp() {
     }
 
     public void notifyListeners() {
+        long currentTime = System.currentTimeMillis();
+       long timeSinceLastUpdate = currentTime - mLastNotificationTime;
+
+        if (timeSinceLastUpdate < NOTIFICATION_THROTTLE_MS) {
+            mHandler.removeCallbacks(mOnDataUpdatedRunnable);
+            mHandler.postDelayed(mOnDataUpdatedRunnable, 
+                NOTIFICATION_THROTTLE_MS - timeSinceLastUpdate);
+            return;
+        }
+
         synchronized (mNotificationLock) {
             if (mHasPendingNotification) {
                 return; // Already scheduled
             }
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - mLastNotificationTime < 50) { // Throttle to max 20fps
-                return;
-            }
             mHasPendingNotification = true;
+            mLastNotificationTime = currentTime;
         }
 
         mHandler.removeCallbacks(mOnDataUpdatedRunnable);
