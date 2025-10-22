@@ -101,7 +101,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     private int mLastWeatherTempHash = 0;
     private int mLastActionTitleHash = 0;
     private long mLastUpdateTime = 0;
-    private static final long MIN_UPDATE_INTERVAL = 2000;
+    private static final long MIN_UPDATE_INTERVAL = 100;
 
     private QuickSpaceActionReceiver mActionReceiver;
 
@@ -187,28 +187,39 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
             return false;
         }
 
-        if (mController == null || mController.getEventController() == null) {
+        if (mController == null) {
             return false;
         }
 
-        String currentEventTitle = mController.getEventController().getTitle();
-        String currentWeatherTemp = mController.getWeatherTemp();
-        boolean currentNowPlayingState = mController.getEventController().isNowPlaying();
-        String currentActionTitle = mController.getEventController().getActionTitle();
-        
+        QuickEventsController eventController = mController.getEventController();
+        if (eventController == null) {
+            return false;
+        }
+
+        boolean currentNowPlayingState = eventController.isNowPlaying();
+        if (mLastNowPlayingState != currentNowPlayingState) {
+            mLastNowPlayingState = currentNowPlayingState;
+            mLastUpdateTime = currentTime;
+            return true;
+        }
+
+        String currentEventTitle = eventController.getTitle();
         int eventTitleHash = currentEventTitle != null ? currentEventTitle.hashCode() : 0;
+
+        String currentWeatherTemp = mController.getWeatherTemp();
         int weatherTempHash = currentWeatherTemp != null ? currentWeatherTemp.hashCode() : 0;
+
+        String currentActionTitle = eventController.getActionTitle();
         int actionTitleHash = currentActionTitle != null ? currentActionTitle.hashCode() : 0;
-        
+
+
         boolean changed = mLastEventTitleHash != eventTitleHash ||
                          mLastWeatherTempHash != weatherTempHash ||
-                         mLastNowPlayingState != currentNowPlayingState ||
                          mLastActionTitleHash != actionTitleHash;
 
         if (changed) {
             mLastEventTitleHash = eventTitleHash;
             mLastWeatherTempHash = weatherTempHash;
-            mLastNowPlayingState = currentNowPlayingState;
             mLastActionTitleHash = actionTitleHash;
             mLastUpdateTime = currentTime;
 
@@ -320,16 +331,24 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
         boolean hasText = !TextUtils.isEmpty(newText);
 
+        int currentVisibility = textView.getVisibility();
+        CharSequence currentText = textView.getText();
+        int desiredVisibility = hasText ? View.VISIBLE : View.GONE;
+
+        if (setVisibility && currentVisibility == desiredVisibility && 
+            TextUtils.equals(currentText, newText)) {
+            return;
+        }
+
         // Update visibility if requested
         if (setVisibility) {
-            int newVisibility = hasText ? View.VISIBLE : View.GONE;
-            if (textView.getVisibility() != newVisibility) {
-                textView.setVisibility(newVisibility);
+            if (currentVisibility != desiredVisibility) {
+                textView.setVisibility(desiredVisibility);
             }
         }
 
         // Update text content only if it has changed
-        if (!TextUtils.equals(textView.getText(), newText)) {
+        if (!TextUtils.equals(currentText, newText)) {
             textView.setText(newText);
         }
     }
