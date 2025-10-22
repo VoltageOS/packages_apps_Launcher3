@@ -70,6 +70,7 @@ public class QuickspaceController implements OmniJawsClient.OmniJawsObserver,
     private boolean mMediaInitialized = false;
 
     private static final String PREF_KEY_LAST_PSA_UPDATE_TIME = "pref_last_psa_update_time";
+    private static final long MEDIA_UPDATE_DEBOUNCE_MS = 150;
     private static final long PSA_UPDATE_DELAY_MS = 3 * 60 * 1000;
 
     private final Handler mHandler = MAIN_EXECUTOR.getHandler();
@@ -104,6 +105,16 @@ public class QuickspaceController implements OmniJawsClient.OmniJawsObserver,
                 }
             }
         };
+
+    private final Runnable mMediaUpdateRunnable = new Runnable() {
+        @Override
+       public void run() {
+            if (mDestroyed) {
+                return;
+            }
+            updateMediaControllerInternal();
+        }
+    };
 
     private Runnable mWeatherRunnable = new Runnable() {
             @Override
@@ -572,7 +583,7 @@ public String getWeatherTemp() {
         }
     }
 
-    private void updateMediaController() {
+    private void updateMediaControllerInternal() {
         if (!LauncherPrefs.SHOW_QUICKSPACE_NOWPLAYING.get(mContext)) {
             unregisterMediaController();
             return;
@@ -621,6 +632,13 @@ public String getWeatherTemp() {
         });
     }
 
+    private void updateMediaController() {
+        if (mDestroyed) return;
+
+        mHandler.removeCallbacks(mMediaUpdateRunnable);
+        mHandler.postDelayed(mMediaUpdateRunnable, MEDIA_UPDATE_DEBOUNCE_MS);
+    }
+
     @Override
     public void onMediaMetadataChanged() {
         if (mDestroyed) {
@@ -636,6 +654,9 @@ public String getWeatherTemp() {
             return;
         }
 
-        updateMediaController();
+        if (mDestroyed) return;
+
+        mHandler.removeCallbacks(mMediaUpdateRunnable);
+        mHandler.postDelayed(mMediaUpdateRunnable, 50);
     }
 }
