@@ -43,7 +43,7 @@
         <item name="allAppsScrimColorOverBlur">#33000000</item>
         <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
         <item name="allAppsNavBarScrimColor">#66FFFFFF</item>
-        <item name="allAppsSearchTextColor">@*android:color/system_accent1_600</item>
+        <item name="allAppsSearchTextColor">@android:color/black</item>
         <item name="popupColorPrimary">@color/popup_color_primary_light</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_light</item>
         <item name="popupColorTertiary">@color/popup_color_tertiary_light</item>
@@ -120,7 +120,7 @@
         <item name="allAppsScrimColorOverBlur">#52000000</item>
         <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
         <item name="allAppsNavBarScrimColor">#80000000</item>
-        <item name="allAppsSearchTextColor">@*android:color/system_accent1_200</item>
+        <item name="allAppsSearchTextColor">@android:color/white</item>
         <item name="popupColorPrimary">@color/popup_color_primary_dark</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_dark</item>
         <item name="popupColorTertiary">@color/popup_color_tertiary_dark</item>
