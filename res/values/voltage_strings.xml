@@ -557,4 +557,7 @@
     <string name="all_apps_dark_text_title">Dark app labels</string>
     <string name="all_apps_dark_text_summary">Always use dark text for app labels in the app drawer</string>
 
+    <string name="recents_chips_title">Use compact action design</string>
+    <string name="recents_chips_summary">May be required for large numbers of actions to display</string>
+
 </resources>
