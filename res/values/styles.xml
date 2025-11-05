@@ -43,7 +43,7 @@
         <item name="allAppsScrimColorOverBlur">#33000000</item>
         <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
         <item name="allAppsNavBarScrimColor">#66FFFFFF</item>
-        <item name="allAppsSearchTextColor">@android:color/black</item>
+        <item name="allAppsSearchTextColor">@android:color/system_neutral1_900</item>
         <item name="popupColorPrimary">@color/popup_color_primary_light</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_light</item>
         <item name="popupColorTertiary">@color/popup_color_tertiary_light</item>
@@ -120,7 +120,7 @@
         <item name="allAppsScrimColorOverBlur">#52000000</item>
         <item name="allappsHeaderProtectionColor">@*android:color/transparent</item>
         <item name="allAppsNavBarScrimColor">#80000000</item>
-        <item name="allAppsSearchTextColor">@android:color/white</item>
+        <item name="allAppsSearchTextColor">@android:color/system_neutral1_50</item>
         <item name="popupColorPrimary">@color/popup_color_primary_dark</item>
         <item name="popupColorSecondary">@color/popup_color_secondary_dark</item>
         <item name="popupColorTertiary">@color/popup_color_tertiary_dark</item>
@@ -167,56 +167,56 @@
          affecting the base theme -->
     <style name="AppTheme" parent="@style/LauncherTheme">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/white</item>
-        <item name="qsbIconTintPrimary">@android:color/black</item>
-        <item name="qsbIconTintQuaternary">@android:color/black</item>
-        <item name="qsbIconTintSecondary">@android:color/black</item>
-        <item name="qsbIconTintTertiary">@android:color/black</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_900</item>
     </style>
 
     <style name="AppTheme.DarkMainColor" parent="@style/LauncherTheme.DarkMainColor">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/white</item>
-        <item name="qsbIconTintPrimary">@android:color/black</item>
-        <item name="qsbIconTintQuaternary">@android:color/black</item>
-        <item name="qsbIconTintSecondary">@android:color/black</item>
-        <item name="qsbIconTintTertiary">@android:color/black</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_900</item>
     </style>
 
     <style name="AppTheme.DarkText" parent="@style/LauncherTheme.DarkText">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/white</item>
-        <item name="qsbIconTintPrimary">@android:color/black</item>
-        <item name="qsbIconTintQuaternary">@android:color/black</item>
-        <item name="qsbIconTintSecondary">@android:color/black</item>
-        <item name="qsbIconTintTertiary">@android:color/black</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_900</item>
     </style>
 
     <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/black</item>
-        <item name="qsbIconTintPrimary">@android:color/white</item>
-        <item name="qsbIconTintQuaternary">@android:color/white</item>
-        <item name="qsbIconTintSecondary">@android:color/white</item>
-        <item name="qsbIconTintTertiary">@android:color/white</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_50</item>
     </style>
 
     <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/black</item>
-        <item name="qsbIconTintPrimary">@android:color/white</item>
-        <item name="qsbIconTintQuaternary">@android:color/white</item>
-        <item name="qsbIconTintSecondary">@android:color/white</item>
-        <item name="qsbIconTintTertiary">@android:color/white</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_50</item>
     </style>
 
     <style name="AppTheme.Dark.DarkText" parent="@style/LauncherTheme.Dark.DarkText">
         <item name="qsbFillColor">@color/surface</item>
-        <item name="qsbFillColorThemed">@android:color/black</item>
-        <item name="qsbIconTintPrimary">@android:color/white</item>
-        <item name="qsbIconTintQuaternary">@android:color/white</item>
-        <item name="qsbIconTintSecondary">@android:color/white</item>
-        <item name="qsbIconTintTertiary">@android:color/white</item>
+        <item name="qsbFillColorThemed">@android:color/system_neutral1_900</item>
+        <item name="qsbIconTintPrimary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintQuaternary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintSecondary">@android:color/system_neutral1_50</item>
+        <item name="qsbIconTintTertiary">@android:color/system_neutral1_50</item>
     </style>
 
     <style name="HomeSettings.Theme" parent="@android:style/Theme.DeviceDefault.Settings">
