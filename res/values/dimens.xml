@@ -605,4 +605,8 @@
     <!-- App Title Pill -->
     <dimen name="app_title_pill_horizontal_padding">4dp</dimen>
     <dimen name="app_title_pill_round_rect_padding">2dp</dimen>
+
+    <!-- Burn-in protection shift amounts -->
+    <dimen name="burn_in_protection_horizontal_shift">12dp</dimen>
+    <dimen name="burn_in_protection_vertical_shift">6dp</dimen>
 </resources>
