@@ -17,6 +17,7 @@ package com.android.launcher3
 
 import android.content.Context
 import android.widget.Toast;
+import com.android.launcher3.LauncherSettings
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.icons.IconCache
 import com.android.launcher3.icons.ThirdPartyIconProvider
@@ -47,6 +48,24 @@ constructor(
         if (needsRestart) {
             Toast.makeText(context, R.string.restarting_launcher_changes, Toast.LENGTH_SHORT).show();
             Utilities.restart()
+        }
+    }
+
+    /**
+     * Clears all items from the home screen desktop container.
+     *
+     */
+    fun clearAllViewsFromHomeScreen() {
+        val writer = model.getWriter(/* hasVerticalHotseat= */ false, /* callbacks= */ null, /* owner= */ null)
+        val removed = writer.clearAllHomeScreenViewsByType(
+            LauncherSettings.Favorites.CONTAINER_DESKTOP
+        )
+        if (removed) {
+            Toast.makeText(
+                context,
+                R.string.home_screen_all_views_removed_msg,
+                Toast.LENGTH_SHORT,
+            ).show()
         }
     }
 

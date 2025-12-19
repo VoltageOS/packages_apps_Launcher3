@@ -302,4 +302,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/home_screen_actions">
+
+        <Preference
+            android:key="pref_clear_home_screen"
+            android:title="@string/remove_all_views_from_home_screen"
+            android:persistent="false"
+            launcher:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

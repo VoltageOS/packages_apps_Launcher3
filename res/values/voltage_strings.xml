@@ -592,4 +592,11 @@
     <string name="scroll_shape_title">Scroll</string>
     <string name="stretched_shape_title">Stretched</string>
 
+    <!-- clear home screen -->
+    <string name="home_screen_actions">Home screen actions</string>
+    <string name="remove_all_views_from_home_screen">Clear home screen</string>
+    <string name="remove_all_views_from_home_screen_desc">Home screen will be cleared. Do you want to continue?</string>
+    <!-- Message shown when all home screen views are removed -->
+    <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
+
 </resources>
