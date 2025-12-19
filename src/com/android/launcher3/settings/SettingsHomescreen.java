@@ -10,6 +10,7 @@ import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.SharedPreferences;
@@ -180,6 +181,8 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private static final String KEY_VOLTAGE_ACCENT = "pref_quickspace_voltage_accent";
         private static final String KEY_QUICKSPACE_BATTERY = "pref_quickspace_battery";
 
+        private static final String KEY_CLEAR_HOME_SCREEN = "pref_clear_home_screen";
+
         private ListPreference mQuickspaceStyle;
         private Preference mVoltageAccent;
         private Preference mQuickspaceBattery;
@@ -225,6 +228,21 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
             mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
+
+            Preference clearHomeScreenPref = screen.findPreference(KEY_CLEAR_HOME_SCREEN);
+            if (clearHomeScreenPref != null) {
+                clearHomeScreenPref.setOnPreferenceClickListener(pref -> {
+                    new AlertDialog.Builder(getContext())
+                            .setMessage(R.string.remove_all_views_from_home_screen_desc)
+                            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                                LauncherAppState.getInstance(getContext())
+                                        .clearAllViewsFromHomeScreen();
+                            })
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .show();
+                    return true;
+                });
+            }
 
             updateVoltageAccentVisibility();
 
