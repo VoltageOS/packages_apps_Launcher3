@@ -130,6 +130,25 @@ constructor(
     ): IModelWriter =
         modelWriterFactory.create(verifyChanges, activity.cellPosMapper, UISurface(activity), owner)
 
+    fun clearItemsInContainer(container: Int): Boolean {
+        val topLevelIds =
+            synchronized(mBgDataModel) {
+                mBgDataModel.itemsIdMap.filter { it.container == container }.map { it.id }
+            }
+        if (topLevelIds.isEmpty()) return false
+
+        MODEL_EXECUTOR.execute {
+            modelDbController.delete(
+                "${LauncherSettings.Favorites.CONTAINER} = $container" +
+                    " OR ${LauncherSettings.Favorites.CONTAINER}" +
+                    " IN (${topLevelIds.joinToString(",")})",
+                null,
+            )
+            forceReload("clearItemsInContainer")
+        }
+        return true
+    }
+
     /** Called when the model is destroyed */
     fun destroy() {
         mModelDestroyed = true

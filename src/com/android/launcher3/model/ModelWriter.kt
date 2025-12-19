@@ -340,6 +340,16 @@ open class ModelWriter(
         }
     }
 
+    fun clearAllHomeScreenViewsByType(type: Int): Boolean {
+        val itemsToRemove = bgDataModel.itemsIdMap.filter { it.container == type }
+        if (itemsToRemove.isEmpty()) {
+            return false
+        }
+        execute { it.deleteItemsFromDatabase(itemsToRemove, REASON_CLEAR_HOME_SCREEN) }
+        modelExecutor.execute { model.forceReload(REASON_CLEAR_HOME_SCREEN) }
+        return true
+    }
+
     /**
      * Move an item in the DB to a new <container></container>, screen, cellX, cellY>
      *
@@ -508,5 +518,6 @@ open class ModelWriter(
 
     companion object {
         private const val TAG = "ModelWriter"
+        private const val REASON_CLEAR_HOME_SCREEN = "clear home screen"
     }
 }
