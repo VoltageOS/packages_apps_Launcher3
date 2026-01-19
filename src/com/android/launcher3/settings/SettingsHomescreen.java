@@ -178,9 +178,11 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
         private static final String KEY_QUICKSPACE_STYLE = "pref_quickspace_style";
         private static final String KEY_VOLTAGE_ACCENT = "pref_quickspace_voltage_accent";
+        private static final String KEY_QUICKSPACE_BATTERY = "pref_quickspace_battery";
 
         private ListPreference mQuickspaceStyle;
         private Preference mVoltageAccent;
+        private Preference mQuickspaceBattery;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
 
@@ -222,6 +224,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
+            mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
 
             updateVoltageAccentVisibility();
 
@@ -398,7 +401,14 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             }
             // The "Voltage" style has a value of "2" in your arrays.xml
             boolean isVoltageStyle = "2".equals(mQuickspaceStyle.getValue());
-            mVoltageAccent.setVisible(isVoltageStyle);
+
+            if (mVoltageAccent != null) {
+                mVoltageAccent.setVisible(isVoltageStyle);
+            }
+
+            if (mQuickspaceBattery != null) {
+                mQuickspaceBattery.setVisible(isVoltageStyle);
+            }
         }
     }
 }
