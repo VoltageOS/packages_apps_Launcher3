@@ -448,15 +448,13 @@ public class DeviceProfile {
             mAllAppsProfile = getAllAppsProfile().copyWithCellHeightPx(cellHeight);
         }
 
-        if (LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE.get(context)
-                && mAllAppsIconText
-                && !(mIsResponsiveGrid && getAllAppsProfile().getMaxAllAppsTextLineCount() == 2)) {
-            // Add extra textHeight to the existing allAppsCellHeight.
-            mAllAppsProfile = getAllAppsProfile().copyWithCellHeightPx(
-                    (int) (getAllAppsProfile().getCellHeightPx()
-                            * mAllAppsCellHeightMultiplier)
-                            + Utilities.calculateTextHeight(getAllAppsProfile().getIconTextSizePx())
-            );
+        if (mAllAppsIconText) {
+            int cellHeight = (int) (getAllAppsProfile().getCellHeightPx() * mAllAppsCellHeightMultiplier);
+            if (LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE.get(context)
+                    && !(mIsResponsiveGrid && getAllAppsProfile().getMaxAllAppsTextLineCount() == 2)) {
+                cellHeight += Utilities.calculateTextHeight(getAllAppsProfile().getIconTextSizePx());
+            }
+            mAllAppsProfile = getAllAppsProfile().copyWithCellHeightPx(cellHeight);
         }
 
         mBottomSheetProfile = BottomSheetProfile.Factory.createBottomSheetProfile(
