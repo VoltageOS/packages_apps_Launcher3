@@ -64,10 +64,12 @@ class AutoUpdateClock implements Runnable {
     }
 
     private void rescheduleUpdate() {
-        long millisInSecond = 1000L;
         unscheduleSelf(this);
-        long uptimeMillis = SystemClock.uptimeMillis();
-        scheduleSelf(this, uptimeMillis - uptimeMillis % millisInSecond + millisInSecond);
+        long now = SystemClock.uptimeMillis();
+        boolean hasSeconds = (mLayers != null && mLayers.mSecondIndex != -1);
+        long interval = hasSeconds ? 1000L : 60_000L;
+        long next = now - (now % interval) + interval;
+        scheduleSelf(this, next);
     }
 
     void updateLayers(ClockLayers layers) {
@@ -97,9 +99,8 @@ class AutoUpdateClock implements Runnable {
     public void run() {
         if (mLayers != null && mLayers.updateAngles()) {
             invalidateSelf();
-        } else {
-            rescheduleUpdate();
         }
+        rescheduleUpdate();
     }
 
     private static class ClockDelegate implements FastBitmapDrawableDelegate {
@@ -118,7 +119,7 @@ class AutoUpdateClock implements Runnable {
         @Override
         public void drawContent(@NonNull BitmapInfo info, @NonNull IconShape shape,
                 @NonNull Canvas canvas, @NonNull Rect bounds, @NonNull Paint paint) {
-            if (mLayers != null) {
+            if (mLayers != null && mLayers.mDrawable != null) {
                 canvas.drawBitmap(mLayers.bitmap, null, bounds, paint);
                 mLayers.updateAngles();
                 canvas.scale(mLayers.scale, mLayers.scale,
@@ -126,7 +127,6 @@ class AutoUpdateClock implements Runnable {
                         bounds.exactCenterY() + mLayers.offset);
                 canvas.clipPath(mLayers.mDrawable.getIconMask());
                 mLayers.mDrawable.getForeground().draw(canvas);
-                mHost.rescheduleUpdate();
             } else {
                 canvas.drawBitmap(info.icon, null, bounds, paint);
             }
