@@ -23,6 +23,7 @@ import android.content.Context
 import android.graphics.drawable.Icon
 import android.provider.Settings
 import android.provider.Settings.Secure.USER_SETUP_COMPLETE
+import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import com.android.launcher3.R
 import com.android.launcher3.concurrent.annotations.LightweightBackground
@@ -57,6 +58,8 @@ constructor(
 ) {
 
     private var onSettingsChangeSafeCloseable: SafeCloseable? = null
+
+    private var isDestroyed = false
 
     init {
         onSettingsChangeSafeCloseable =
@@ -114,6 +117,11 @@ constructor(
 
     private fun updateSystemAction() {
         synchronized(this) {
+            if (isDestroyed) {
+                Log.w(TAG, "updateSystemAction called when destroyed", Throwable())
+                return
+            }
+
             val isInSetupFlow = isSetupUiVisible || !isUserSetupComplete
             val shouldRegisterAction =
                 (isHomeAndOverviewSame || isTaskbarPresent) && !isInSetupFlow && isUserUnlocked
@@ -121,27 +129,36 @@ constructor(
             isActionRegistered = shouldRegisterAction
 
             bgExecutor.execute {
-                val accessibilityManager =
-                    context.getSystemService(AccessibilityManager::class.java) ?: return@execute
-                if (shouldRegisterAction) {
-                    val allAppsPendingIntent = PendingIntent(allAppsIntentSenderProvider.get())
-                    accessibilityManager.registerSystemAction(
-                        RemoteAction(
-                            Icon.createWithResource(context, R.drawable.ic_apps),
-                            context.getString(R.string.all_apps_label),
-                            context.getString(R.string.all_apps_label),
-                            allAppsPendingIntent,
-                        ),
-                        GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS,
-                    )
-                    quickstepKeyGestureEventsManager.registerAllAppsKeyGestureEvent(
-                        allAppsPendingIntent
-                    )
-                } else {
-                    accessibilityManager.unregisterSystemAction(
-                        GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS
-                    )
-                    quickstepKeyGestureEventsManager.unregisterAllAppsKeyGestureEvent()
+                synchronized(this@AllAppsActionManager) {
+                    if (isDestroyed) {
+                        isActionRegistered = false
+                        Log.w(TAG, "updateSystemAction bgExecutor task running " +
+                                "when destroyed; shouldRegisterAction $shouldRegisterAction")
+                        return@execute
+                    }
+
+                    val accessibilityManager =
+                        context.getSystemService(AccessibilityManager::class.java) ?: return@execute
+                    if (shouldRegisterAction) {
+                        val allAppsPendingIntent = PendingIntent(allAppsIntentSenderProvider.get())
+                        accessibilityManager.registerSystemAction(
+                            RemoteAction(
+                                Icon.createWithResource(context, R.drawable.ic_apps),
+                                context.getString(R.string.all_apps_label),
+                                context.getString(R.string.all_apps_label),
+                                allAppsPendingIntent,
+                            ),
+                            GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS,
+                        )
+                        quickstepKeyGestureEventsManager.registerAllAppsKeyGestureEvent(
+                            allAppsPendingIntent
+                        )
+                    } else {
+                        accessibilityManager.unregisterSystemAction(
+                            GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS
+                        )
+                        quickstepKeyGestureEventsManager.unregisterAllAppsKeyGestureEvent()
+                    }
                 }
             }
         }
@@ -149,6 +166,7 @@ constructor(
 
     fun onDestroy() {
         synchronized(this) {
+            isDestroyed = true
             isActionRegistered = false
             context
                 .getSystemService(AccessibilityManager::class.java)
@@ -167,5 +185,9 @@ constructor(
         pw.println("\tisUserSetupComplete=$isUserSetupComplete")
         pw.println("\tisActionRegistered=$isActionRegistered")
         pw.println("\tisUserUnlocked=$isUserUnlocked")
+    }
+
+    companion object {
+        private const val TAG = "AllAppsActionManager"
     }
 }
