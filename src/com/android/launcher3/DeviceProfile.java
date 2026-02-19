@@ -2046,11 +2046,12 @@ public class DeviceProfile {
         static DisplayOptionSpec createDefaultDisplayOptionSpec(DisplayController.Info info,
                 WindowBounds windowBounds, boolean isMultiDisplay, InvariantDeviceProfile inv) {
             // Check user preference for tablet overview style
-            boolean forceTabletStyle = false;
+            boolean systemIsTablet = info.isTablet(windowBounds);
+            boolean prefValue = false;
             if (info.context != null) {
-                forceTabletStyle = LauncherPrefs.get(info.context).get(LauncherPrefs.TABLET_OVERVIEW_STYLE);
+                prefValue = LauncherPrefs.get(info.context).get(LauncherPrefs.TABLET_OVERVIEW_STYLE);
             }
-            boolean isTablet = info.isTablet(windowBounds) || forceTabletStyle;
+            boolean isTablet = systemIsTablet ? !prefValue : prefValue;
             boolean isTwoPanels = isTablet && isMultiDisplay;
             boolean isLandscape = windowBounds.isLandscape();
             return new DisplayOptionSpec(inv, isTwoPanels, isLandscape);

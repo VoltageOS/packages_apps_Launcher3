@@ -96,12 +96,12 @@ data class DeviceProperties(
             context.getSystemService(UserManager::class.java).isUserUnlocked
             val systemIsTablet = info.isTablet(windowBounds)
             val isRotationAllowed = info.isRotationAllowed()
-            val forceTabletStyle = if (isUserUnlocked) { 
+            val prefValue = if (isUserUnlocked) {
                 LauncherPrefs.get(context).get(LauncherPrefs.TABLET_OVERVIEW_STYLE) 
             } else {
                 false 
             }
-            val isTablet = systemIsTablet || forceTabletStyle
+            val isTablet = if (systemIsTablet) !prefValue else prefValue
 
             val windowX = windowBounds.bounds.left
             val windowY = windowBounds.bounds.top
