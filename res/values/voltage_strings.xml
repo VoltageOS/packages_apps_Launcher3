@@ -548,4 +548,13 @@
     <string name="pref_tablet_overview_style_title">Use tablet overview style(Need restart)</string>
     <string name="pref_tablet_overview_style_summary_on">Using tablet style for overview/recents</string>
     <string name="pref_tablet_overview_style_summary_off">Using phone style for overview/recents</string>
+
+    <!-- Additional shape options in customization picker -->
+    <string name="pebble_shape_title">Pebble</string>
+    <string name="vessel_shape_title">Vessel</string>
+    <string name="pure_square_shape_title">Pure square</string>
+    <string name="squircle_shape_title">Squircle</string>
+    <string name="tapered_rect_shape_title">Tapered rect</string>
+    <string name="teardrop_shape_title">Teardrop</string>
+    <string name="rounded_rect_shape_title">Rounded rect</string>
 </resources>
