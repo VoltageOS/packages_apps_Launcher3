@@ -234,6 +234,11 @@
             android:defaultValue="true"
             launcher:iconSpaceReserved="false" />
 
+        <androidx.preference.ListPreference
+            android:key="pref_dock_search_provider"
+            android:title="@string/pref_dock_search_provider_title"
+            launcher:iconSpaceReserved="false" />
+
         <com.android.launcher3.settings.preferences.CustomSeekBarPreference
             android:key="pref_hotseat_qsb_opacity"
             android:title="@string/background_opacity_title"

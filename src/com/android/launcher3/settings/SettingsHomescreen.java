@@ -33,7 +33,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.ListPreference;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartFragmentCallback;
@@ -41,6 +41,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallb
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceGroup.PreferencePositionCallback;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.ListPreference;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.BuildConfig;
@@ -51,9 +52,12 @@ import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.SettingsCache;
+import com.android.launcher3.qsb.QsbContainerView;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
+
+import java.util.ArrayList;
 
 /**
  * Settings activity for Launcher.
@@ -130,7 +134,8 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 LauncherPrefs.SHOW_QUICKSPACE_NOWPLAYING.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey().equals(key) ||
-                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key)) {
+                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key) ||
+                Utilities.KEY_DOCK_SEARCH_PROVIDER.equals(key)) {
             LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
         }
     }
@@ -194,6 +199,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private ListPreference mQuickspaceStyle;
         private Preference mVoltageAccent;
         private Preference mQuickspaceBattery;
+        private ListPreference mSearchProviderPref;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
 
@@ -221,6 +227,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             mShowGoogleAppPref = screen.findPreference(KEY_MINUS_ONE);
             mShowGoogleBarPref = screen.findPreference(LauncherPrefs.DOCK_SEARCH.getSharedPrefKey());
+            mSearchProviderPref = screen.findPreference(Utilities.KEY_DOCK_SEARCH_PROVIDER);
 
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
@@ -229,6 +236,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             updateVoltageAccentVisibility();
 
             updateIsGoogleAppEnabled();
+            updateSearchProviders();
 
             // If the target preference is not in the current preference screen, find the parent
             // preference screen that contains the target preference and set it as the preference
@@ -315,6 +323,83 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             }
             if (mShowGoogleBarPref != null) {
                 mShowGoogleBarPref.setEnabled(Utilities.isGSAEnabled(getContext()));
+                mShowGoogleBarPref.setEnabled(QsbContainerView.getSearchWidgetPackageName(getContext()) != null);
+                mShowGoogleBarPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                    boolean value = (Boolean) newValue;
+                    if (mSearchProviderPref != null) {
+                        mSearchProviderPref.setEnabled(value);
+                    }
+                    SharedPreferences prefs = LauncherPrefs.getPrefs(getContext().getApplicationContext());
+                    prefs.edit().putBoolean(LauncherPrefs.DOCK_SEARCH.getSharedPrefKey(), value).commit();
+                   return true;
+                });
+                if (mSearchProviderPref != null) {
+                    mSearchProviderPref.setEnabled(((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
+                }
+            }
+        }
+
+        private void updateSearchProviders() {
+            if (mSearchProviderPref == null) {
+                return;
+            }
+            if (mShowGoogleBarPref != null) {
+                mSearchProviderPref.setEnabled(
+                        ((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
+            }
+            String[] fallbacks = getContext().getResources().getStringArray(
+                    R.array.qsb_search_fallback);
+            String[] fallbackNames = getContext().getResources().getStringArray(
+                    R.array.qsb_search_fallback_names);
+            ArrayList<CharSequence> entries = new ArrayList<>();
+            ArrayList<CharSequence> entryValues = new ArrayList<>();
+            entries.add(getContext().getResources().getString(
+                    R.string.pref_dock_search_provider_default));
+            entryValues.add("");
+            for (int i = 0; i < fallbacks.length; i++) {
+                if (!Utilities.isPackageInstalled(getContext(), fallbacks[i])) {
+                    continue;
+                }
+            if (entryValues.contains(fallbacks[i])) {
+                continue;
+            }
+                entries.add(fallbackNames[i]);
+                entryValues.add(fallbacks[i]);
+            }
+        boolean hasAnyProvider = Utilities.isGSAEnabled(getContext())
+                || entries.size() > 1;
+       if (!hasAnyProvider) {
+            mSearchProviderPref.setVisible(false);
+            return;
+        }
+        mSearchProviderPref.setVisible(true);
+        if (mShowGoogleBarPref != null) {
+            mSearchProviderPref.setEnabled(
+                    ((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
+        }
+
+            mSearchProviderPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                String value = (String) newValue;
+                int index = mSearchProviderPref.findIndexOfValue(value);
+                if (index >= 0) {
+                    mSearchProviderPref.setSummary(mSearchProviderPref.getEntries()[index]);
+                }
+                SharedPreferences prefs = LauncherPrefs.getPrefs(
+                        getContext().getApplicationContext());
+                prefs.edit().putString(Utilities.KEY_DOCK_SEARCH_PROVIDER, value).commit();
+                return true;
+            });
+            CharSequence[] entriesArr = entries.toArray(new CharSequence[0]);
+            CharSequence[] valuesArr = entryValues.toArray(new CharSequence[0]);
+            mSearchProviderPref.setEntries(entriesArr);
+            mSearchProviderPref.setEntryValues(valuesArr);
+            String value = Utilities.getQSBProviderOverride(getContext());
+            int index = mSearchProviderPref.findIndexOfValue(value);
+            mSearchProviderPref.setValue(index >= 0 ? value : "");
+            if (index >= 0 && entriesArr.length > index) {
+                mSearchProviderPref.setSummary(entriesArr[index]);
+            } else if (entriesArr.length > 0) {
+                mSearchProviderPref.setSummary(entriesArr[0]);
             }
         }
 

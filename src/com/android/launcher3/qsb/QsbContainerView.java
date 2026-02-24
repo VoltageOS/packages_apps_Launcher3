@@ -49,6 +49,7 @@ import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.Utilities;
+import android.content.SharedPreferences;
 import com.android.launcher3.graphics.FragmentWithPreview;
 
 /**
@@ -70,19 +71,20 @@ public class QsbContainerView extends FrameLayout {
     @WorkerThread
     @Nullable
     public static String getSearchWidgetPackageName(@NonNull Context context) {
-        String providerPkg = Settings.Secure.getString(context.getContentResolver(),
-                SEARCH_ENGINE_SETTINGS_KEY);
-        if (providerPkg == null) {
-            SearchManager searchManager = context.getSystemService(SearchManager.class);
-            try {
-                ComponentName componentName = searchManager.getGlobalSearchActivity();
-                if (componentName != null) {
-                    providerPkg = componentName.getPackageName();
-                }
-            } catch (IllegalStateException e) {
-            }
-            if (providerPkg == null && Utilities.isGSAEnabled(context)) {
-                providerPkg = Utilities.GSA_PACKAGE;
+        String override = Utilities.getQSBProviderOverride(context);
+        if (override != null && !override.isEmpty()
+                && Utilities.isPackageEnabled(override, context)) {
+            return override;
+        }
+
+        if (Utilities.isGSAEnabled(context)) {
+            return Utilities.GSA_PACKAGE;
+        }
+        String providerPkg = null;
+        for (String fallback : Utilities.getQSBProviderFallbacks(context).keySet()) {
+            if (Utilities.isPackageEnabled(fallback, context)) {
+                providerPkg = fallback;
+                break;
             }
         }
         return providerPkg;
@@ -102,19 +104,22 @@ public class QsbContainerView extends FrameLayout {
         }
 
         AppWidgetProviderInfo defaultWidgetForSearchPackage = null;
+        AppWidgetProviderInfo searchCategoryWidget = null;
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         for (AppWidgetProviderInfo info :
                 appWidgetManager.getInstalledProvidersForPackage(providerPkg, null)) {
             if (info.provider.getPackageName().equals(providerPkg)) {
                 if ((info.widgetCategory
                         & AppWidgetProviderInfo.WIDGET_CATEGORY_SEARCHBOX) != 0) {
-                    return info;
+                    if (searchCategoryWidget == null) {
+                        searchCategoryWidget = info;
+                    }
                 } else if (defaultWidgetForSearchPackage == null) {
                     defaultWidgetForSearchPackage = info;
                 }
             }
         }
-        return defaultWidgetForSearchPackage;
+        return searchCategoryWidget != null ? searchCategoryWidget : defaultWidgetForSearchPackage;
     }
 
     /**
@@ -161,7 +166,8 @@ public class QsbContainerView extends FrameLayout {
     /**
      * A fragment to display the QSB.
      */
-    public static class QsbFragment extends FragmentWithPreview {
+    public static class QsbFragment extends FragmentWithPreview
+            implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         public static final int QSB_WIDGET_HOST_ID = 1026;
         private static final int REQUEST_BIND_QSB = 1;
@@ -179,6 +185,8 @@ public class QsbContainerView extends FrameLayout {
         public void onInit(Bundle savedInstanceState) {
             mQsbWidgetHost = createHost();
             mOrientation = getContext().getResources().getConfiguration().orientation;
+            LauncherPrefs.getPrefs(getContext())
+                    .registerOnSharedPreferenceChangeListener(this);
         }
 
         protected QsbWidgetHost createHost() {
@@ -281,7 +289,16 @@ public class QsbContainerView extends FrameLayout {
         @Override
         public void onDestroy() {
             mQsbWidgetHost.stopListening();
+            LauncherPrefs.getPrefs(getContext())
+                    .unregisterOnSharedPreferenceChangeListener(this);
             super.onDestroy();
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if (Utilities.KEY_DOCK_SEARCH_PROVIDER.equals(key)) {
+                rebindFragment();
+            }
         }
 
         private void rebindFragment() {
