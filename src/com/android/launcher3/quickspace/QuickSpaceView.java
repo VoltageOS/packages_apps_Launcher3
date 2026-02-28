@@ -1554,6 +1554,14 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mCachedColorStateList = null;
 
     setBackground(null);
+
+    if (mAttached) {
+      try {
+        getContext().unregisterReceiver(mWallpaperChangeReceiver);
+      } catch (Exception e) {
+      }
+    }
+
     mAttached = false;
     mFinishedInflate = false;
     mViewsLoaded = false;
