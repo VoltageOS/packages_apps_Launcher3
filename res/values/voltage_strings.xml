@@ -127,8 +127,17 @@
     <string name="pref_show_hotseat_qsb_summary">At the bottom of your home screen</string>
 
     <!-- App drawer searchbar -->
-    <string name="drawer_search_title">App search bar</string>
-    <string name="drawer_search_summary">Search bar on top of the app drawer</string>
+    <string name="drawer_search_title">App search bar placement</string>
+    <string-array name="allapps_search_placement_entries">
+        <item>Hidden</item>
+        <item>Top</item>
+        <item>Bottom</item>
+    </string-array>
+    <string-array name="allapps_search_placement_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
     <!-- Wallpaper scrolling -->
     <string name="allow_wallpaper_scrolling">Wallpaper scrolling</string>

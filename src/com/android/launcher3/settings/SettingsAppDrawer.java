@@ -32,6 +32,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallb
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceGroup.PreferencePositionCallback;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.ListPreference;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.BuildConfig;
@@ -106,7 +107,7 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (LauncherPrefs.DRAWER_SEARCH.getSharedPrefKey().equals(key) ||
+        if (LauncherPrefs.ALL_APPS_SEARCH_PLACEMENT.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.DRAWER_SCROLLBAR.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.ALL_APPS_DARK_TEXT.getSharedPrefKey().equals(key)) {
             LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
@@ -151,7 +152,11 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class AppDrawerSettingsFragment extends SettingsBasePreferenceFragment {
+    public static class AppDrawerSettingsFragment extends SettingsBasePreferenceFragment implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private static final String KEY_SEARCH_PLACEMENT = "pref_allapps_search_placement";
+        private static final String KEY_OPEN_KEYBOARD = "pref_drawer_open_keyboard";
 
         private @Nullable SafeCloseable mSettingCacheSafeCloseable;
 
@@ -162,6 +167,9 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
         private String mHighLightKey;
 
         private boolean mPreferenceHighlighted = false;
+
+        private ListPreference mSearchPlacementPref;
+        private Preference mOpenKeyboardPref;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -194,6 +202,10 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
 
             PreferenceScreen screen = getPreferenceScreen();
             initPreferences(screen);
+
+            mSearchPlacementPref = screen.findPreference(KEY_SEARCH_PLACEMENT);
+            mOpenKeyboardPref = screen.findPreference(KEY_OPEN_KEYBOARD);
+            updateOpenKeyboardEnabled();
 
             if (mHighLightKey != null
                     && !isKeyInPreferenceGroup(mHighLightKey, screen)) {
@@ -282,6 +294,9 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
         public void onResume() {
             super.onResume();
 
+            getPreferenceManager().getSharedPreferences()
+                    .registerOnSharedPreferenceChangeListener(this);
+
             if (isAdded() && !mPreferenceHighlighted) {
                 PreferenceHighlighter highlighter = createHighlighter();
                 if (highlighter != null) {
@@ -293,6 +308,25 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
             if (mRestartOnResume) {
                 recreateActivityNow();
             }
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            getPreferenceManager().getSharedPreferences()
+                    .unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if (KEY_SEARCH_PLACEMENT.equals(key)) {
+                updateOpenKeyboardEnabled();
+            }
+        }
+
+        private void updateOpenKeyboardEnabled() {
+            if (mOpenKeyboardPref == null || mSearchPlacementPref == null) return;
+            mOpenKeyboardPref.setEnabled(!"0".equals(mSearchPlacementPref.getValue()));
         }
 
         @Override
