@@ -42,11 +42,14 @@
         android:persistent="true"
         launcher:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:key="pref_drawer_search"
+    <ListPreference
+        android:key="pref_allapps_search_placement"
         android:title="@string/drawer_search_title"
-        android:summary="@string/drawer_search_summary"
-        android:defaultValue="true"
+        android:summary="%s"
+        android:entries="@array/allapps_search_placement_entries"
+        android:entryValues="@array/allapps_search_placement_values"
+        android:defaultValue="1"
+        android:persistent="true"
         launcher:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
@@ -62,7 +65,6 @@
         android:summary="@string/drawer_open_keyboard_summary"
         android:defaultValue="false"
         android:persistent="true"
-        android:dependency="pref_drawer_search"
         launcher:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
