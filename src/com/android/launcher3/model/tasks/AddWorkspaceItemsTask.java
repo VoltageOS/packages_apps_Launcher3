@@ -31,6 +31,7 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.LauncherModel.ModelUpdateTask;
 import com.android.launcher3.LauncherSettings;
+import com.android.launcher3.allapps.AppDrawerStyle;
 import com.android.launcher3.icons.IconCache;
 import com.android.launcher3.logging.FileLog;
 import com.android.launcher3.model.AllAppsList;
@@ -48,6 +49,7 @@ import com.android.launcher3.model.data.WorkspaceItemFactory;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.pm.InstallSessionHelper;
 import com.android.launcher3.pm.PackageInstallInfo;
+import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.util.ApplicationInfoWrapper;
 import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.PackageManagerHelper;
@@ -96,13 +98,19 @@ public class AddWorkspaceItemsTask implements ModelUpdateTask {
             for (Pair<ItemInfo, Object> entry : mItemList) {
                 ItemInfo item = entry.first;
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
+                    // Short-circuit this logic if the icon belongs to a private space user
+                    if (item.user != null && UserCache.getInstance(context).getUserInfo(item.user).isPrivate()) {
+                        continue;
+                    }
+
                     // Short-circuit this logic if the icon exists somewhere on the workspace
                     if (shortcutExists(dataModel, item.getIntent(), item.user)) {
                         continue;
                     }
 
                     // b/139663018 Short-circuit this logic if the icon is a system app
-                    if (new ApplicationInfoWrapper(context,
+                    if (!AppDrawerStyle.isIos(AppDrawerStyle.get(context))
+                            && new ApplicationInfoWrapper(context,
                             Objects.requireNonNull(item.getIntent())).isSystem()) {
                         continue;
                     }

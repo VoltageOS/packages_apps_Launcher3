@@ -169,6 +169,7 @@ import com.android.launcher3.DropTarget.DragObject;
 import com.android.launcher3.accessibility.LauncherAccessibilityDelegate;
 import com.android.launcher3.allapps.ActivityAllAppsContainerView;
 import com.android.launcher3.allapps.AllAppsTransitionController;
+import com.android.launcher3.allapps.AppDrawerStyle;
 import com.android.launcher3.allapps.DiscoveryBounce;
 import com.android.launcher3.anim.AnimationSuccessListener;
 import com.android.launcher3.anim.PropertyListBuilder;
@@ -1127,6 +1128,10 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     public void onStateSetStart(LauncherState state) {
         super.onStateSetStart(state);
+        if (ALL_APPS.equals(state) && !canOpenAllApps()) {
+            mStateManager.goToState(NORMAL, false /* animated */);
+            return;
+        }
         if (mDeferOverlayCallbacks) {
             scheduleDeferredCheck();
         }
@@ -1654,6 +1659,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     private void toggleAllApps(boolean alreadyOnHome, boolean focusSearch) {
+        if (!canOpenAllApps()) {
+            return;
+        }
         if (getStateManager().isInStableState(ALL_APPS)) {
             getStateManager().goToState(NORMAL, alreadyOnHome);
         } else {
@@ -1680,6 +1688,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     private void showAllAppsWithSelectedTabFromIntent(boolean alreadyOnHome, int tab) {
+        if (isIosStyleDrawer()) {
+            return;
+        }
         AbstractFloatingView.closeAllOpenViews(this);
         getStateManager().goToState(ALL_APPS, alreadyOnHome);
         if (mAppsView.isSearching()) {
@@ -2467,6 +2478,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     public void bindAllApplications(AppInfo[] apps, int flags,
             Map<PackageUserKey, Integer> packageUserKeytoUidMap) {
         mModelCallbacks.bindAllApplications(apps, flags, packageUserKeytoUidMap);
+        syncWorkspaceForIosStyle();
     }
 
     @Override
@@ -2662,7 +2674,39 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     public TouchController[] createTouchControllers() {
+        if (!canOpenAllApps()) {
+            return new TouchController[] {getDragController()};
+        }
         return new TouchController[] {getDragController(), new AllAppsSwipeController(this)};
+    }
+
+    public boolean canOpenAllApps() {
+        return !isIosStyleDrawer();
+    }
+
+    private boolean isIosStyleDrawer() {
+        return AppDrawerStyle.isIos(AppDrawerStyle.get(this));
+    }
+
+    private void syncWorkspaceForIosStyle() {
+        if (!isIosStyleDrawer()) {
+            LauncherPrefs.get(this).put(LauncherPrefs.IOS_STYLE_WORKSPACE_MIGRATED, false);
+            return;
+        }
+        if (LauncherPrefs.IOS_STYLE_WORKSPACE_MIGRATED.get(this) || mAppsView == null) {
+            return;
+        }
+
+        AppInfo[] apps = mAppsView.getAppsStore().getApps();
+        if (apps.length == 0) {
+            return;
+        }
+
+        ItemInstallQueue installQueue = ItemInstallQueue.INSTANCE.get(this);
+        for (AppInfo app : apps) {
+            installQueue.queueItem(app);
+        }
+        LauncherPrefs.get(this).put(LauncherPrefs.IOS_STYLE_WORKSPACE_MIGRATED, true);
     }
 
     public void onDragLayerHierarchyChanged() {

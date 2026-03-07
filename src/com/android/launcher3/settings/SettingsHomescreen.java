@@ -50,6 +50,8 @@ import com.android.launcher3.Flags;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.LauncherPrefs;
+import com.android.launcher3.SessionCommitReceiver;
+import com.android.launcher3.allapps.AppDrawerStyle;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.SettingsCache;
@@ -203,6 +205,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private Preference mVoltageAccent;
         private Preference mQuickspaceBattery;
         private ListPreference mSearchProviderPref;
+        private SwitchPreferenceCompat mAutoAddIconsPref;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
 
@@ -231,6 +234,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             mShowGoogleAppPref = screen.findPreference(KEY_MINUS_ONE);
             mShowGoogleBarPref = screen.findPreference(LauncherPrefs.DOCK_SEARCH.getSharedPrefKey());
             mSearchProviderPref = screen.findPreference(Utilities.KEY_DOCK_SEARCH_PROVIDER);
+            mAutoAddIconsPref = screen.findPreference(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY);
 
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
@@ -254,6 +258,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             updateVoltageAccentVisibility();
 
             updateIsGoogleAppEnabled();
+            updateAutoAddIconsPreferenceState();
             updateSearchProviders();
 
             // If the target preference is not in the current preference screen, find the parent
@@ -435,6 +440,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             getPreferenceManager().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(this);
             updateIsGoogleAppEnabled();
+            updateAutoAddIconsPreferenceState();
 
             if (mRestartOnResume) {
                 recreateActivityNow();
@@ -494,6 +500,27 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (KEY_QUICKSPACE_STYLE.equals(key)) {
                 updateVoltageAccentVisibility();
+            }
+            if (LauncherPrefs.APP_DRAWER_STYLE.getSharedPrefKey().equals(key)) {
+                updateAutoAddIconsPreferenceState();
+            }
+        }
+
+        private void updateAutoAddIconsPreferenceState() {
+            if (mAutoAddIconsPref == null || getContext() == null) {
+                return;
+            }
+            boolean iosStyle = AppDrawerStyle.isIos(AppDrawerStyle.get(getContext()));
+            if (iosStyle) {
+                mAutoAddIconsPref.setChecked(true);
+                LauncherPrefs.getPrefs(getContext()).edit()
+                        .putBoolean(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY, true)
+                        .apply();
+                mAutoAddIconsPref.setEnabled(false);
+                mAutoAddIconsPref.setSummary(R.string.auto_add_shortcuts_forced_ios_summary);
+            } else {
+                mAutoAddIconsPref.setEnabled(true);
+                mAutoAddIconsPref.setSummary(R.string.auto_add_shortcuts_description);
             }
         }
 

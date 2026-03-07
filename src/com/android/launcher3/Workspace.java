@@ -3551,7 +3551,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (!workspaceInModalState()) {
             if (getNextPage() != page) {
                 snapToPage(page);
-            } else {
+            } else if (mLauncher.canOpenAllApps()) {
                 mLauncher.getStateManager().goToState(ALL_APPS);
             }
         }

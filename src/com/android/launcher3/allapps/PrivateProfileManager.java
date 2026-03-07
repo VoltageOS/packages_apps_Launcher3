@@ -231,7 +231,11 @@ public class PrivateProfileManager extends UserProfileManager {
         Trace.beginSection("PrivateProfileManager#reset");
         // Ensure the state of the header view is what it should be before animating.
         updateView();
-        getMainRecyclerView().setChildAttachedConsumer(null);
+        
+        AllAppsRecyclerView rv = getMainRecyclerView();
+        if (rv != null) {
+            rv.setChildAttachedConsumer(null);
+        }
         int previousState = getCurrentState();
         boolean isEnabled = !mAllApps.getAppsStore()
                 .hasModelFlag(FLAG_PRIVATE_PROFILE_QUIET_MODE_ENABLED);
@@ -246,8 +250,12 @@ public class PrivateProfileManager extends UserProfileManager {
             postUnlock();
         } else if (previousState == STATE_ENABLED && updatedState == STATE_DISABLED){
             executeLock();
+        } else if (previousState == STATE_UNKNOWN) {
+            updateView();
         }
-        addPrivateSpaceDecorator();
+        if (rv != null) {
+            addPrivateSpaceDecorator();
+        }
         Trace.endSection();
     }
 
@@ -282,9 +290,11 @@ public class PrivateProfileManager extends UserProfileManager {
     }
 
     /** Adds a private space decorator to the main (personal) app recyclerview. */
-    @VisibleForTesting
     void addPrivateSpaceDecorator() {
         ActivityAllAppsContainerView<?>.AdapterHolder mainAdapterHolder = mAllApps.mAH.get(MAIN);
+        if (mainAdapterHolder.mRecyclerView == null) {
+            return;
+        }
         // Create a new decorator instance if not already available.
         if (mPrivateAppsSectionDecorator == null) {
             mPrivateAppsSectionDecorator = new PrivateAppsSectionDecorator(
@@ -453,6 +463,7 @@ public class PrivateProfileManager extends UserProfileManager {
     /** Finds the private space header to smooth scroll to. */
     private void collapse() {
         AllAppsRecyclerView allAppsRecyclerView = mAllApps.getActiveRecyclerView();
+        if (allAppsRecyclerView == null || allAppsRecyclerView.getApps() == null) return;
         List<BaseAllAppsAdapter.AdapterItem> appListAdapterItems =
                 allAppsRecyclerView.getApps().getAdapterItems();
         for (int i = appListAdapterItems.size() - 1; i > 0; i--) {
@@ -524,9 +535,11 @@ public class PrivateProfileManager extends UserProfileManager {
                         }
                     };
             smoothScroller.setTargetPosition(itemToScrollTo);
-            RecyclerView.LayoutManager layoutManager = allAppsRecyclerView.getLayoutManager();
-            if (layoutManager != null) {
-                startAnimationScroll(allAppsRecyclerView, layoutManager, smoothScroller);
+            if (allAppsRecyclerView != null) {
+                RecyclerView.LayoutManager layoutManager = allAppsRecyclerView.getLayoutManager();
+                if (layoutManager != null) {
+                    startAnimationScroll(allAppsRecyclerView, layoutManager, smoothScroller);
+                }
             }
         }
         return itemToScrollTo;
@@ -538,7 +551,8 @@ public class PrivateProfileManager extends UserProfileManager {
     private ValueAnimator animateCollapseAnimation() {
         float from = 1;
         float to = 0;
-        RecyclerViewFastScroller scrollBar = mAllApps.getActiveRecyclerView().getScrollbar();
+        AllAppsRecyclerView collapseRv = mAllApps.getActiveRecyclerView();
+        RecyclerViewFastScroller scrollBar = collapseRv != null ? collapseRv.getScrollbar() : null;
         ValueAnimator collapseAnim = ValueAnimator.ofFloat(from, to);
         collapseAnim.setDuration(EXPAND_COLLAPSE_DURATION);
         collapseAnim.addListener(new AnimatorListenerAdapter() {
@@ -566,8 +580,11 @@ public class PrivateProfileManager extends UserProfileManager {
         float from = isExpanding ? 0 : 1;
         float to = isExpanding ? 1 : 0;
         AllAppsRecyclerView allAppsRecyclerView = mAllApps.getActiveRecyclerView();
+        if (allAppsRecyclerView == null || allAppsRecyclerView.getApps() == null) {
+            return new ValueAnimator().setDuration(0);
+        }
         List<BaseAllAppsAdapter.AdapterItem> allAppsAdapterItems =
-                mAllApps.getActiveRecyclerView().getApps().getAdapterItems();
+                allAppsRecyclerView.getApps().getAdapterItems();
         ValueAnimator alphaAnim = ObjectAnimator.ofFloat(from, to);
         alphaAnim.setDuration(APP_OPACITY_DURATION)
                 .setStartDelay(isExpanding ? APP_OPACITY_DELAY : NO_DELAY);
@@ -656,6 +673,13 @@ public class PrivateProfileManager extends UserProfileManager {
             setAnimationRunning(true);
             return;
         }
+        if (mAllApps.isVerticalPagedMode()) {
+            mIsStateTransitioning = false;
+            setAnimationRunning(false);
+            setCurrentState(expand ? STATE_ENABLED : STATE_DISABLED);
+            updateView();
+            return;
+        }
         attachFloatingMaskView(expand);
         if (mAnimatorSet != null && mAnimatorSet.isRunning()) {
             mAnimatorSet.cancel();
@@ -666,11 +690,14 @@ public class PrivateProfileManager extends UserProfileManager {
             public void onAnimationStart(Animator animation) {
                 Log.d(TAG, "updatePrivateStateAnimator: Private space animation expanding: "
                         + expand);
-                mStatsLogManager.logger().sendToInteractionJankMonitor(
-                        expand
-                                ? LAUNCHER_PRIVATE_SPACE_UNLOCK_ANIMATION_BEGIN
-                                : LAUNCHER_PRIVATE_SPACE_LOCK_ANIMATION_BEGIN,
-                        mAllApps.getActiveRecyclerView());
+                AllAppsRecyclerView activeRv = mAllApps.getActiveRecyclerView();
+                if (activeRv != null) {
+                    mStatsLogManager.logger().sendToInteractionJankMonitor(
+                            expand
+                                    ? LAUNCHER_PRIVATE_SPACE_UNLOCK_ANIMATION_BEGIN
+                                    : LAUNCHER_PRIVATE_SPACE_LOCK_ANIMATION_BEGIN,
+                            activeRv);
+                }
                 setAnimationRunning(true);
             }
 
@@ -682,12 +709,18 @@ public class PrivateProfileManager extends UserProfileManager {
         mAnimatorSet.addListener(forEndCallback(() -> {
             mIsStateTransitioning = false;
             setAnimationRunning(false);
-            getMainRecyclerView().setChildAttachedConsumer(child -> child.setAlpha(1));
-            mStatsLogManager.logger().sendToInteractionJankMonitor(
-                    expand
-                            ? LAUNCHER_PRIVATE_SPACE_UNLOCK_ANIMATION_END
-                            : LAUNCHER_PRIVATE_SPACE_LOCK_ANIMATION_END,
-                    mAllApps.getActiveRecyclerView());
+            AllAppsRecyclerView mainRv = getMainRecyclerView();
+            if (mainRv != null) {
+                mainRv.setChildAttachedConsumer(child -> child.setAlpha(1));
+            }
+            AllAppsRecyclerView activeRv = mAllApps.getActiveRecyclerView();
+            if (activeRv != null) {
+                mStatsLogManager.logger().sendToInteractionJankMonitor(
+                        expand
+                                ? LAUNCHER_PRIVATE_SPACE_UNLOCK_ANIMATION_END
+                                : LAUNCHER_PRIVATE_SPACE_LOCK_ANIMATION_END,
+                        activeRv);
+            }
             Log.d(TAG, "updatePrivateStateAnimator: lockText visibility: "
                     + mLockText.getVisibility() + " lockTextAlpha: " + mLockText.getAlpha());
             Log.d(TAG, "updatePrivateStateAnimator: settingsCog visibility: "
@@ -698,9 +731,9 @@ public class PrivateProfileManager extends UserProfileManager {
                 if (!Utilities.isRunningInTestHarness()) {
                     mAllApps.getPersonalAppList().onAppsUpdated();
                 }
-                if (isPrivateSpaceHidden()) {
+                if (isPrivateSpaceHidden() && mainRv != null && mainRv.getAdapter() != null) {
                     // TODO (b/325455879): Figure out if we can avoid this.
-                    getMainRecyclerView().getAdapter().notifyDataSetChanged();
+                    mainRv.getAdapter().notifyDataSetChanged();
                 }
             }
         }));
@@ -731,10 +764,13 @@ public class PrivateProfileManager extends UserProfileManager {
 
     /** Fades out the private space container (defined by its items' decorators). */
     private ValueAnimator animateAlphaOfPrivateSpaceContainer() {
+        AllAppsRecyclerView allAppsRecyclerView = mAllApps.getActiveRecyclerView();
+        if (allAppsRecyclerView == null) {
+            return new ValueAnimator().setDuration(0);
+        }
         int from = 255; // 100% opacity.
         int to = 0; // No opacity.
         ValueAnimator alphaAnim = ObjectAnimator.ofInt(from, to);
-        AllAppsRecyclerView allAppsRecyclerView = mAllApps.getActiveRecyclerView();
         List<BaseAllAppsAdapter.AdapterItem> allAppsAdapterItems =
                 allAppsRecyclerView.getApps().getAdapterItems();
         alphaAnim.setDuration(CONTAINER_OPACITY_DURATION);
@@ -839,8 +875,12 @@ public class PrivateProfileManager extends UserProfileManager {
             // Animate the text and settings icon.
             DeviceProfile deviceProfile =
                     ActivityContext.lookupContext(mAllApps.getContext()).getDeviceProfile();
-            scrollForHeaderToBeVisibleInContainer(mainAdapterHolder.mRecyclerView, adapterItems,
-                    getPsHeaderHeight(), deviceProfile.getAllAppsProfile().getCellHeightPx());
+            AllAppsRecyclerView rv = getMainRecyclerView() != null ? getMainRecyclerView()
+                    : mainAdapterHolder.mRecyclerView;
+            if (rv != null) {
+                scrollForHeaderToBeVisibleInContainer(rv, adapterItems,
+                        getPsHeaderHeight(), deviceProfile.getAllAppsProfile().getCellHeightPx());
+            }
             updatePrivateStateAnimator(true);
         }
         Trace.endSection();
@@ -862,6 +902,10 @@ public class PrivateProfileManager extends UserProfileManager {
         if (!Flags.privateSpaceAddFloatingMaskView() || mAllApps.isBackgroundBlurEnabled()) {
             return;
         }
+        AllAppsRecyclerView mainRv = getMainRecyclerView();
+        if (mainRv == null) {
+            return;
+        }
         // Use getLocationOnScreen() as simply checking for mPSHeader.getBottom() is only relative
         // to its parent.
         int[] psHeaderLocation = new int[2];
@@ -869,7 +913,7 @@ public class PrivateProfileManager extends UserProfileManager {
         int psHeaderBottomY = psHeaderLocation[1] + mPsHeaderHeight;
         // Calculate the topY of the floatingMaskView as if it was added.
         int floatingMaskViewBottomBoxTopY =
-                (int) (mAllApps.getBottom() - getMainRecyclerView().getPaddingBottom());
+                (int) (mAllApps.getBottom() - mainRv.getPaddingBottom());
         // Don't attach if the header will be clipped by the floating mask view.
         if (psHeaderBottomY > floatingMaskViewBottomBoxTopY) {
             mFloatingMaskView = null;
@@ -904,7 +948,8 @@ public class PrivateProfileManager extends UserProfileManager {
     }
 
     private float getFloatingMaskViewHeight() {
-        return mFloatingMaskViewCornerRadius + getMainRecyclerView().getPaddingBottom();
+        AllAppsRecyclerView mainRv = getMainRecyclerView();
+        return mFloatingMaskViewCornerRadius + (mainRv != null ? mainRv.getPaddingBottom() : 0);
     }
 
     AllAppsRecyclerView getMainRecyclerView() {
