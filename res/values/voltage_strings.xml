@@ -576,4 +576,8 @@
     <!-- Message shown when all home screen views are removed -->
     <string name="home_screen_all_views_removed_msg">Home screen cleared</string>
 
+    <!-- app drawer sorting -->
+     <string name="sort_alphabetical">Sort by alphabet</string>
+     <string name="sort_install_date">Sort by date of install</string>
+     <string name="sort_usage">Sort by usage</string>
 </resources>
