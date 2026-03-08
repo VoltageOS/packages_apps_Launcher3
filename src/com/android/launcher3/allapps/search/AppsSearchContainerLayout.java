@@ -25,17 +25,22 @@ import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTO
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.PopupMenu;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.ExtendedEditText;
 import com.android.launcher3.Insettable;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.ActivityAllAppsContainerView;
@@ -45,6 +50,7 @@ import com.android.launcher3.allapps.PrivateProfileManager;
 import com.android.launcher3.allapps.SearchUiManager;
 import com.android.launcher3.search.SearchCallback;
 import com.android.launcher3.util.ApiWrapper;
+import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 
 import java.util.ArrayList;
@@ -84,6 +90,18 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
+
+        setUpSortingOptionsIcon(context);
+    }
+
+    /** Shows the overflow icon that opens the app drawer sorting options. */
+    private void setUpSortingOptionsIcon(Context context) {
+        Drawable optionsIcon = context.getDrawable(R.drawable.ic_more_vert_dots);
+        if (optionsIcon == null) {
+            return;
+        }
+        optionsIcon.setTint(Themes.getAttrColor(context, android.R.attr.textColorPrimary));
+        setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, optionsIcon, null);
     }
 
     @Override
@@ -219,6 +237,61 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     @Override
     public ExtendedEditText getEditText() {
         return this;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            Drawable endDrawable = getCompoundDrawablesRelative()[2]; // end drawable
+            if (endDrawable != null) {
+                boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
+                float x = event.getX();
+                boolean isOptionsClick = false;
+                if (!isRtl && x >= (getWidth() - getPaddingRight() - endDrawable.getIntrinsicWidth() - 30)) {
+                    isOptionsClick = true;
+                } else if (isRtl && x <= (getPaddingLeft() + endDrawable.getIntrinsicWidth() + 30)) {
+                    isOptionsClick = true;
+                }
+
+                if (isOptionsClick) {
+                    showSortingOptions();
+                    return true;
+                }
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private void showSortingOptions() {
+        PopupMenu popup = new PopupMenu(getContext(), this, android.view.Gravity.END);
+        popup.getMenu().add(0, 0, 0, getContext().getString(R.string.sort_alphabetical));
+        popup.getMenu().add(0, 1, 1, getContext().getString(R.string.sort_install_date));
+        popup.getMenu().add(0, 2, 2, getContext().getString(R.string.sort_usage));
+
+        popup.setOnMenuItemClickListener((MenuItem item) -> {
+            int sortMode = item.getItemId();
+            if (sortMode == 2) {
+                android.app.AppOpsManager appOps = (android.app.AppOpsManager) getContext().getSystemService(Context.APP_OPS_SERVICE);
+                int mode = appOps.checkOpNoThrow(android.app.AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), getContext().getPackageName());
+                if (mode == android.app.AppOpsManager.MODE_DEFAULT) {
+                    mode = getContext().checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                            ? android.app.AppOpsManager.MODE_ALLOWED
+                            : android.app.AppOpsManager.MODE_IGNORED;
+                }
+                if (mode != android.app.AppOpsManager.MODE_ALLOWED) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(intent);
+                    return true;
+                }
+            }
+            LauncherPrefs.get(getContext()).put(LauncherPrefs.APP_DRAWER_SORT_MODE, sortMode);
+            if (mAppsView != null) {
+                mAppsView.getAppsStore().notifyUpdate();
+            }
+            return true;
+        });
+        popup.show();
     }
 
     private void privateSpaceQuery() {
