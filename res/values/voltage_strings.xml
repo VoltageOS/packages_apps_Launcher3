@@ -199,6 +199,12 @@
         <item>2</item>
     </string-array>
 
+    <!-- Pinned Apps -->
+    <string name="pref_pinned_apps_enabled_title">Enable pinned apps</string>
+    <string name="pref_pinned_apps_enabled_summary">Show a row of pinned apps below the search bar</string>
+    <string name="pref_pinned_apps_list_title">Pinned apps list</string>
+    <string name="pref_pinned_apps_list_summary">Select apps to pin</string>
+
     <!-- Wallpaper scrolling -->
     <string name="allow_wallpaper_scrolling">Wallpaper scrolling</string>
     <string name="allow_wallpaper_scrolling_summary">Wallpaper scrolling effect for multiple screens</string>

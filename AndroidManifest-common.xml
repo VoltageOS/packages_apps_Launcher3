@@ -185,6 +185,13 @@
             android:exported="true"
             android:autoRemoveFromRecents="true" />
 
+        <activity
+            android:name="com.android.launcher3.settings.PinnedAppsActivity"
+            android:label="@string/pref_pinned_apps_list_title"
+            android:theme="@style/HomeSettings.Theme"
+            android:exported="false"
+            android:autoRemoveFromRecents="true" />
+
         <!-- Homescreen -->
         <activity
             android:name="com.android.launcher3.settings.SettingsHomescreen"
