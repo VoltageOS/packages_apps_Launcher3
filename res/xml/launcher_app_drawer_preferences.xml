@@ -47,6 +47,21 @@
         launcher:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
+        android:key="pref_pinned_apps_enabled"
+        android:title="@string/pref_pinned_apps_enabled_title"
+        android:summary="@string/pref_pinned_apps_enabled_summary"
+        android:defaultValue="false"
+        android:persistent="true"
+        launcher:iconSpaceReserved="false" />
+
+    <Preference
+        android:key="pref_pinned_apps_list"
+        android:title="@string/pref_pinned_apps_list_title"
+        android:summary="@string/pref_pinned_apps_list_summary"
+        android:dependency="pref_pinned_apps_enabled"
+        launcher:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
         android:key="pref_drawer_scrollbar"
         android:title="@string/drawer_scrollbar_title"
         android:summary="@string/drawer_scrollbar_summary"

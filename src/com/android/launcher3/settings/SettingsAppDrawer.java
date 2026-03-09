@@ -213,6 +213,15 @@ public class SettingsAppDrawer extends CollapsingToolbarBaseActivity
             updateOpenKeyboardEnabled();
             updateDrawerStyleSummary();
 
+            Preference pinnedAppsPref = screen.findPreference("pref_pinned_apps_list");
+            if (pinnedAppsPref != null) {
+                pinnedAppsPref.setOnPreferenceClickListener(preference -> {
+                    Intent intent = new Intent(getActivity(), PinnedAppsActivity.class);
+                    startActivity(intent);
+                    return true;
+                });
+            }
+
             if (mHighLightKey != null
                     && !isKeyInPreferenceGroup(mHighLightKey, screen)) {
                 final PreferenceScreen parentPreferenceScreen =
