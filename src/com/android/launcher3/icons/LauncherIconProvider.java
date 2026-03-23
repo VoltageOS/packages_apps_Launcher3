@@ -71,10 +71,14 @@ public class LauncherIconProvider extends IconProvider {
     public void updateSystemState() {
         super.updateSystemState();
         mSystemState += "," + mThemeManager.getIconState().toUniqueId()
+            + "," + com.android.launcher3.LauncherPrefs.get(mContext).get(com.android.launcher3.LauncherPrefs.THEMED_ICONS_OVERLAY)
             + Build.VERSION.INCREMENTAL;
     }
 
     private Map<String, ThemeData> getThemedIconMap() {
+        if (!com.android.launcher3.LauncherPrefs.get(mContext).get(com.android.launcher3.LauncherPrefs.THEMED_ICONS_OVERLAY)) {
+            return DISABLED_MAP;
+        }
         if (mThemedIconMap != null) {
             return mThemedIconMap;
         }

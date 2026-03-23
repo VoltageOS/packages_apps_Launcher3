@@ -261,6 +261,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField val WORKSPACE_LOCK = backedUpItem("pref_workspace_lock", false)
         @JvmField val ALLOW_WALLPAPER_ZOOMING = backedUpItem("pref_allow_wallpaper_zooming", false)
         @JvmField val ALLAPPS_ICON_CUSTOMIZATION = backedUpItem("pref_allapps_icon_customization", true)
+        @JvmField val THEMED_ICONS_OVERLAY = backedUpItem("pref_themed_icons_overlay", true)
         @JvmField val BLUR_DEPTH = backedUpItem("pref_blur_depth", 30)
         @JvmField val APP_DRAWER_OPACITY = backedUpItem("pref_app_drawer_opacity", 60)
         @JvmField val DARK_STATUS_BAR = backedUpItem("pref_dark_status_bar", false)
