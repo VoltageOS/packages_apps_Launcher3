@@ -78,6 +78,9 @@
     <!-- All apps themed icons -->
     <string name="pref_themed_icons_title">Use themed icons in drawer</string>
     <string name="pref_themed_icons_summary">Follow themed icons used on home screen</string>
+    
+    <string name="themed_icons_overlay_title">Overlayed themed icons</string>
+    <string name="themed_icons_overlay_summary">Use custom themed icons mapping for apps without native themed icon</string>
 
     <!-- Hide labels -->
     <string name="desktop_show_labels">Show icon labels on desktop</string>

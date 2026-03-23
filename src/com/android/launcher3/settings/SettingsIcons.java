@@ -274,6 +274,9 @@ public class SettingsIcons extends CollapsingToolbarBaseActivity
                 case IconDatabase.KEY_ICON_PACK:
                     updatePreferences();
                     break;
+                case "pref_themed_icons_overlay":
+                    com.android.launcher3.Utilities.restart();
+                    break;
             }
         }
 
