@@ -151,6 +151,9 @@ public class TaskbarManagerImpl {
     public static final Uri GESTURE_NAVBAR_HEIGHT_MODE_URI = Settings.System.getUriFor(
             Settings.System.GESTURE_NAVBAR_HEIGHT_MODE);
 
+    public static final Uri GESTURE_NAVBAR_AUTO_HIDE_URI = Settings.System.getUriFor(
+            Settings.System.GESTURE_NAVBAR_AUTO_HIDE);
+
     public static final Uri NAV_BAR_IME = Settings.Secure.getUriFor(
             "sysui_show_nav_bar_ime");
 
@@ -389,6 +392,8 @@ public class TaskbarManagerImpl {
                 NAV_BAR_IME, false, gestureNavbarSettingsObserver);
         mBaseContext.getContentResolver().registerContentObserver(
                 NAV_BAR_LAYOUT_URI, false, gestureNavbarSettingsObserver);
+        mBaseContext.getContentResolver().registerContentObserver(
+                GESTURE_NAVBAR_AUTO_HIDE_URI, false, gestureNavbarSettingsObserver);
         cleanupTasks.addTask(getTaskbarUiThread(), () -> mBaseContext.getContentResolver()
                 .unregisterContentObserver(gestureNavbarSettingsObserver));
 

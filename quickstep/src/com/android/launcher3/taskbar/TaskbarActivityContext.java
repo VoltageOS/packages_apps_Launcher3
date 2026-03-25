@@ -1240,6 +1240,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
 
     public void touchAutoDim(boolean reset) {
         mControllers.navbarButtonsViewController.touchAutoDim(reset);
+        mControllers.stashedHandleViewController.touchAutoHide(reset);
     }
 
     public void transitionTo(@BarTransitions.TransitionMode int barMode,
