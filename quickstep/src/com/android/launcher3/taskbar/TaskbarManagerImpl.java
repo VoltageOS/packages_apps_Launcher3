@@ -1347,8 +1347,19 @@ public class TaskbarManagerImpl implements DisplayDecorationListener {
             FrameLayout rootLayout = getTaskbarRootLayoutForDisplay(displayId);
             WindowManager windowManager = getWindowManager(displayId);
             if (rootLayout != null && windowManager != null) {
-                windowManager.addView(rootLayout, taskbar.getWindowLayoutParams());
-                mAddedRootLayouts.put(displayId, true);
+                if (rootLayout.isAttachedToWindow() || rootLayout.getParent() != null) {
+                    try {
+                        windowManager.removeViewImmediate(rootLayout);
+                    } catch (IllegalArgumentException e) {
+                    }
+                }
+                try {
+                    windowManager.addView(rootLayout, taskbar.getWindowLayoutParams());
+                    mAddedRootLayouts.put(displayId, true);
+                } catch (WindowManager.BadTokenException e) {
+                    Log.e(TAG, "Failed to add Taskbar window for display " + displayId 
+                            + ". Another window of this type may already exist.", e);
+                }
             } else {
                 String rootLayoutStatus =
                         (rootLayout == null) ? "rootLayout is NULL!" : "rootLayout exists!";
@@ -1372,7 +1383,10 @@ public class TaskbarManagerImpl implements DisplayDecorationListener {
 
         WindowManager windowManager = getWindowManager(displayId);
         if (isTaskbarRootLayoutAddedForDisplay(displayId) && windowManager != null) {
-            windowManager.removeViewImmediate(rootLayout);
+            try {
+                windowManager.removeViewImmediate(rootLayout);
+            } catch (IllegalArgumentException e) {
+            }
             mAddedRootLayouts.put(displayId, false);
             removeTaskbarRootLayoutFromMap(displayId);
         } else {
