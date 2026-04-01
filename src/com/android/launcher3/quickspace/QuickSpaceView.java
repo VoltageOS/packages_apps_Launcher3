@@ -84,6 +84,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   public ImageView mEventSubIcon;
   public ImageView mNowPlayingIcon;
   public TextView mEventTitleSub;
+  public ViewGroup mSubtitleLine;
 
   public TextView mQuickspaceDayOfWeek;
   public AccentedTextClock mQuickspaceClock;
@@ -372,6 +373,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   }
 
   private void updatePsaContent(boolean shouldShowPsa, boolean useAlternativeQuickspaceUI) {
+    if (shouldShowPsa && mSubtitleLine != null) {
+      mSubtitleLine.setVisibility(View.VISIBLE);
+    }
+
     if (shouldShowPsa) {
       maybeSetMarquee(mEventTitle);
       mEventTitle.setOnClickListener(mController.getEventController().getAction());
@@ -381,9 +386,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       maybeSetMarquee(mEventTitleSub);
       mEventTitleSub.setOnClickListener(mController.getEventController().getAction());
 
-      if (mEventTitleSub.getVisibility() != View.VISIBLE) {
-        animateIn(mEventTitleSub);
-      }
+      animateIn(mEventTitleSub);
 
       if (useAlternativeQuickspaceUI) {
         updateNowPlayingState();
@@ -470,9 +473,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     Drawable icon = mController.getEventController().getActionIcon();
     if (icon != null) {
-      if (mEventSubIcon.getVisibility() != View.VISIBLE) {
-        animateIn(mEventSubIcon);
-      }
+      animateIn(mEventSubIcon);
       mEventSubIcon.setImageTintList(
           mController.getEventController().isNowPlaying() ? null : mColorStateList);
       mEventSubIcon.setImageDrawable(icon);
@@ -498,9 +499,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       }
       return;
     }
-    if (container.getVisibility() != View.VISIBLE) {
-      animateIn(container);
-    }
+    animateIn(container);
 
     updateTextViewIfNeeded(title, weatherTemp, false);
 
@@ -1148,6 +1147,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private final void loadViews() {
     mEventTitle = (TextView) findViewById(R.id.quick_event_title);
     mEventTitleSub = (TextView) findViewById(R.id.quick_event_title_sub);
+    mSubtitleLine = (ViewGroup) findViewById(R.id.subtitle_line);
     mEventTitleSubColored = (TextView) findViewById(R.id.quick_event_title_sub_colored);
     mNowPlayingIcon = (ImageView) findViewById(R.id.now_playing_icon_sub);
     mEventSubIcon = (ImageView) findViewById(R.id.quick_event_icon_sub);
@@ -1275,13 +1275,15 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     view.animate().cancel();
 
-    if (view.getVisibility() == View.VISIBLE && view.getAlpha() == 1f) {
+    if (view.getVisibility() == View.VISIBLE && view.getAlpha() == 1f && view.getTranslationY() == 0f) {
       return;
     }
 
+    if (view.getVisibility() != View.VISIBLE) {
+      view.setAlpha(0f);
+      view.setTranslationY(view.getHeight() / 2f);
+    }
     view.setVisibility(View.VISIBLE);
-    view.setAlpha(0f);
-    view.setTranslationY(view.getHeight() / 2f);
     mCurrentAnimateIn =
         view.animate()
             .alpha(1f)
@@ -1314,6 +1316,9 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
                   view.setTranslationY(0f);
                   view.setAlpha(1f);
                   view.setOnClickListener(null);
+                  if (view == mEventTitleSub && mSubtitleLine != null) {
+                    mSubtitleLine.setVisibility(View.GONE);
+                  }
                 });
 
     mCurrentAnimateOut.start();
@@ -1526,6 +1531,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mEventSubIcon = null;
     mNowPlayingIcon = null;
     mEventTitleSub = null;
+    mSubtitleLine = null;
     mEventTitleSubColored = null;
     mGreetingsExt = null;
     mGreetingsExtClock = null;
