@@ -300,6 +300,16 @@
             android:dependency="pref_show_hotseat_bg"
             android:defaultValue="40" />
 
+        <ListPreference
+            android:key="pref_dock_suggestion_mode"
+            android:title="@string/dock_suggestion_mode_title"
+            android:summary="@string/dock_suggestion_mode_summary"
+            android:defaultValue="smart"
+            android:entries="@array/dock_suggestion_mode_entries"
+            android:entryValues="@array/dock_suggestion_mode_values"
+            android:persistent="true"
+            launcher:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

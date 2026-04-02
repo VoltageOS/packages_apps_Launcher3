@@ -26,6 +26,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,6 +41,9 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.ShortcutAndWidgetContainer.TranslationProvider;
 import com.android.launcher3.celllayout.CellLayoutLayoutParams;
+import com.android.launcher3.dock.DockSlot;
+import com.android.launcher3.dock.DockSuggestionsHelper;
+import com.android.launcher3.dock.DockSlotView;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.util.HorizontalInsettableView;
 import com.android.launcher3.util.LauncherBindableItemsContainer.ItemOperator;
@@ -52,6 +56,8 @@ import com.android.launcher3.views.ActivityContext;
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View class that represents the bottom row of the home screen.
@@ -94,6 +100,9 @@ public class Hotseat extends CellLayout implements Insettable {
     private final MultiPropertyFactory mIconsTranslationXFactory;
 
     private final View mQsb;
+
+    private final List<DockSlotView> mRecentSlotViews = new ArrayList<>();
+    private long mLastDockApplyTime;
 
     public Hotseat(Context context) {
         this(context, null);
@@ -161,6 +170,8 @@ public class Hotseat extends CellLayout implements Insettable {
         boolean bubbleBarEnabled = activityContext.isBubbleBarEnabled();
         boolean hasBubbles = activityContext.hasBubbles();
         removeAllViewsInLayout();
+        mRecentSlotViews.clear();
+        mLastDockApplyTime = SystemClock.uptimeMillis();
         mHasVerticalHotseat = hasVerticalHotseat;
         DeviceProfile dp = mActivity.getDeviceProfile();
 
@@ -388,6 +399,349 @@ public class Hotseat extends CellLayout implements Insettable {
             return mQsb;
         }
         return super.mapOverItems(op);
+    }
+
+    public void applyDockSlots(@androidx.annotation.NonNull List<? extends DockSlot> slots) {
+        ShortcutAndWidgetContainer swc = getShortcutsAndWidgets();
+        boolean suppressAnimations =
+                SystemClock.uptimeMillis() - mLastDockApplyTime < RAPID_UPDATE_WINDOW_MS;
+        mLastDockApplyTime = SystemClock.uptimeMillis();
+        Launcher launcher = Launcher.getLauncher(getContext());
+        List<DockSlotView> outgoing = new java.util.ArrayList<>();
+        for (DockSlotView view : mRecentSlotViews) {
+            if (view.getParent() == swc) {
+                outgoing.add(view);
+            }
+        }
+        mRecentSlotViews.clear();
+
+        if (slots.isEmpty() || !DockSuggestionsHelper.isFeatureEnabled(getContext())) {
+            animateOutAll(swc, outgoing, suppressAnimations, () -> {});
+            return;
+        }
+
+        java.util.List<PendingDockSuggestion> pending = buildPendingDockSuggestions(slots, swc);
+        ExistingDockViews existingViews = new ExistingDockViews(outgoing);
+        existingViews.captureExactMatches(pending);
+
+        for (PendingDockSuggestion suggestion : pending) {
+            DockSlotView existing = existingViews.takeBestMatch(suggestion);
+            if (existing == null) {
+                DockSlotView view = createSuggestionView(suggestion, launcher);
+                swc.addView(view, suggestion.layoutParams);
+                mRecentSlotViews.add(view);
+                if (!suppressAnimations) {
+                    view.animateIn(0);
+                }
+                continue;
+            }
+
+            rebindSuggestionView(existing, suggestion, launcher, suppressAnimations);
+            mRecentSlotViews.add(existing);
+        }
+
+        java.util.List<DockSlotView> toRemove = existingViews.getUnmatchedViews();
+        animateOutAll(swc, toRemove, suppressAnimations, () -> {});
+    }
+
+    private void animateOutAll(ShortcutAndWidgetContainer swc,
+            List<DockSlotView> views, boolean suppressAnimations, Runnable onDone) {
+        if (views.isEmpty()) { onDone.run(); return; }
+        if (suppressAnimations) {
+            for (DockSlotView v : views) {
+                swc.removeView(v);
+            }
+            onDone.run();
+            return;
+        }
+        java.util.concurrent.atomic.AtomicInteger pending =
+                new java.util.concurrent.atomic.AtomicInteger(views.size());
+        for (DockSlotView v : views) {
+            v.animateOut(() -> {
+                swc.removeView(v);
+                if (pending.decrementAndGet() == 0) onDone.run();
+            });
+        }
+    }
+
+    private static final long RAPID_UPDATE_WINDOW_MS = 450;
+
+    private static long toCellKey(int cellX, int cellY) {
+        return ((long) cellX << 32) | (cellY & 0xffffffffL);
+    }
+
+    @Nullable
+    private static String getPackageName(DockSlot.Suggested slot) {
+        return slot.getApp().componentName != null
+                ? slot.getApp().componentName.getPackageName() : null;
+    }
+
+    public List<String> getPinnedPackagesByRank() {
+        int slotCount = mActivity.getDeviceProfile().numShownHotseatIcons;
+        java.util.ArrayList<String> result =
+                new java.util.ArrayList<>(java.util.Collections.<String>nCopies(slotCount, null));
+        ShortcutAndWidgetContainer swc = getShortcutsAndWidgets();
+        for (int i = 0; i < swc.getChildCount(); i++) {
+            View child = swc.getChildAt(i);
+            if (child == null || child instanceof DockSlotView) {
+                continue;
+            }
+            if (!(child.getLayoutParams() instanceof CellLayoutLayoutParams)) {
+                continue;
+            }
+            CellLayoutLayoutParams lp = (CellLayoutLayoutParams) child.getLayoutParams();
+            int rank = slotIndexForCell(lp.getCellX(), lp.getCellY());
+            if (rank < 0 || rank >= slotCount) {
+                continue;
+            }
+            Object tag = child.getTag();
+            if (tag instanceof ItemInfo) {
+                android.content.ComponentName cn = ((ItemInfo) tag).getTargetComponent();
+                result.set(rank, cn != null ? cn.getPackageName() : null);
+            }
+        }
+        return result;
+    }
+
+    public java.util.Set<Integer> getOccupiedRanks() {
+        java.util.Set<Integer> occupiedRanks = new java.util.HashSet<>();
+        ShortcutAndWidgetContainer swc = getShortcutsAndWidgets();
+        for (int i = 0; i < swc.getChildCount(); i++) {
+            View child = swc.getChildAt(i);
+            if (child == null || child instanceof DockSlotView
+                    || !(child.getLayoutParams() instanceof CellLayoutLayoutParams)) {
+                continue;
+            }
+            CellLayoutLayoutParams lp = (CellLayoutLayoutParams) child.getLayoutParams();
+            occupiedRanks.add(slotIndexForCell(lp.getCellX(), lp.getCellY()));
+        }
+        return occupiedRanks;
+    }
+
+    public boolean isRankOccupied(int rank) {
+        ShortcutAndWidgetContainer swc = getShortcutsAndWidgets();
+        for (int i = 0; i < swc.getChildCount(); i++) {
+            View child = swc.getChildAt(i);
+            if (child == null || child instanceof DockSlotView
+                    || !(child.getLayoutParams() instanceof CellLayoutLayoutParams)) {
+                continue;
+            }
+            CellLayoutLayoutParams lp = (CellLayoutLayoutParams) child.getLayoutParams();
+            if (slotIndexForCell(lp.getCellX(), lp.getCellY()) == rank) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int slotIndexForCell(int cellX, int cellY) {
+        return mHasVerticalHotseat ? (getCountY() - (cellY + 1)) : cellX;
+    }
+
+    private java.util.List<PendingDockSuggestion> buildPendingDockSuggestions(
+            List<? extends DockSlot> slots, ShortcutAndWidgetContainer swc) {
+        java.util.Set<Long> occupiedCells = new java.util.HashSet<>();
+        java.util.Set<String> usedPackages = new java.util.HashSet<>();
+        collectPinnedContent(swc, occupiedCells, usedPackages);
+
+        int slotCount = mActivity.getDeviceProfile().numShownHotseatIcons;
+        java.util.List<PendingDockSuggestion> pending = new java.util.ArrayList<>();
+        for (int rank = 0; rank < Math.min(slotCount, slots.size()); rank++) {
+            DockSlot slot = slots.get(rank);
+            if (!(slot instanceof DockSlot.Suggested)) {
+                continue;
+            }
+
+            DockSlot.Suggested suggested = (DockSlot.Suggested) slot;
+            String packageName = getPackageName(suggested);
+            CellLayoutLayoutParams layoutParams =
+                    new CellLayoutLayoutParams(getCellXFromOrder(rank), getCellYFromOrder(rank), 1, 1);
+            long cellKey = toCellKey(layoutParams.getCellX(), layoutParams.getCellY());
+            if (occupiedCells.contains(cellKey)
+                    || (packageName != null && usedPackages.contains(packageName))) {
+                continue;
+            }
+
+            pending.add(new PendingDockSuggestion(suggested, layoutParams, rank, packageName));
+            occupiedCells.add(cellKey);
+            if (packageName != null) {
+                usedPackages.add(packageName);
+            }
+        }
+        return pending;
+    }
+
+    private void collectPinnedContent(
+            ShortcutAndWidgetContainer swc,
+            java.util.Set<Long> occupiedCells,
+            java.util.Set<String> usedPackages) {
+        for (int i = 0; i < swc.getChildCount(); i++) {
+            View child = swc.getChildAt(i);
+            if (child == null || child instanceof DockSlotView
+                    || !(child.getLayoutParams() instanceof CellLayoutLayoutParams)) {
+                continue;
+            }
+
+            CellLayoutLayoutParams layoutParams = (CellLayoutLayoutParams) child.getLayoutParams();
+            occupiedCells.add(toCellKey(layoutParams.getCellX(), layoutParams.getCellY()));
+
+            Object tag = child.getTag();
+            if (tag instanceof com.android.launcher3.model.data.WorkspaceItemInfo) {
+                android.content.ComponentName componentName =
+                        ((com.android.launcher3.model.data.WorkspaceItemInfo) tag)
+                                .getTargetComponent();
+                if (componentName != null) {
+                    usedPackages.add(componentName.getPackageName());
+                }
+            }
+        }
+    }
+
+    private DockSlotView createSuggestionView(PendingDockSuggestion suggestion, Launcher launcher) {
+        DockSlotView view = new DockSlotView(getContext());
+        bindSuggestionActions(view, launcher);
+        view.bind(suggestion.slot, suggestion.rank);
+        return view;
+    }
+
+    private void rebindSuggestionView(
+            DockSlotView view,
+            PendingDockSuggestion suggestion,
+            Launcher launcher,
+            boolean suppressAnimations) {
+        if (view.getParent() != getShortcutsAndWidgets()) {
+            if (view.getParent() instanceof ViewGroup) {
+                ((ViewGroup) view.getParent()).removeView(view);
+            }
+            getShortcutsAndWidgets().addView(view, suggestion.layoutParams);
+        } else {
+            CellLayoutLayoutParams currentLp = (CellLayoutLayoutParams) view.getLayoutParams();
+            if (currentLp.getCellX() != suggestion.layoutParams.getCellX()
+                    || currentLp.getCellY() != suggestion.layoutParams.getCellY()) {
+                view.setLayoutParams(suggestion.layoutParams);
+            }
+        }
+
+        bindSuggestionActions(view, launcher);
+        view.setRank(suggestion.rank);
+        if (suggestion.shouldAnimateChange(view, suppressAnimations)) {
+            view.animateChange(suggestion.slot);
+        } else {
+            view.bind(suggestion.slot, suggestion.rank);
+        }
+    }
+
+    private void bindSuggestionActions(DockSlotView view, Launcher launcher) {
+        view.setSuggestionActionListener(new DockSlotView.SuggestionActionListener() {
+            @Override
+            public boolean onPinRequested(com.android.launcher3.model.data.AppInfo app, int rank) {
+                return launcher.pinDockSuggestion(app, rank);
+            }
+
+            @Override
+            public boolean onHideForNow(com.android.launcher3.model.data.AppInfo app) {
+                return launcher.hideDockSuggestionForNow(app);
+            }
+
+            @Override
+            public boolean onDontSuggest(com.android.launcher3.model.data.AppInfo app) {
+                return launcher.blockDockSuggestion(app);
+            }
+        });
+    }
+
+    private static final class PendingDockSuggestion {
+        final DockSlot.Suggested slot;
+        final CellLayoutLayoutParams layoutParams;
+        final int rank;
+        @Nullable final String packageName;
+
+        PendingDockSuggestion(DockSlot.Suggested slot, CellLayoutLayoutParams layoutParams,
+                int rank, @Nullable String packageName) {
+            this.slot = slot;
+            this.layoutParams = layoutParams;
+            this.rank = rank;
+            this.packageName = packageName;
+        }
+
+        long getCellKey() {
+            return toCellKey(layoutParams.getCellX(), layoutParams.getCellY());
+        }
+
+        boolean shouldAnimateChange(DockSlotView existing, boolean suppressAnimations) {
+            return !suppressAnimations
+                    && !java.util.Objects.equals(existing.getCurrentAppPkg(), packageName);
+        }
+    }
+
+    private static final class ExistingDockViews {
+        private final java.util.Map<Long, DockSlotView> mViewsByCell = new java.util.HashMap<>();
+        private final java.util.Map<String, DockSlotView> mViewsByPackage = new java.util.HashMap<>();
+        private final java.util.Map<Long, DockSlotView> mExactMatches = new java.util.HashMap<>();
+
+        ExistingDockViews(List<DockSlotView> views) {
+            for (DockSlotView view : views) {
+                CellLayoutLayoutParams layoutParams =
+                        (CellLayoutLayoutParams) view.getLayoutParams();
+                mViewsByCell.put(toCellKey(layoutParams.getCellX(), layoutParams.getCellY()), view);
+                String packageName = view.getCurrentAppPkg();
+                if (packageName != null) {
+                    mViewsByPackage.put(packageName, view);
+                }
+            }
+        }
+
+        void captureExactMatches(java.util.List<PendingDockSuggestion> pendingSuggestions) {
+            for (PendingDockSuggestion suggestion : pendingSuggestions) {
+                DockSlotView existing = mViewsByCell.get(suggestion.getCellKey());
+                if (existing == null
+                        || !java.util.Objects.equals(existing.getCurrentAppPkg(),
+                                suggestion.packageName)) {
+                    continue;
+                }
+
+                mExactMatches.put(suggestion.getCellKey(), existing);
+                mViewsByCell.remove(suggestion.getCellKey());
+                if (suggestion.packageName != null) {
+                    mViewsByPackage.remove(suggestion.packageName);
+                }
+            }
+        }
+
+        @Nullable
+        DockSlotView takeBestMatch(PendingDockSuggestion suggestion) {
+            DockSlotView existing = mExactMatches.remove(suggestion.getCellKey());
+            if (existing != null) {
+                return existing;
+            }
+
+            if (suggestion.packageName != null) {
+                existing = mViewsByPackage.remove(suggestion.packageName);
+                if (existing != null) {
+                    removeFromCellMap(existing);
+                    return existing;
+                }
+            }
+
+            existing = mViewsByCell.remove(suggestion.getCellKey());
+            if (existing != null) {
+                String oldPackageName = existing.getCurrentAppPkg();
+                if (oldPackageName != null) {
+                    mViewsByPackage.remove(oldPackageName);
+                }
+            }
+            return existing;
+        }
+
+        java.util.List<DockSlotView> getUnmatchedViews() {
+            return new java.util.ArrayList<>(mViewsByCell.values());
+        }
+
+        private void removeFromCellMap(DockSlotView view) {
+            CellLayoutLayoutParams layoutParams =
+                    (CellLayoutLayoutParams) view.getLayoutParams();
+            mViewsByCell.remove(toCellKey(layoutParams.getCellX(), layoutParams.getCellY()));
+        }
     }
 
     /** Dumps the Hotseat internal state */

@@ -29,12 +29,15 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.android.launcher3.dock.DockSuggestionMode;
+import com.android.launcher3.dock.DockSuggestionsHelper;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.SwitchPreferenceCompat;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartFragmentCallback;
@@ -42,7 +45,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallb
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceGroup.PreferencePositionCallback;
 import androidx.preference.PreferenceScreen;
-import androidx.preference.ListPreference;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.BuildConfig;
@@ -206,8 +209,10 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private Preference mQuickspaceBattery;
         private ListPreference mSearchProviderPref;
         private SwitchPreferenceCompat mAutoAddIconsPref;
+        private ListPreference mDockSuggestionModePref;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
+        private static final String KEY_DOCK_SUGGESTION_MODE = "pref_dock_suggestion_mode";
 
         private Preference mShowGoogleAppPref;
         private Preference mShowGoogleBarPref;
@@ -239,6 +244,11 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
             mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
+            mDockSuggestionModePref = screen.findPreference(KEY_DOCK_SUGGESTION_MODE);
+        DockSuggestionMode dockSuggestionMode = DockSuggestionsHelper.getSuggestionMode(requireContext());
+            if (mDockSuggestionModePref != null) {
+                mDockSuggestionModePref.setValue(dockSuggestionMode.getPrefValue());
+            }
 
             Preference clearHomeScreenPref = screen.findPreference(KEY_CLEAR_HOME_SCREEN);
             if (clearHomeScreenPref != null) {
@@ -504,6 +514,27 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             if (LauncherPrefs.APP_DRAWER_STYLE.getSharedPrefKey().equals(key)) {
                 updateAutoAddIconsPreferenceState();
             }
+            if (KEY_DOCK_SUGGESTION_MODE.equals(key)) {
+                DockSuggestionMode mode =
+                        DockSuggestionMode.fromPrefValue(sharedPreferences.getString(key, null));
+                if (mode.isEnabled() && !DockSuggestionsHelper.hasUsageStatsPermission(requireContext())) {
+                    showUsageAccessDialog();
+                }
+            }
+        }
+
+
+        private void showUsageAccessDialog() {
+            new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.dock_recents_permission_title)
+                .setMessage(R.string.dock_recents_permission_message)
+                .setPositiveButton(R.string.dock_recents_permission_grant, (d, w) -> {
+                    Intent intent = DockSuggestionsHelper.usageAccessSettingsIntent();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
         }
 
         private void updateAutoAddIconsPreferenceState() {

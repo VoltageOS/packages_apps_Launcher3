@@ -216,6 +216,8 @@ import com.android.launcher3.pm.PinRequestHelper;
 import com.android.launcher3.popup.ArrowPopup;
 import com.android.launcher3.popup.PopupController;
 import com.android.launcher3.popup.SystemShortcut;
+import com.android.launcher3.dock.DockSuggestionsController;
+import com.android.launcher3.dock.DockSuggestionsHelper;
 import com.android.launcher3.quickspace.QuickSpaceView;
 import com.android.launcher3.statemanager.StateManager;
 import com.android.launcher3.statemanager.StateManager.StateHandler;
@@ -436,6 +438,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     // QuickSpace
     private QuickSpaceView mQuickSpace;
 
+    // Dock Suggestions
+    private DockSuggestionsController mDockSuggestionsController;
+
     public static Launcher getLauncher(Context context) {
         return fromContext(context);
     }
@@ -476,6 +481,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         setupViews();
         updateDisallowBack();
+        initDockSuggestions();
 
         mAppWidgetHolder.startListening();
         mAppWidgetHolder.addProviderChangeListener(() -> refreshAndBindWidgetsForPackageUser(null));
@@ -1245,6 +1251,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         TraceHelper.INSTANCE.endSection();
 
         LauncherAppState.INSTANCE.executeIfCreated(app -> app.checkIfRestartNeeded());
+        refreshDockSuggestions();
     }
 
     @Override
@@ -1264,6 +1271,9 @@ public class Launcher extends StatefulActivity<LauncherState>
             mQuickSpace.onPause();
         }
         mAppWidgetHolder.setActivityResumed(false);
+        if (mDockSuggestionsController != null) {
+            mDockSuggestionsController.onLauncherPaused();
+        }
     }
 
     /**
@@ -1373,6 +1383,87 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         mItemInflater = new ItemInflater<>(this, mAppWidgetHolder, getItemOnClickListener(),
                 mFocusHandler, new CellLayout(mWorkspace.getContext(), mWorkspace));
+    }
+
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener
+            mDockSuggestionsPrefListener = (prefs, key) -> {
+        boolean isModeKey = com.android.launcher3.LauncherPrefs.DOCK_SUGGESTION_MODE
+                .getSharedPrefKey().equals(key);
+        if (!isModeKey) return;
+        if (mDockSuggestionsController == null || mHotseat == null) return;
+        if (!com.android.launcher3.dock.DockSuggestionsHelper.isFeatureEnabled(this)) {
+            mHotseat.applyDockSlots(java.util.Collections.emptyList());
+        } else {
+            refreshDockSuggestions();
+        }
+    };
+
+    private void initDockSuggestions() {
+        DockSuggestionsHelper.getSuggestionMode(this);
+        mDockSuggestionsController = new DockSuggestionsController(this);
+        mDockSuggestionsController.init(slots -> {
+            if (mHotseat != null) mHotseat.applyDockSlots(slots);
+        });
+        mSharedPrefs.registerOnSharedPreferenceChangeListener(mDockSuggestionsPrefListener);
+    }
+
+    private void refreshDockSuggestions() {
+        if (mDockSuggestionsController == null || mHotseat == null) {
+            return;
+        }
+        mDockSuggestionsController.onLauncherResumed(
+                getDeviceProfile().numShownHotseatIcons,
+                mHotseat.getPinnedPackagesByRank(),
+                mHotseat.getOccupiedRanks(),
+                null);
+    }
+
+    public boolean pinDockSuggestion(com.android.launcher3.model.data.AppInfo app, int rank) {
+        if (mHotseat == null || rank < 0 || rank >= getDeviceProfile().numShownHotseatIcons) {
+            return false;
+        }
+        if (mHotseat.isRankOccupied(rank)) {
+            return false;
+        }
+        com.android.launcher3.model.data.WorkspaceItemInfo item = app.makeWorkspaceItem(this);
+        item.container = LauncherSettings.Favorites.CONTAINER_HOTSEAT;
+        item.rank = rank;
+        item.screenId = rank;
+        item.cellX = mHotseat.getCellXFromOrder(rank);
+        item.cellY = mHotseat.getCellYFromOrder(rank);
+        getModelWriter().addItemToDatabase(item,
+                LauncherSettings.Favorites.CONTAINER_HOTSEAT, rank, item.cellX, item.cellY);
+        getStatsLogManager().logger().log(
+                com.android.launcher3.logging.StatsLogManager.LauncherEvent
+                        .LAUNCHER_HOTSEAT_PREDICTION_PINNED);
+        if (mHotseat != null) {
+            mHotseat.post(this::refreshDockSuggestions);
+        }
+        return true;
+    }
+
+    public boolean hideDockSuggestionForNow(com.android.launcher3.model.data.AppInfo app) {
+        String packageName = app.componentName != null ? app.componentName.getPackageName() : null;
+        if (TextUtils.isEmpty(packageName)) {
+            return false;
+        }
+        DockSuggestionsHelper.hidePackageForNow(packageName);
+        if (mHotseat != null) {
+            mHotseat.post(this::refreshDockSuggestions);
+        }
+        return true;
+    }
+
+    public boolean blockDockSuggestion(com.android.launcher3.model.data.AppInfo app) {
+        String packageName = app.componentName != null ? app.componentName.getPackageName() : null;
+        if (TextUtils.isEmpty(packageName)) {
+            return false;
+        }
+        DockSuggestionsHelper.blockPackage(this, packageName);
+        if (mHotseat != null) {
+            mHotseat.post(this::refreshDockSuggestions);
+        }
+        return true;
     }
 
     /**
@@ -1772,6 +1863,11 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         mModel.removeCallbacks(this);
         mRotationHelper.destroy();
+        if (mDockSuggestionsController != null) {
+            mSharedPrefs.unregisterOnSharedPreferenceChangeListener(mDockSuggestionsPrefListener);
+            mDockSuggestionsController.destroy();
+            mDockSuggestionsController = null;
+        }
 
         mAppWidgetHolder.stopListening();
         mAppWidgetHolder.destroy();
@@ -2389,6 +2485,7 @@ public class Launcher extends StatefulActivity<LauncherState>
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void finishBindingItems(IntSet pagesBoundFirst) {
+        refreshDockSuggestions();
         TestEventEmitter.sendEvent(TestEvent.WORKSPACE_FINISH_LOADING);
     }
 

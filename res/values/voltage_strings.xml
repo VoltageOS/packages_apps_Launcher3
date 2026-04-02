@@ -148,6 +148,7 @@
     <string name="label_gemini_search">AI mode</string>
     <string name="dock_music_search_title">Music search</string>
     <string name="dock_music_search_summary">Start music search on pressing mic icon</string>
+    <string name="dock_suggestion_hide_for_now">Hide for now</string>
     <string name="dock_search_title">Google search bar</string>
     <string name="dock_search_summary">Search bar in the bottom dock</string>
     <string name="dock_theme_title">Themed icons</string>
@@ -639,4 +640,31 @@
      <string name="sort_alphabetical">Sort by alphabet</string>
      <string name="sort_install_date">Sort by date of install</string>
      <string name="sort_usage">Sort by usage</string>
+
+    <!-- Dock Suggestions -->
+    <string name="dock_suggestion_mode_title">Smart dock suggestions</string>
+    <string name="dock_suggestion_mode_summary">Fill empty dock slots with app suggestions</string>
+    <string name="dock_suggestion_pin">Pin to dock</string>
+    <string name="dock_suggestion_mode_off">Off</string>
+    <string name="dock_suggestion_mode_recent">Recent apps</string>
+    <string name="dock_suggestion_mode_top_apps">Top apps</string>
+    <string name="dock_suggestion_mode_smart">Smart</string>
+    <string-array name="dock_suggestion_mode_entries">
+        <item>@string/dock_suggestion_mode_off</item>
+        <item>@string/dock_suggestion_mode_recent</item>
+        <item>@string/dock_suggestion_mode_top_apps</item>
+        <item>@string/dock_suggestion_mode_smart</item>
+    </string-array>
+    <string-array name="dock_suggestion_mode_values" translatable="false">
+        <item>off</item>
+        <item>recent</item>
+        <item>top_apps</item>
+        <item>smart</item>
+    </string-array>
+
+    <!-- Dock Recents: Permission onboarding dialog -->
+    <string name="dock_recents_permission_title">Usage Access required</string>
+    <string name="dock_recents_permission_message">To fill empty dock slots with your recently used apps, VoltageOS Launcher needs Usage Access permission.\n\nGo to Settings → Apps → Special access → Usage access and enable it for Home.</string>
+    <string name="dock_recents_permission_grant">Grant permission</string>
+
 </resources>

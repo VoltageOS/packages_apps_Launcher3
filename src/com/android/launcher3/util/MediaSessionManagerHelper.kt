@@ -196,6 +196,9 @@ class MediaSessionManagerHelper private constructor(private val context: Context
 
     fun isMediaPlaying() = playbackState.value?.state == PlaybackState.STATE_PLAYING
 
+    fun getActiveMediaPackageName(): String? =
+        activeController?.packageName?.takeIf { isMediaPlaying() && it.isNotEmpty() }
+
     fun getMediaControllerPlaybackState(): PlaybackState? {
         return activeController?.playbackState ?: null
     }
