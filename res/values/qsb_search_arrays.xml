@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="qsb_search_fallback" translatable="false">
+        <item>com.duckduckgo.mobile.android</item>
+        <item>org.cromite.cromite</item>
+        <item>com.brave.browser_nightly</item>
+        <item>com.brave.browser_beta</item>
+        <item>com.brave.browser</item>
+        <item>org.mozilla.focus</item>
+        <item>org.mozilla.fenix</item>
+        <item>org.mozilla.firefox_beta</item>
+        <item>org.mozilla.firefox</item>
+        <item>org.mozilla.fennec_fdroid</item>
+        <item>org.chromium.chrome</item>
+        <item>com.android.chrome</item>
+        <item>com.vivaldi.browser</item>
+        <item>org.torproject.torbrowser_alpha</item>
+        <item>org.torproject.torbrowser</item>
+        <item>com.kiwibrowser.browser</item>
+        <item>com.startpage.app</item>
+        <item>rk.android.app.pixelsearch</item>
+    </string-array>
+</resources>

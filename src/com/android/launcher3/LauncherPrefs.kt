@@ -268,6 +268,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField val ALL_APPS_DARK_TEXT = backedUpItem("pref_all_apps_dark_text", false)
         @JvmField val DOCK_MUSIC_SEARCH = backedUpItem("pref_dock_music_search", false)
         @JvmField val DOCK_SEARCH = backedUpItem("pref_dock_search", true)
+        @JvmField val DOCK_SEARCH_MODE = backedUpItem("pref_dock_search_mode", "google")
         @JvmField val DOCK_THEME = backedUpItem("pref_dock_theme", false)
         @JvmField val DOCK_SUGGESTION_MODE = backedUpItem("pref_dock_suggestion_mode", "smart")
         @JvmField val DOCK_SUGGESTION_DENYLIST = backedUpItem("pref_dock_suggestion_denylist", emptySet<String>())

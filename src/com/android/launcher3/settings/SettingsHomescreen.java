@@ -58,7 +58,6 @@ import com.android.launcher3.allapps.AppDrawerStyle;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.util.SettingsCache;
-import com.android.launcher3.qsb.QsbContainerView;
 
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 import com.android.settingslib.widget.SettingsBasePreferenceFragment;
@@ -125,6 +124,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         if (LauncherPrefs.SHOW_HOTSEAT_BG.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.HOTSEAT_OPACITY.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.DOCK_SEARCH.getSharedPrefKey().equals(key) ||
+                LauncherPrefs.DOCK_SEARCH_MODE.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.DOCK_THEME.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SEARCH_RADIUS_SIZE.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.DOCK_MUSIC_SEARCH.getSharedPrefKey().equals(key) ||
@@ -140,8 +140,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 LauncherPrefs.SHOW_QUICKSPACE_NOWPLAYING.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey().equals(key) ||
-                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key) ||
-                Utilities.KEY_DOCK_SEARCH_PROVIDER.equals(key)) {
+                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key)) {
             LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
         }
     }
@@ -207,15 +206,20 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private ListPreference mQuickspaceStyle;
         private Preference mVoltageAccent;
         private Preference mQuickspaceBattery;
-        private ListPreference mSearchProviderPref;
         private SwitchPreferenceCompat mAutoAddIconsPref;
         private ListPreference mDockSuggestionModePref;
+        private ListPreference mDockSearchModePref;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
         private static final String KEY_DOCK_SUGGESTION_MODE = "pref_dock_suggestion_mode";
 
         private Preference mShowGoogleAppPref;
         private Preference mShowGoogleBarPref;
+        private Preference mDockMusicSearchPref;
+        private Preference mDockThemePref;
+        private Preference mHotseatQsbOpacityPref;
+        private Preference mHotseatQsbStrokePref;
+        private Preference mSearchRadiusPref;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,14 +242,20 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             mShowGoogleAppPref = screen.findPreference(KEY_MINUS_ONE);
             mShowGoogleBarPref = screen.findPreference(LauncherPrefs.DOCK_SEARCH.getSharedPrefKey());
-            mSearchProviderPref = screen.findPreference(Utilities.KEY_DOCK_SEARCH_PROVIDER);
+            mDockSearchModePref = screen.findPreference(LauncherPrefs.DOCK_SEARCH_MODE.getSharedPrefKey());
             mAutoAddIconsPref = screen.findPreference(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY);
+            mDockMusicSearchPref = screen.findPreference(LauncherPrefs.DOCK_MUSIC_SEARCH.getSharedPrefKey());
+            mDockThemePref = screen.findPreference(LauncherPrefs.DOCK_THEME.getSharedPrefKey());
+            mHotseatQsbOpacityPref = screen.findPreference(LauncherPrefs.HOTSEAT_QSB_OPACITY.getSharedPrefKey());
+            mHotseatQsbStrokePref = screen.findPreference(LauncherPrefs.HOTSEAT_QSB_STROKE_WIDTH.getSharedPrefKey());
+            mSearchRadiusPref = screen.findPreference(LauncherPrefs.SEARCH_RADIUS_SIZE.getSharedPrefKey());
 
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
             mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
             mDockSuggestionModePref = screen.findPreference(KEY_DOCK_SUGGESTION_MODE);
-        DockSuggestionMode dockSuggestionMode = DockSuggestionsHelper.getSuggestionMode(requireContext());
+            DockSuggestionMode dockSuggestionMode =
+                    DockSuggestionsHelper.getSuggestionMode(requireContext());
             if (mDockSuggestionModePref != null) {
                 mDockSuggestionModePref.setValue(dockSuggestionMode.getPrefValue());
             }
@@ -267,9 +277,8 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             updateVoltageAccentVisibility();
 
-            updateIsGoogleAppEnabled();
+            updateSearchBarPreferences();
             updateAutoAddIconsPreferenceState();
-            updateSearchProviders();
 
             // If the target preference is not in the current preference screen, find the parent
             // preference screen that contains the target preference and set it as the preference
@@ -350,89 +359,84 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             outState.putBoolean(SAVE_HIGHLIGHTED_KEY, mPreferenceHighlighted);
         }
 
-        private void updateIsGoogleAppEnabled() {
-            if (mShowGoogleAppPref != null) {
-                mShowGoogleAppPref.setEnabled(Utilities.isGSAEnabled(getContext()));
-            }
-            if (mShowGoogleBarPref != null) {
-                mShowGoogleBarPref.setEnabled(Utilities.isGSAEnabled(getContext()));
-                mShowGoogleBarPref.setEnabled(QsbContainerView.getSearchWidgetPackageName(getContext()) != null);
-                mShowGoogleBarPref.setOnPreferenceChangeListener((pref, newValue) -> {
-                    boolean value = (Boolean) newValue;
-                    if (mSearchProviderPref != null) {
-                        mSearchProviderPref.setEnabled(value);
-                    }
-                    SharedPreferences prefs = LauncherPrefs.getPrefs(getContext().getApplicationContext());
-                    prefs.edit().putBoolean(LauncherPrefs.DOCK_SEARCH.getSharedPrefKey(), value).commit();
-                   return true;
-                });
-                if (mSearchProviderPref != null) {
-                    mSearchProviderPref.setEnabled(((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
-                }
-            }
-        }
-
-        private void updateSearchProviders() {
-            if (mSearchProviderPref == null) {
+        private void updateSearchBarPreferences() {
+            if (getContext() == null) {
                 return;
             }
+
+            boolean hasGoogle = Utilities.hasGoogleQsb(getContext());
+            boolean hasWidget = Utilities.hasWidgetQsb(getContext());
+            boolean hasAny = hasGoogle || hasWidget;
+            boolean searchEnabled = LauncherPrefs.DOCK_SEARCH.get(getContext());
+
+            if (mShowGoogleAppPref != null) {
+                mShowGoogleAppPref.setEnabled(hasGoogle);
+            }
+
             if (mShowGoogleBarPref != null) {
-                mSearchProviderPref.setEnabled(
-                        ((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
+                mShowGoogleBarPref.setEnabled(hasAny);
+                mShowGoogleBarPref.setSummary(hasAny
+                        ? R.string.dock_search_summary
+                        : R.string.dock_search_unavailable);
             }
-            String[] fallbacks = getContext().getResources().getStringArray(
-                    R.array.qsb_search_fallback);
-            String[] fallbackNames = getContext().getResources().getStringArray(
-                    R.array.qsb_search_fallback_names);
-            ArrayList<CharSequence> entries = new ArrayList<>();
-            ArrayList<CharSequence> entryValues = new ArrayList<>();
-            entries.add(getContext().getResources().getString(
-                    R.string.pref_dock_search_provider_default));
-            entryValues.add("");
-            for (int i = 0; i < fallbacks.length; i++) {
-                if (!Utilities.isPackageInstalled(getContext(), fallbacks[i])) {
-                    continue;
+
+            if (mDockSearchModePref != null) {
+                if (!hasAny) {
+                    mDockSearchModePref.setEnabled(false);
+                    mDockSearchModePref.setSummary(R.string.dock_search_unavailable);
+                } else {
+                    ArrayList<CharSequence> entries = new ArrayList<>();
+                    ArrayList<CharSequence> entryValues = new ArrayList<>();
+                    if (hasGoogle) {
+                        entries.add(getString(R.string.dock_search_mode_google));
+                        entryValues.add(Utilities.DOCK_SEARCH_MODE_GOOGLE);
+                    }
+                    if (hasWidget) {
+                        entries.add(getString(R.string.dock_search_mode_widget));
+                        entryValues.add(Utilities.DOCK_SEARCH_MODE_WIDGET);
+                    }
+                    mDockSearchModePref.setEntries(entries.toArray(new CharSequence[0]));
+                    mDockSearchModePref.setEntryValues(entryValues.toArray(new CharSequence[0]));
+
+                    String preferredMode = LauncherPrefs.DOCK_SEARCH_MODE.get(getContext());
+                    int preferredIndex = mDockSearchModePref.findIndexOfValue(preferredMode);
+                    if (preferredIndex < 0 && !entryValues.isEmpty()) {
+                        preferredMode = entryValues.get(0).toString();
+                        LauncherPrefs.getPrefs(getContext()).edit()
+                                .putString(LauncherPrefs.DOCK_SEARCH_MODE.getSharedPrefKey(),
+                                        preferredMode)
+                                .apply();
+                        preferredIndex = mDockSearchModePref.findIndexOfValue(preferredMode);
+                    }
+                    mDockSearchModePref.setValue(preferredMode);
+                    mDockSearchModePref.setEnabled(searchEnabled && entryValues.size() > 1);
+                    if (preferredIndex >= 0 && preferredIndex < entries.size()) {
+                        mDockSearchModePref.setSummary(entries.get(preferredIndex));
+                    }
                 }
-            if (entryValues.contains(fallbacks[i])) {
-                continue;
             }
-                entries.add(fallbackNames[i]);
-                entryValues.add(fallbacks[i]);
-            }
-        boolean hasAnyProvider = Utilities.isGSAEnabled(getContext())
-                || entries.size() > 1;
-       if (!hasAnyProvider) {
-            mSearchProviderPref.setVisible(false);
-            return;
-        }
-        mSearchProviderPref.setVisible(true);
-        if (mShowGoogleBarPref != null) {
-            mSearchProviderPref.setEnabled(
-                    ((SwitchPreferenceCompat) mShowGoogleBarPref).isChecked());
+
+            boolean googleQsbActive = searchEnabled && hasGoogle
+                    && Utilities.DOCK_SEARCH_MODE_GOOGLE.equals(
+                    Utilities.getEffectiveDockSearchMode(getContext()));
+            updateGoogleQsbOptionsState(googleQsbActive);
         }
 
-            mSearchProviderPref.setOnPreferenceChangeListener((pref, newValue) -> {
-                String value = (String) newValue;
-                int index = mSearchProviderPref.findIndexOfValue(value);
-                if (index >= 0) {
-                    mSearchProviderPref.setSummary(mSearchProviderPref.getEntries()[index]);
-                }
-                SharedPreferences prefs = LauncherPrefs.getPrefs(
-                        getContext().getApplicationContext());
-                prefs.edit().putString(Utilities.KEY_DOCK_SEARCH_PROVIDER, value).commit();
-                return true;
-            });
-            CharSequence[] entriesArr = entries.toArray(new CharSequence[0]);
-            CharSequence[] valuesArr = entryValues.toArray(new CharSequence[0]);
-            mSearchProviderPref.setEntries(entriesArr);
-            mSearchProviderPref.setEntryValues(valuesArr);
-            String value = Utilities.getQSBProviderOverride(getContext());
-            int index = mSearchProviderPref.findIndexOfValue(value);
-            mSearchProviderPref.setValue(index >= 0 ? value : "");
-            if (index >= 0 && entriesArr.length > index) {
-                mSearchProviderPref.setSummary(entriesArr[index]);
-            } else if (entriesArr.length > 0) {
-                mSearchProviderPref.setSummary(entriesArr[0]);
+        private void updateGoogleQsbOptionsState(boolean enabled) {
+            if (mDockMusicSearchPref != null) {
+                mDockMusicSearchPref.setEnabled(enabled);
+            }
+            if (mDockThemePref != null) {
+                mDockThemePref.setEnabled(enabled);
+            }
+            if (mHotseatQsbOpacityPref != null) {
+                mHotseatQsbOpacityPref.setEnabled(enabled);
+            }
+            if (mHotseatQsbStrokePref != null) {
+                mHotseatQsbStrokePref.setEnabled(enabled);
+            }
+            if (mSearchRadiusPref != null) {
+                mSearchRadiusPref.setEnabled(enabled);
             }
         }
 
@@ -449,7 +453,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
              }
             getPreferenceManager().getSharedPreferences()
                     .registerOnSharedPreferenceChangeListener(this);
-            updateIsGoogleAppEnabled();
+            updateSearchBarPreferences();
             updateAutoAddIconsPreferenceState();
 
             if (mRestartOnResume) {
@@ -513,6 +517,10 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             }
             if (LauncherPrefs.APP_DRAWER_STYLE.getSharedPrefKey().equals(key)) {
                 updateAutoAddIconsPreferenceState();
+            }
+            if (LauncherPrefs.DOCK_SEARCH.getSharedPrefKey().equals(key)
+                    || LauncherPrefs.DOCK_SEARCH_MODE.getSharedPrefKey().equals(key)) {
+                updateSearchBarPreferences();
             }
             if (KEY_DOCK_SUGGESTION_MODE.equals(key)) {
                 DockSuggestionMode mode =

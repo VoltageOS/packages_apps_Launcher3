@@ -131,6 +131,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.android.launcher3.qsb.QsbSetupActivity"
+            android:excludeFromRecents="true"
+            android:autoRemoveFromRecents="true"
+            android:exported="false" />
+
         <!--
         The settings provider contains Home's data, like the workspace favorites. The permissions
         should be changed to what is defined above. The authorities should also be changed to

@@ -51,7 +51,7 @@
                 android:padding="@dimen/qsb_icon_padding"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_mic_color" />
-	    
+
             <ImageView
                 android:id="@+id/lens_icon"
                 android:layout_width="wrap_content"
@@ -66,7 +66,7 @@
                 android:src="@drawable/ic_lens_color" />
 
         </LinearLayout>
-               
+
         <ImageView
             android:id="@+id/g_icon"
             android:layout_width="wrap_content"

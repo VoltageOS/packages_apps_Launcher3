@@ -255,7 +255,10 @@ public class TaskbarView extends FrameLayout implements FolderIcon.FolderIconPar
 
         // TODO: Disable touch events on QSB otherwise it can crash.
         if (Utilities.showQSB(context)) {
-            mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
+            int layoutRes = Utilities.useWidgetQsb(context)
+                    ? R.layout.search_container_hotseat_widget
+                    : R.layout.search_container_hotseat;
+            mQsb = LayoutInflater.from(context).inflate(layoutRes, this, false);
         } else {
             mQsb = LayoutInflater.from(context).inflate(R.layout.empty_view, this, false);
         }
@@ -1166,12 +1169,13 @@ public class TaskbarView extends FrameLayout implements FolderIcon.FolderIconPar
             if (child == mQsb) {
                 int qsbStart;
                 int qsbEnd;
+                int qsbWidth = Utilities.getHotseatQsbWidth(getContext());
                 if (layoutRtl) {
                     qsbStart = iconEnd + mItemMarginLeftRight;
-                    qsbEnd = qsbStart + deviceProfile.hotseatQsbWidth;
+                    qsbEnd = qsbStart + qsbWidth;
                 } else {
                     qsbEnd = iconEnd - mItemMarginLeftRight;
-                    qsbStart = qsbEnd - deviceProfile.hotseatQsbWidth;
+                    qsbStart = qsbEnd - qsbWidth;
                 }
                 int qsbTop = (bottom - top - deviceProfile.getHotseatProfile().getQsbHeight()) / 2;
                 int qsbBottom = qsbTop + deviceProfile.getHotseatProfile().getQsbHeight();

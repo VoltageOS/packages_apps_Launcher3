@@ -234,9 +234,12 @@
             android:defaultValue="true"
             launcher:iconSpaceReserved="false" />
 
-        <androidx.preference.ListPreference
-            android:key="pref_dock_search_provider"
-            android:title="@string/pref_dock_search_provider_title"
+        <ListPreference
+            android:key="pref_dock_search_mode"
+            android:title="@string/dock_search_mode_title"
+            android:summary="%s"
+            android:defaultValue="google"
+            android:dependency="pref_dock_search"
             launcher:iconSpaceReserved="false" />
 
         <com.android.launcher3.settings.preferences.CustomSeekBarPreference

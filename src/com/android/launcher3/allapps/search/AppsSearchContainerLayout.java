@@ -142,6 +142,9 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
+        boolean googleQsbActive = Utilities.DOCK_SEARCH_MODE_GOOGLE.equals(
+                Utilities.getEffectiveDockSearchMode(getContext()));
+        boolean themedGoogleQsb = googleQsbActive && LauncherPrefs.DOCK_THEME.get(getContext());
         Drawable gIcon = getContext().getDrawable(R.drawable.ic_super_g_color);
         Drawable gIconThemed = getContext().getDrawable(R.drawable.ic_super_g_themed);
         Drawable sIcon = getContext().getDrawable(R.drawable.ic_allapps_search);
@@ -159,9 +162,9 @@ public class AppsSearchContainerLayout extends ExtendedEditText
             optionsIcon.setTint(Themes.getAttrColor(getContext(), android.R.attr.textColorPrimary));
         }
 
-        if (Utilities.showQSB(getContext()) && !LauncherPrefs.DOCK_THEME.get(getContext())) {
+        if (googleQsbActive && !themedGoogleQsb) {
             setCompoundDrawablesRelativeWithIntrinsicBounds(gIcon, null, optionsIcon, null);
-        } else if (Utilities.showQSB(getContext()) && LauncherPrefs.DOCK_THEME.get(getContext())) {
+        } else if (themedGoogleQsb) {
             setCompoundDrawablesRelativeWithIntrinsicBounds(gIconThemed, null, optionsIcon, null);
         } else {
             setCompoundDrawablesRelativeWithIntrinsicBounds(sIcon, null, optionsIcon, null);
@@ -175,8 +178,11 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     private void setUpBackground() {
         Context context = getContext();
         float cornerRadius = getCornerRadius(context);
+        boolean themedGoogleQsb = Utilities.DOCK_SEARCH_MODE_GOOGLE.equals(
+                Utilities.getEffectiveDockSearchMode(context))
+                && LauncherPrefs.DOCK_THEME.get(context);
         int color = Themes.getAttrColor(context, R.attr.qsbFillColor);
-        if (LauncherPrefs.DOCK_THEME.get(context))
+        if (themedGoogleQsb)
             color = Themes.getAttrColor(context, R.attr.qsbFillColorThemed);
 
         color = androidx.core.graphics.ColorUtils.setAlphaComponent(color, 80);
