@@ -29,7 +29,6 @@ import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET
 import com.android.launcher3.R
-import com.android.launcher3.util.DisplayController
 import java.io.IOException
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -73,8 +72,8 @@ class LauncherSearchIndexablesProvider : SearchIndexablesProvider() {
         return InvariantDeviceProfile.INSTANCE.get(context).deviceType == TYPE_TABLET
     }
 
-    fun isRotationAllowed(): Boolean {
-        return DisplayController.INSTANCE.get(context).info.isRotationAllowed
+    fun supportsAutoRotation(): Boolean {
+        return context!!.resources.getBoolean(com.android.internal.R.bool.config_supportAutoRotation)
     }
 
     override fun queryRawData(projection: Array<String>) =
@@ -82,9 +81,10 @@ class LauncherSearchIndexablesProvider : SearchIndexablesProvider() {
 
     override fun queryNonIndexableKeys(projection: Array<String>): Cursor {
         val cursor = MatrixCursor(SearchIndexablesContract.NON_INDEXABLES_KEYS_COLUMNS)
-        if (Flags.oneGridSpecs() && !isDeviceTablet() && !isRotationAllowed()) {
+        if (!supportsAutoRotation() || isDeviceTablet()) {
             cursor.addRow(arrayOf(ALLOW_ROTATION_KEY))
-        } else {
+        }
+        if (supportsAutoRotation() || !Flags.oneGridSpecs() || isDeviceTablet()) {
             cursor.addRow(arrayOf(FIXED_LANDSCAPE_KEY))
         }
         if (!context!!.getSystemService(LauncherApps::class.java)?.hasShortcutHostPermission()!!) {

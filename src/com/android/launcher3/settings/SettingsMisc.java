@@ -323,21 +323,19 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
             }
 
             DisplayController.Info info = DisplayController.INSTANCE.get(getContext()).getInfo();
+            boolean supportsAutoRotation = getContext().getResources().getBoolean(
+                    com.android.internal.R.bool.config_supportAutoRotation);
             switch (preference.getKey()) {
                 case ALLOW_ROTATION_PREFERENCE_KEY:
-                    if (Flags.oneGridSpecs()) {
-                        return false;
-                    }
                     if (info.isTablet(info.realBounds)) {
-                        // Launcher supports rotation by default. No need to show this setting.
+                        // Tablets always allow rotation; do not show a toggle.
                         return false;
                     }
-                    if (!getContext().getResources().getBoolean(
-                            com.android.internal.R.bool.config_supportAutoRotation)) {
+                    if (!supportsAutoRotation) {
                         // Not supported by the device, hide setting.
                         return false;
                     }
-                    // Initialize the UI once
+                    // Phones default to off and can opt in to home rotation.
                     preference.setDefaultValue(RotationHelper.getAllowRotationDefaultValue(info));
                     return true;
                 case DEVELOPER_OPTIONS_KEY:
@@ -352,6 +350,9 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                             == TYPE_MULTI_DISPLAY
                             || InvariantDeviceProfile.INSTANCE.get(getContext()).deviceType
                             == TYPE_TABLET) {
+                        return false;
+                    }
+                    if (supportsAutoRotation) {
                         return false;
                     }
                     // When the setting changes rotate the screen accordingly to showcase the result

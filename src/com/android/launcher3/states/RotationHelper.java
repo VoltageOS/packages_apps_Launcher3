@@ -54,12 +54,8 @@ public class RotationHelper implements LauncherPrefChangeListener,
      * Returns the default value of {@link #ALLOW_ROTATION_PREFERENCE_KEY} preference.
      */
     public static boolean getAllowRotationDefaultValue(DisplayController.Info info) {
-        if (info.isRotationAllowed()) {
-            return true;
-        }
-
         // If the device's pixel density was scaled (usually via settings for A11y), use the
-        // original dimensions to determine if rotation is allowed of not.
+        // original dimensions to determine if home rotation should default on or off.
         float originalSmallestWidth = dpiFromPx(Math.min(info.currentSize.x, info.currentSize.y),
                 DENSITY_DEVICE_STABLE);
         return originalSmallestWidth >= MIN_TABLET_WIDTH;
@@ -109,7 +105,6 @@ public class RotationHelper implements LauncherPrefChangeListener,
 
     private void setIgnoreAutoRotateSettings(boolean ignoreAutoRotateSettings) {
         if (mDestroyed) return;
-        // On large devices we do not handle auto-rotate differently.
         mIgnoreAutoRotateSettings = ignoreAutoRotateSettings;
         if (!mIgnoreAutoRotateSettings) {
             mHomeRotationEnabled = LauncherPrefs.get(mActivity).get(ALLOW_ROTATION);
