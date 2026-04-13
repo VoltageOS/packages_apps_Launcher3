@@ -397,6 +397,35 @@ public class QuickspaceController
     return mCachedWeatherTemp;
   }
 
+  public String getWeatherTemperature() {
+    if (mWeatherInfo == null || mWeatherInfo.temp == null || mWeatherInfo.tempUnits == null) {
+      return null;
+    }
+    return mWeatherInfo.temp + mWeatherInfo.tempUnits;
+  }
+
+  public String getWeatherStateKey() {
+    if (mWeatherInfo == null) return null;
+
+    StringBuilder stateKey = new StringBuilder();
+    if (mWeatherInfo.city != null) {
+      stateKey.append(mWeatherInfo.city);
+    }
+    stateKey.append('|');
+    if (mWeatherInfo.temp != null) {
+      stateKey.append(mWeatherInfo.temp);
+    }
+    stateKey.append('|');
+    if (mWeatherInfo.tempUnits != null) {
+      stateKey.append(mWeatherInfo.tempUnits);
+    }
+    stateKey.append('|').append(mWeatherInfo.conditionCode).append('|');
+    if (mWeatherInfo.condition != null) {
+      stateKey.append(mWeatherInfo.condition);
+    }
+    return stateKey.toString();
+  }
+
   private String getConditionText(String input) {
     if (input == null || input.isEmpty()) return "";
 

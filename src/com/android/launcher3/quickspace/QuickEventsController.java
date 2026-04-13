@@ -90,6 +90,36 @@ public class QuickEventsController {
     private DateFormat mDateFormat;
     private String mLastDateFormatSkeleton;
 
+    private final OnClickListener mPSAAction = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent calendarIntent = new Intent(Intent.ACTION_MAIN);
+            calendarIntent.addCategory(Intent.CATEGORY_APP_CALENDAR);
+
+            Intent clockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
+
+            PackageManager packageManager = mContext.getPackageManager();
+            List<ResolveInfo> calendarApps = packageManager.queryIntentActivities(calendarIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            List<ResolveInfo> clockApps = packageManager.queryIntentActivities(clockIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+            if (!calendarApps.isEmpty()) {
+                calendarIntent.setPackage(calendarApps.get(0).activityInfo.packageName);
+               try {
+                    mContext.startActivity(calendarIntent);
+                } catch (ActivityNotFoundException e) {
+                }
+            } else if (!clockApps.isEmpty()) {
+                clockIntent.setPackage(clockApps.get(0).activityInfo.packageName);
+                try {
+                    mContext.startActivity(clockIntent);
+                } catch (ActivityNotFoundException e) {
+                }
+            } else {
+                Toast.makeText(mContext, R.string.intent_no_app_clock_found, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
     public QuickEventsController(Context context) {
         mContext = context;
         mResources = context.getResources();
@@ -173,6 +203,13 @@ public class QuickEventsController {
         return format.format(System.currentTimeMillis());
     }
 
+    public static String getFullDateLine(Context context) {
+        android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEEdMMMM");
+        DateFormat format = DateFormat.getInstanceForSkeleton("EEEE, d MMMM", Locale.getDefault());
+        format.setContext(DisplayContext.CAPITALIZATION_FOR_STANDALONE);
+        return format.format(System.currentTimeMillis());
+    }
+
     private String formatDateTime(Context context, int style) {
         String styleText;
         if (style == 1) { // Extended
@@ -190,41 +227,37 @@ public class QuickEventsController {
         return mDateFormat.format(System.currentTimeMillis());
     }
 
+    private void updatePSACache(int hourOfDay) {
+        if (shouldUseCachedPSA(hourOfDay)) return;
+
+        int luckNumber = getLuckyNumber(6); // 0..6
+        boolean useRandom = (luckNumber == 0);
+
+        mPSAStr = null;
+        if (!useRandom) {
+            mPSAStr = getPSAStr(hourOfDay);
+        }
+
+        if (mPSAStr == null) {
+            mPSAStr = mResources.getStringArray(R.array.quickspace_psa_random);
+            useRandom = true;
+        }
+
+        mCachedPSAMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+        mCachedPSAHour = hourOfDay;
+        mCachedPSAIsRandom = useRandom;
+    }
+
     private void psonalityEvent() {
+        int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if (LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.get(mContext)) {
+            updatePSACache(hourOfDay);
+        }
+
         if (mEventNowPlaying) return;
 
         mEventTitle = formatDateTime(mContext, Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(mContext)));
-        mEventTitleSubAction = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent calendarIntent = new Intent(Intent.ACTION_MAIN);
-                calendarIntent.addCategory(Intent.CATEGORY_APP_CALENDAR);
-
-                Intent clockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
-
-                PackageManager packageManager = mContext.getPackageManager();
-                List<ResolveInfo> calendarApps = packageManager.queryIntentActivities(calendarIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                List<ResolveInfo> clockApps = packageManager.queryIntentActivities(clockIntent, PackageManager.MATCH_DEFAULT_ONLY);
-
-                if (!calendarApps.isEmpty()) {
-                    calendarIntent.setPackage(calendarApps.get(0).activityInfo.packageName);
-                    try {
-                        mContext.startActivity(calendarIntent);
-                    } catch (ActivityNotFoundException e) {
-                    }
-                } else if (!clockApps.isEmpty()) {
-                    clockIntent.setPackage(clockApps.get(0).activityInfo.packageName);
-                    try {
-                        mContext.startActivity(clockIntent);
-                    } catch (ActivityNotFoundException e) {
-                    }
-                } else {
-                    Toast.makeText(mContext, R.string.intent_no_app_clock_found, Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-
-        int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        mEventTitleSubAction = mPSAAction;
 
         if (hourOfDay >= 5 && hourOfDay <= 9) {
             mGreetings = mResources.getString(R.string.quickspace_grt_morning);
@@ -251,50 +284,9 @@ public class QuickEventsController {
             return;
         }
 
-        // Check if we can use cached PSA message
-        if (shouldUseCachedPSA(hourOfDay)) {
-            mEventTitleSub = mCachedPSAMessage;
-            mIsQuickEvent = true;
-            mEventSubIcon = null;
-            return;
-        }
-
-        // Generate new PSA message
-        int luckNumber = getLuckyNumber(13);
-        if (luckNumber < 7) {
-            mIsQuickEvent = false;
-            return;
-        } else if (luckNumber == 7) {
-            mPSAStr = mResources.getStringArray(R.array.quickspace_psa_random);
-            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
-            
-            // Cache the random PSA message
-            mCachedPSAMessage = selectedMessage;
-            mCachedPSAHour = hourOfDay;
-            mCachedPSAIsRandom = true;
-            
-            mEventTitleSub = selectedMessage;
-            mIsQuickEvent = true;
-            mEventSubIcon = null;
-            return;
-        }
-
+        mEventTitleSub = mCachedPSAMessage;
+        mIsQuickEvent = true;
         mEventSubIcon = null;
-        mPSAStr = getPSAStr(hourOfDay);
-
-        if (mPSAStr != null) {
-            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
-            
-            // Cache the time-based PSA message
-            mCachedPSAMessage = selectedMessage;
-            mCachedPSAHour = hourOfDay;
-            mCachedPSAIsRandom = false;
-            
-            mEventTitleSub = selectedMessage;
-            mIsQuickEvent = true;
-        } else {
-            mIsQuickEvent = false;
-        }
     }
 
     private String[] getPSAStr(int hour) {
@@ -339,6 +331,14 @@ public class QuickEventsController {
 
     public Drawable getActionIcon() {
         return mEventSubIcon;
+    }
+
+    public String getPSAMessage() {
+        return mCachedPSAMessage;
+    }
+
+    public OnClickListener getPSAAction() {
+        return mPSAAction;
     }
 
     public int getLuckyNumber(int max) {

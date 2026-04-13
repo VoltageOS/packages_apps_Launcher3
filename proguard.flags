@@ -82,3 +82,8 @@
 -keep class com.android.launcher3.icons.** {
   *;
 }
+
+# Material Components
+-keep class com.google.android.material.slider.** {
+  *;
+}
