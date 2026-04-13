@@ -120,11 +120,13 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 LauncherPrefs.DARK_STATUS_BAR.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.QUICKSPACE_UI_STYLE.getSharedPrefKey().equals(key) ||
+                LauncherPrefs.QUICKSPACE_VOLTAGE_MINIMAL.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_NOWPLAYING.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey().equals(key) ||
-                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key)) {
+                LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key) ||
+                LauncherPrefs.QUICKSPACE_VOLTAGE_ACCENT.getSharedPrefKey().equals(key)) {
             LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
         }
     }
@@ -182,13 +184,17 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
         private static final String KEY_QUICKSPACE_STYLE = "pref_quickspace_style";
         private static final String KEY_VOLTAGE_ACCENT = "pref_quickspace_voltage_accent";
+        private static final String KEY_VOLTAGE_MINIMAL = "pref_quickspace_voltage_minimal";
         private static final String KEY_QUICKSPACE_BATTERY = "pref_quickspace_battery";
 
         private static final String KEY_CLEAR_HOME_SCREEN = "pref_clear_home_screen";
 
         private ListPreference mQuickspaceStyle;
         private Preference mVoltageAccent;
+        private Preference mVoltageMinimal;
         private Preference mQuickspaceBattery;
+        private Preference mQuickspaceWeatherCity;
+        private Preference mQuickspaceWeatherText;
 
         private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
 
@@ -232,7 +238,12 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
 
             mQuickspaceStyle = screen.findPreference(KEY_QUICKSPACE_STYLE);
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
+            mVoltageMinimal = screen.findPreference(KEY_VOLTAGE_MINIMAL);
             mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
+            mQuickspaceWeatherCity =
+                    screen.findPreference(LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey());
+            mQuickspaceWeatherText =
+                    screen.findPreference(LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey());
 
             Preference clearHomeScreenPref = screen.findPreference(KEY_CLEAR_HOME_SCREEN);
             if (clearHomeScreenPref != null) {
@@ -249,7 +260,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 });
             }
 
-            updateVoltageAccentVisibility();
+            updateQuickspaceStylePreferenceVisibility();
 
             updateIsGoogleAppEnabled();
 
@@ -415,7 +426,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (KEY_QUICKSPACE_STYLE.equals(key)) {
-                updateVoltageAccentVisibility();
+                updateQuickspaceStylePreferenceVisibility();
             }
             if (LauncherPrefs.APP_DRAWER_STYLE.getSharedPrefKey().equals(key)) {
                 updateAutoAddIconsPreferenceState();
@@ -440,19 +451,33 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             }
         }
 
-        private void updateVoltageAccentVisibility() {
-            if (mVoltageAccent == null || mQuickspaceStyle == null) {
+        private void updateQuickspaceStylePreferenceVisibility() {
+            if (mQuickspaceStyle == null) {
                 return;
             }
-            // The "Voltage" style has a value of "2" in your arrays.xml
-            boolean isVoltageStyle = "2".equals(mQuickspaceStyle.getValue());
+
+            String quickspaceStyle = mQuickspaceStyle.getValue();
+            boolean isVoltageFamilyStyle = "2".equals(quickspaceStyle) || "3".equals(quickspaceStyle);
+            boolean isVoltagePagedStyle = "3".equals(quickspaceStyle);
 
             if (mVoltageAccent != null) {
-                mVoltageAccent.setVisible(isVoltageStyle);
+                mVoltageAccent.setVisible(isVoltageFamilyStyle);
+            }
+
+            if (mVoltageMinimal != null) {
+                mVoltageMinimal.setVisible(isVoltageFamilyStyle);
             }
 
             if (mQuickspaceBattery != null) {
-                mQuickspaceBattery.setVisible(isVoltageStyle);
+                mQuickspaceBattery.setVisible(isVoltageFamilyStyle);
+            }
+
+            if (mQuickspaceWeatherCity != null) {
+                mQuickspaceWeatherCity.setVisible(!isVoltagePagedStyle);
+            }
+
+            if (mQuickspaceWeatherText != null) {
+                mQuickspaceWeatherText.setVisible(!isVoltagePagedStyle);
             }
         }
     }

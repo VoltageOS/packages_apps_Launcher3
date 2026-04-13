@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quickspace_weather_expanded_row"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/quickspace_weather_expanded_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/quickspace_weather_expanded_temp"
+        style="@style/QuickSpaceSubText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="6dp"
+        android:fontFamily="google-sans-flex"
+        android:textColor="?workspaceTextColor"
+        android:textSize="@dimen/quickspace_subtitle_size"
+        android:singleLine="true" />
+</LinearLayout>
