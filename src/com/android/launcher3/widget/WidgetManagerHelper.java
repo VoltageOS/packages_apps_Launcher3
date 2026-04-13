@@ -177,7 +177,14 @@ public class WidgetManagerHelper {
                 UserCache.INSTANCE.get(context)
                         .getUserProfiles()
                         .stream()
-                        .flatMap(u -> awm.getInstalledProvidersForProfile(u).stream()),
+                        .flatMap(u -> {
+                            try {
+                                return awm.getInstalledProvidersForProfile(u).stream();
+                            } catch (IllegalStateException e) {
+                                Log.e(TAG, "allWidgetsSteam: Error getting installed providers for profile", e);
+                                return Stream.empty();
+                            }
+                        }),
                 CustomWidgetManager.INSTANCE.get(context).stream());
     }
 }

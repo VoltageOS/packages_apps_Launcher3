@@ -188,16 +188,20 @@ public class QsbContainerView extends FrameLayout
             @NonNull Context context, @NonNull String providerPkg) {
         AppWidgetProviderInfo defaultWidgetForSearchPackage = null;
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        for (AppWidgetProviderInfo info :
-                appWidgetManager.getInstalledProvidersForPackage(providerPkg, null)) {
-            if (info.provider.getPackageName().equals(providerPkg)) {
-                if ((info.widgetCategory
-                        & AppWidgetProviderInfo.WIDGET_CATEGORY_SEARCHBOX) != 0) {
-                    return info;
-                } else if (defaultWidgetForSearchPackage == null) {
-                    defaultWidgetForSearchPackage = info;
+        try {
+            for (AppWidgetProviderInfo info :
+                    appWidgetManager.getInstalledProvidersForPackage(providerPkg, null)) {
+                if (info.provider.getPackageName().equals(providerPkg)) {
+                    if ((info.widgetCategory
+                            & AppWidgetProviderInfo.WIDGET_CATEGORY_SEARCHBOX) != 0) {
+                        return info;
+                    } else if (defaultWidgetForSearchPackage == null) {
+                        defaultWidgetForSearchPackage = info;
+                    }
                 }
             }
+        } catch (IllegalStateException e) {
+            android.util.Log.e("QsbContainerView", "Failed to get search widget provider", e);
         }
         return defaultWidgetForSearchPackage;
     }
