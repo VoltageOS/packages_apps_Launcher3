@@ -666,7 +666,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         int cellHSpan = mLauncher.getDeviceProfile().inv.numSearchContainerColumns;
         int style = Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(getContext()));
-        int cellVSpan = (style == 2) ? 3 : 1;
+        boolean minimalMode = LauncherPrefs.QUICKSPACE_VOLTAGE_MINIMAL.get(getContext());
+        
+        int cellVSpan = 1;
+        if (style == 2 || style == 3) {
+            cellVSpan = minimalMode ? 2 : 3;
+        }
         CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
 
         lp.canReorder = false;
@@ -1517,7 +1522,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
             int cellHSpan = mLauncher.getDeviceProfile().inv.numSearchContainerColumns;
             int style = Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(getContext()));
-            int cellVSpan = (style == 2) ? 2 : 1;
+            int cellVSpan = (style == 2 || style == 3) ? 2 : 1;
             CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
             lp.canReorder = false;
             firstPage.addViewToCellLayout(

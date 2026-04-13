@@ -173,6 +173,13 @@ public class QuickEventsController {
         return format.format(System.currentTimeMillis());
     }
 
+    public static String getFullDateLine(Context context) {
+        android.text.format.DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEEdMMMM");
+        DateFormat format = DateFormat.getInstanceForSkeleton("EEEE, d MMMM", Locale.getDefault());
+        format.setContext(DisplayContext.CAPITALIZATION_FOR_STANDALONE);
+        return format.format(System.currentTimeMillis());
+    }
+
     private String formatDateTime(Context context, int style) {
         String styleText;
         if (style == 1) { // Extended
@@ -260,41 +267,29 @@ public class QuickEventsController {
         }
 
         // Generate new PSA message
-        int luckNumber = getLuckyNumber(13);
-        if (luckNumber < 7) {
-            mIsQuickEvent = false;
-            return;
-        } else if (luckNumber == 7) {
+        int luckNumber = getLuckyNumber(6); // 0..6
+        boolean useRandom = (luckNumber == 0);
+
+        mPSAStr = null;
+        if (!useRandom) {
+            mPSAStr = getPSAStr(hourOfDay);
+        }
+
+        if (mPSAStr == null) {
             mPSAStr = mResources.getStringArray(R.array.quickspace_psa_random);
-            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
-            
-            // Cache the random PSA message
-            mCachedPSAMessage = selectedMessage;
-            mCachedPSAHour = hourOfDay;
-            mCachedPSAIsRandom = true;
-            
-            mEventTitleSub = selectedMessage;
-            mIsQuickEvent = true;
-            mEventSubIcon = null;
-            return;
+            useRandom = true;
         }
 
+        String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
+        
+        // Cache the PSA message
+        mCachedPSAMessage = selectedMessage;
+        mCachedPSAHour = hourOfDay;
+        mCachedPSAIsRandom = useRandom;
+        
+        mEventTitleSub = selectedMessage;
+        mIsQuickEvent = true;
         mEventSubIcon = null;
-        mPSAStr = getPSAStr(hourOfDay);
-
-        if (mPSAStr != null) {
-            String selectedMessage = mPSAStr[getLuckyNumber(0, mPSAStr.length - 1)];
-            
-            // Cache the time-based PSA message
-            mCachedPSAMessage = selectedMessage;
-            mCachedPSAHour = hourOfDay;
-            mCachedPSAIsRandom = false;
-            
-            mEventTitleSub = selectedMessage;
-            mIsQuickEvent = true;
-        } else {
-            mIsQuickEvent = false;
-        }
     }
 
     private String[] getPSAStr(int hour) {

@@ -254,16 +254,20 @@
         <item>Default</item>
         <item>Extended</item>
         <item>Voltage</item>
+        <item>Voltage paged style</item>
     </string-array>
     <string-array name="quickspace_style_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <!-- Quickspace clock accent -->
     <string name="quickspace_voltage_accent_title">Accent colored clock</string>
     <string name="quickspace_voltage_accent_summary">Color the first number of the clock in Voltage style</string>
+    <string name="quickspace_voltage_minimal_title">Minimal mode</string>
+    <string name="quickspace_voltage_minimal_summary">Collapse Voltage secondary content into tappable quick icons</string>
 
     <!-- QuickSpace: QuickEvent: Greetings -->
     <string name="quickspace_grt_morning">Good morning.</string>
