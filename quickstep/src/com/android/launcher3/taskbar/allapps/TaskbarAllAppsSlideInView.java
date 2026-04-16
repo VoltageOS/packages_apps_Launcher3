@@ -27,6 +27,7 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
@@ -53,6 +54,7 @@ import com.android.launcher3.anim.AnimatorListeners;
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.taskbar.allapps.TaskbarAllAppsViewController.TaskbarAllAppsCallbacks;
 import com.android.launcher3.taskbar.overlay.TaskbarOverlayContext;
+import com.android.launcher3.util.BerryBlackTheme;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.AbstractSlideInView;
 
@@ -284,6 +286,9 @@ public class TaskbarAllAppsSlideInView extends AbstractSlideInView<TaskbarOverla
             scrimColor = context.getResources().getColor(R.color.widgets_picker_scrim);
         } else {
             scrimColor = Themes.getAttrColor(context, R.attr.allAppsScrimColor);
+        }
+        if (BerryBlackTheme.isActive(context)) {
+            scrimColor = Color.BLACK;
         }
         return ColorUtils.setAlphaComponent(
                 scrimColor, LauncherPrefs.APP_DRAWER_OPACITY.get(context) * 255 / 100);

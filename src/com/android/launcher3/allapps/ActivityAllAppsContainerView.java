@@ -93,6 +93,7 @@ import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.recyclerview.AllAppsRecyclerViewPool;
+import com.android.launcher3.util.BerryBlackTheme;
 import com.android.launcher3.util.ItemInfoMatcher;
 import com.android.launcher3.util.Preconditions;
 import com.android.launcher3.util.Themes;
@@ -348,9 +349,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             int layerFg = getContext().getColor(R.color.blur_shade_panel_fg);
             int layerBg = getContext().getColor(R.color.blur_shade_panel_bg);
             mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
-            mBottomSheetBackgroundColorBlurFallback = Utilities.isDarkTheme(getContext())
-                    ? Color.BLACK
-                    : getContext().getColor(android.R.color.system_accent2_200);
+            int fallbackColor = getContext().getColor(Utilities.isDarkTheme(getContext()) 
+                    ? android.R.color.system_accent2_800 : android.R.color.system_accent2_200);
+            if (BerryBlackTheme.isActive(getContext())) {
+                fallbackColor = Color.BLACK;
+            }
+            mBottomSheetBackgroundColorBlurFallback = fallbackColor;
         }
 
         mBottomSheetBackgroundColorLegacy = getContext().getColor(R.color.materialColorSurfaceDim);
@@ -997,8 +1001,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     private int getScrimColor() {
+        int color = Themes.getAttrColor(mContext, R.attr.allAppsScrimColor);
+        if (BerryBlackTheme.isActive(mContext)) {
+            color = Color.BLACK;
+        }
         return ColorUtils.setAlphaComponent(
-                Themes.getAttrColor(mContext, R.attr.allAppsScrimColor),
+                color,
                 LauncherPrefs.APP_DRAWER_OPACITY.get(mContext) * 255 / 100);
     }
 

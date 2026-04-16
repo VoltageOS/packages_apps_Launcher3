@@ -36,6 +36,8 @@ import com.android.launcher3.R;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.Themes;
+import com.android.launcher3.util.BerryBlackTheme;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
 import com.android.quickstep.fallback.RecentsStateUtilsKt;
@@ -172,9 +174,16 @@ public class OverviewState extends LauncherState {
 
     @Override
     public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
+        int baseColor = Themes.getAttrColor(launcher, R.attr.overviewScrimColor);
+        
+        if (Utilities.isDarkTheme(launcher)) {
+            baseColor = BerryBlackTheme.isActive(launcher) ? Color.BLACK : Color.parseColor("#212121");
+        }
+ 
         int scrimColor = ColorUtils.setAlphaComponent(
-                Themes.getAttrColor(launcher, R.attr.overviewScrimColor),
-                LauncherPrefs.RECENTS_OPACITY.get(launcher) * 255 / 100);
+                 baseColor,
+                 LauncherPrefs.RECENTS_OPACITY.get(launcher) * 255 / 100);
+
         return new ScrimColors(
                 /* backgroundColor */ scrimColor,
                 /* foregroundColor */ Color.TRANSPARENT);
