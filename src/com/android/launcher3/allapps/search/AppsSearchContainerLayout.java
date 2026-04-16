@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.PopupMenu;
+import android.view.inputmethod.InputMethodManager;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.ExtendedEditText;
@@ -56,6 +57,7 @@ import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Layout to contain the All-apps search UI.
@@ -123,6 +125,16 @@ public class AppsSearchContainerLayout extends ExtendedEditText
         }
         optionsIcon.setTint(Themes.getAttrColor(context, android.R.attr.textColorPrimary));
         setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, optionsIcon, null);
+    }
+
+    @Override
+    protected void viewClicked(InputMethodManager imm) {
+        super.viewClicked(imm);
+        if (!mIsSearchSessionActive) {
+            mIsSearchSessionActive = true;
+            // non-null list to trigger animateToSearchState
+            mAppsView.setSearchResults(Collections.emptyList());
+        }
     }
 
     @Override
