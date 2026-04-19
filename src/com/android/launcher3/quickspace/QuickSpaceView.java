@@ -160,6 +160,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private int mLastEventTitleHash = 0;
   private int mLastWeatherTempHash = 0;
   private int mLastActionTitleHash = 0;
+  private int mLastPsaMessageHash = 0;
   private long mLastUpdateTime = 0;
 
   private QuickSpaceActionReceiver mActionReceiver;
@@ -317,6 +318,9 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     String currentActionTitle = eventController.getActionTitle();
     int actionTitleHash = currentActionTitle != null ? currentActionTitle.hashCode() : 0;
 
+    String currentPsaMessage = eventController.getPSAMessage();
+    int psaMessageHash = currentPsaMessage != null ? currentPsaMessage.hashCode() : 0;
+
     int batteryLevel =
         mController.getBatteryController() != null
             ? mController.getBatteryController().getBatteryLevel()
@@ -336,6 +340,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         mLastEventTitleHash != eventTitleHash
             || mLastWeatherTempHash != weatherTempHash
             || mLastActionTitleHash != actionTitleHash
+            || mLastPsaMessageHash != psaMessageHash
             || mLastBatteryLevel != batteryLevel
             || batteryVisible != lastBatteryVisible
             || mLastDeviceCount != deviceCount
@@ -345,6 +350,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       mLastEventTitleHash = eventTitleHash;
       mLastWeatherTempHash = weatherTempHash;
       mLastActionTitleHash = actionTitleHash;
+      mLastPsaMessageHash = psaMessageHash;
       mLastBatteryLevel = batteryLevel;
       mLastChargingState = isCharging;
       mLastUpdateTime = currentTime;
@@ -521,7 +527,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       View container, TextView title, ImageView icon, boolean temperatureOnly, View divider) {
     if (container == null || title == null || icon == null) return;
 
-    if (!mWeatherAvailable || mController.getEventController().isNowPlaying()) {
+    boolean preserveWeather = isVoltageMinimalEnabled(mCurrentStyle) || mCurrentStyle == 3;
+    if (!mWeatherAvailable || (!preserveWeather && mController.getEventController().isNowPlaying())) {
       hideWeatherViews(container, divider);
       return;
     }
@@ -554,8 +561,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     }
   }
 
-  private boolean shouldShowMinimalWeather(boolean isNowPlaying) {
-    if (isNowPlaying || !mWeatherAvailable || mController == null || mController.getEventController() == null) {
+  private boolean shouldShowMinimalWeather() {
+    if (!mWeatherAvailable || mController == null || mController.getEventController() == null) {
       return false;
     }
     String weatherText =
@@ -570,13 +577,13 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         && mController.getBatteryController().getBatteryLevel() >= 0;
   }
 
-  private boolean shouldShowMinimalPsa(boolean isNowPlaying) {
-    if (isNowPlaying || !mIsQuickEvent || !LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.get(getContext())) {
+  private boolean shouldShowMinimalPsa() {
+    if (!mIsQuickEvent || !LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.get(getContext())) {
       return false;
     }
     return mController != null
         && mController.getEventController() != null
-        && !TextUtils.isEmpty(mController.getEventController().getActionTitle());
+        && !TextUtils.isEmpty(mController.getEventController().getPSAMessage());
   }
 
   private boolean hasVisibleMinimalChip() {
@@ -791,10 +798,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     boolean isNowPlaying = mController.getEventController().isNowPlaying();
     boolean minimalMode = isVoltageMinimalEnabled(mCurrentStyle);
     boolean minimizeWeather = minimalMode && mCurrentStyle != 3;
-    boolean showWeatherChip = minimizeWeather && shouldShowMinimalWeather(isNowPlaying);
+    boolean showWeatherChip = minimizeWeather && shouldShowMinimalWeather();
     boolean showBattery = LauncherPrefs.SHOW_QUICKSPACE_BATTERY.get(getContext());
     boolean showBatteryChip = shouldShowMinimalBattery();
-    boolean showPsaChip = shouldShowMinimalPsa(isNowPlaying);
+    boolean showPsaChip = shouldShowMinimalPsa();
     QuickBatteryController batController = mController.getBatteryController();
 
     updateMinimalIconRow(
@@ -869,9 +876,9 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
           return;
         }
 
-        String actionTitle = mController.getEventController().getActionTitle();
-        updateTextViewIfNeeded(mPSAMessage, actionTitle, false);
-        mPSAMessage.setOnClickListener(mController.getEventController().getAction());
+        String psaMessage = mController.getEventController().getPSAMessage();
+        updateTextViewIfNeeded(mPSAMessage, psaMessage, false);
+        mPSAMessage.setOnClickListener(mController.getEventController().getPSAAction());
         post(() -> maybeSetMarquee(mPSAMessage));
       } else {
         if (mContextualInfoRow.getVisibility() != View.GONE) {
