@@ -721,8 +721,6 @@ public class Launcher extends StatefulActivity<LauncherState>
         // afterwards.
         if (getDeviceProfile().getDeviceProperties().isRotationAllowed()) {
             LauncherPrefs.get(this).put(FIXED_LANDSCAPE_MODE, false);
-        } else if (getDeviceProfile().getDeviceProperties().isPhone()) {
-            LauncherPrefs.get(this).put(LauncherPrefs.ALLOW_ROTATION, false);
         } else if (getDeviceProfile().getDeviceProperties().isTablet()) {
             // Tablet do not use fixed landscape mode, make sure it can't be activated by mistake
             LauncherPrefs.get(this).put(FIXED_LANDSCAPE_MODE, false);
