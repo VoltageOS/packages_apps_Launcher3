@@ -75,6 +75,7 @@ import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.app.TaskInfo;
 import android.app.WindowConfiguration;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -208,6 +209,8 @@ public abstract class AbsSwipeUpHandler<
 
     // Fraction of the scroll and transform animation in which the current task fades out
     private static final float KQS_TASK_FADE_ANIMATION_FRACTION = 0.4f;
+    private static final String LMO_FREEFORM_INTENT = "com.libremobileos.freeform.START_FREEFORM";
+    private static final String LMO_FREEFORM_PACKAGE = "com.libremobileos.freeform";
 
     protected final RecentsAnimationDeviceState mDeviceState;
     protected final BaseContainerInterface<STATE, RECENTS_CONTAINER> mContainerInterface;
@@ -746,6 +749,7 @@ public abstract class AbsSwipeUpHandler<
     }
 
     private void onLauncherPresentAndGestureStarted() {
+        stopFreeformVibration();
         // Re-setup the recents UI when gesture starts, as the state could have been changed during
         // that time by a previous window transition.
         setupRecentsViewUi();
@@ -1062,6 +1066,7 @@ public abstract class AbsSwipeUpHandler<
                         UI_STATE_FULLSCREEN_TASK, centermostTaskFlags);
             }
         }
+        updateFreeformGestureHaptic(windowProgress);
     }
 
     @Override
@@ -1282,6 +1287,11 @@ public abstract class AbsSwipeUpHandler<
      */
     @VisibleForTesting
     protected void onCalculateEndTarget() {
+        if (maybeStartFreeformFromHomeGesture()) {
+            mGestureState.setEndTarget(HOME);
+            mAnimationFactory.setEndTarget(HOME);
+        }
+
         final GestureEndTarget endTarget = mGestureState.getEndTarget();
 
         switch (endTarget) {
@@ -2398,6 +2408,7 @@ public abstract class AbsSwipeUpHandler<
         if (mContainer != null) {
             mContainer.removeEventCallback(EVENT_DESTROYED, mLauncherOnDestroyCallback);
         }
+        stopFreeformVibration();
     }
 
     /**
@@ -2408,6 +2419,7 @@ public abstract class AbsSwipeUpHandler<
         ActiveGestureProtoLogProxy.logAbsSwipeUpHandlerCancelCurrentAnimation();
         mCanceled = true;
         mCurrentShift.cancelAnimation();
+        stopFreeformVibration();
 
         // Cleanup when switching handlers
         mInputConsumerProxy.unregisterOnTouchDownCallback();
@@ -2640,6 +2652,100 @@ public abstract class AbsSwipeUpHandler<
     private static boolean isNotInRecents(RemoteAnimationTarget app) {
         return app.isNotInRecents
                 || app.windowConfiguration.getActivityType() == ACTIVITY_TYPE_HOME;
+    }
+
+    private boolean isFreeformGestureEnabled() {
+        return LauncherPrefs.FREEFORM_GESTURE.get(mContext);
+    }
+
+    private float getFreeformGestureThreshold() {
+        int progress = LauncherPrefs.FREEFORM_GESTURE_PROGRESS.get(mContext);
+        return Utilities.boundToRange(progress / 10f, 1f, 5f);
+    }
+
+    private boolean mIsFreeformVibrating = false;
+    private android.os.VibrationEffect mFreeformVibrationEffect;
+
+    private void startFreeformVibration() {
+        if (!mIsFreeformVibrating) {
+            if (mFreeformVibrationEffect == null) {
+                mFreeformVibrationEffect = android.os.VibrationEffect.createWaveform(
+                        new long[]{0, 10, 50}, new int[]{0, 50, 0}, 0); // 0 means repeat indefinitely
+            }
+            android.os.Vibrator vibrator = mContext.getSystemService(android.os.Vibrator.class);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                vibrator.vibrate(mFreeformVibrationEffect);
+            }
+            android.widget.Toast.makeText(mContext, R.string.freeform_gesture_threshold_reached, android.widget.Toast.LENGTH_SHORT).show();
+            mIsFreeformVibrating = true;
+        }
+    }
+
+    private void stopFreeformVibration() {
+        if (mIsFreeformVibrating) {
+            android.os.Vibrator vibrator = mContext.getSystemService(android.os.Vibrator.class);
+            if (vibrator != null) {
+                vibrator.cancel();
+            }
+            mIsFreeformVibrating = false;
+        }
+    }
+
+    private void updateFreeformGestureHaptic(float windowProgress) {
+        if (!isFreeformGestureEnabled()) {
+            return;
+        }
+        if (windowProgress >= getFreeformGestureThreshold()) {
+            if (!mIsFreeformVibrating) {
+                startFreeformVibration();
+            }
+        } else {
+            if (mIsFreeformVibrating) {
+                stopFreeformVibration();
+            }
+        }
+    }
+
+    private boolean maybeStartFreeformFromHomeGesture() {
+        if (!isFreeformGestureEnabled() || mCurrentShift.value < getFreeformGestureThreshold()) {
+            return false;
+        }
+        TaskInfo runningTask = getRunningTaskInfo();
+        if (runningTask == null || runningTask.taskId == -1) {
+            return false;
+        }
+        startFreeformByLmoBroadcast(runningTask);
+        return true;
+    }
+
+    @Nullable
+    private TaskInfo getRunningTaskInfo() {
+        TopTaskTracker.CachedTaskInfo runningTask = mGestureState.getRunningTask();
+        return runningTask == null ? null : runningTask.getLegacyBaseTask();
+    }
+
+    private void startFreeformByLmoBroadcast(@NonNull TaskInfo taskInfo) {
+        Intent intent = new Intent(LMO_FREEFORM_INTENT).setPackage(LMO_FREEFORM_PACKAGE);
+
+        ComponentName topActivity = taskInfo.topActivity != null
+                ? taskInfo.topActivity
+                : taskInfo.baseActivity;
+        String packageName = topActivity != null
+                ? topActivity.getPackageName()
+                : null;
+        String activityName = topActivity != null
+                ? topActivity.getClassName()
+                : null;
+
+        if (packageName == null || activityName == null) {
+            return;
+        }
+
+        intent.putExtra("packageName", packageName);
+        intent.putExtra("activityName", activityName);
+        intent.putExtra("userId", taskInfo.userId);
+        intent.putExtra("taskId", taskInfo.taskId);
+        mContext.sendBroadcast(intent);
     }
 
     protected void performHapticFeedback() {
