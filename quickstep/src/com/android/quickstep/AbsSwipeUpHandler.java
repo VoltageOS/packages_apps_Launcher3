@@ -2681,6 +2681,7 @@ public abstract class AbsSwipeUpHandler<
             mIsFreeformVibrating = true;
             android.widget.Toast.makeText(mContext, R.string.freeform_gesture_threshold_reached, android.widget.Toast.LENGTH_SHORT).show();
             mFreeformVibrateRunnable.run();
+            animateFreeformScale(true);
         }
     }
 
@@ -2688,7 +2689,43 @@ public abstract class AbsSwipeUpHandler<
         if (mIsFreeformVibrating) {
             mIsFreeformVibrating = false;
             com.android.launcher3.util.Executors.MAIN_EXECUTOR.getHandler().removeCallbacks(mFreeformVibrateRunnable);
+            animateFreeformScale(false);
         }
+    }
+
+    private android.animation.ValueAnimator mFreeformScaleAnimator;
+    private final android.graphics.Matrix mFreeformScaleMatrix = new android.graphics.Matrix();
+    private float mCurrentFreeformScale = 1f;
+
+    private void animateFreeformScale(boolean isScalingDown) {
+        if (mFreeformScaleAnimator != null) {
+            mFreeformScaleAnimator.cancel();
+        }
+        float targetScale = isScalingDown ? 0.95f : 1f;
+        mFreeformScaleAnimator = android.animation.ValueAnimator.ofFloat(mCurrentFreeformScale, targetScale);
+        mFreeformScaleAnimator.setDuration(150);
+        mFreeformScaleAnimator.setInterpolator(com.android.app.animation.Interpolators.DECELERATE);
+        mFreeformScaleAnimator.addUpdateListener(animation -> {
+            mCurrentFreeformScale = (float) animation.getAnimatedValue();
+            float pivotX = mDp.getDeviceProperties().getWidthPx() / 2f;
+            float pivotY = mDp.getDeviceProperties().getHeightPx() / 2f;
+            mFreeformScaleMatrix.setScale(mCurrentFreeformScale, mCurrentFreeformScale, pivotX, pivotY);
+            
+            float radiusProgress = (1f - mCurrentFreeformScale) / 0.05f;
+            float maxRadius = com.android.quickstep.util.TaskCornerRadius.get(mContext);
+            float radius = radiusProgress * maxRadius;
+            
+            if (mRemoteTargetHandles != null) {
+                for (RemoteTargetGluer.RemoteTargetHandle handle : mRemoteTargetHandles) {
+                    com.android.quickstep.util.TaskViewSimulator tvs = handle.getTaskViewSimulator();
+                    com.android.quickstep.util.TransformParams params = handle.getTransformParams();
+                    tvs.setTaskRectTransform(mCurrentFreeformScale == 1f ? null : mFreeformScaleMatrix);
+                    params.setCornerRadius(radius <= 0f ? -1f : radius);
+                    tvs.apply(params);
+                }
+            }
+        });
+        mFreeformScaleAnimator.start();
     }
 
     private void updateFreeformGestureHaptic(float windowProgress) {
