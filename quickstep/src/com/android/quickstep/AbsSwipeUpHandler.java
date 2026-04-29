@@ -2664,30 +2664,30 @@ public abstract class AbsSwipeUpHandler<
     }
 
     private boolean mIsFreeformVibrating = false;
-    private android.os.VibrationEffect mFreeformVibrationEffect;
+
+    private final Runnable mFreeformVibrateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mIsFreeformVibrating) {
+                com.android.launcher3.util.VibratorWrapper.INSTANCE.get(mContext).vibrate(
+                        android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_TICK));
+                com.android.launcher3.util.Executors.MAIN_EXECUTOR.getHandler().postDelayed(this, 50);
+            }
+        }
+    };
 
     private void startFreeformVibration() {
         if (!mIsFreeformVibrating) {
-            if (mFreeformVibrationEffect == null) {
-                mFreeformVibrationEffect = android.os.VibrationEffect.createWaveform(
-                        new long[]{0, 10, 50}, new int[]{0, 50, 0}, 0); // 0 means repeat indefinitely
-            }
-            android.os.Vibrator vibrator = mContext.getSystemService(android.os.Vibrator.class);
-            if (vibrator != null && vibrator.hasVibrator()) {
-                vibrator.vibrate(mFreeformVibrationEffect);
-            }
-            android.widget.Toast.makeText(mContext, R.string.freeform_gesture_threshold_reached, android.widget.Toast.LENGTH_SHORT).show();
             mIsFreeformVibrating = true;
+            android.widget.Toast.makeText(mContext, R.string.freeform_gesture_threshold_reached, android.widget.Toast.LENGTH_SHORT).show();
+            mFreeformVibrateRunnable.run();
         }
     }
 
     private void stopFreeformVibration() {
         if (mIsFreeformVibrating) {
-            android.os.Vibrator vibrator = mContext.getSystemService(android.os.Vibrator.class);
-            if (vibrator != null) {
-                vibrator.cancel();
-            }
             mIsFreeformVibrating = false;
+            com.android.launcher3.util.Executors.MAIN_EXECUTOR.getHandler().removeCallbacks(mFreeformVibrateRunnable);
         }
     }
 
