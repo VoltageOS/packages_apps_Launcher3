@@ -2184,13 +2184,6 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 }
                 if (isSearchBarFloating()) {
                     bottomOffset += mSearchContainer.getHeight();
-                } else {
-                    String searchPlacement =
-                            LauncherPrefs.ALL_APPS_SEARCH_PLACEMENT.get(getContext());
-                    if ("2".equals(searchPlacement) && mSearchContainer != null
-                            && !AppDrawerStyle.isVerticalPaged(mAppDrawerStyle)) {
-                        bottomOffset += mSearchContainer.getHeight();
-                    }
                 }
                 mRecyclerView.setPadding(mPadding.left, mPadding.top, mPadding.right,
                         mPadding.bottom + bottomOffset);
