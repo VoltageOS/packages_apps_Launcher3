@@ -57,6 +57,8 @@ import com.android.launcher3.quickspace.QuickspaceController.OnDataListener;
 import com.android.launcher3.quickspace.receivers.QuickSpaceActionReceiver;
 import com.android.launcher3.quickspace.views.AccentedTextClock;
 import com.android.launcher3.util.Themes;
+import java.util.HashMap;
+import java.util.Map;
 
 public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
@@ -152,6 +154,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private boolean mLastChargingState = false;
   private boolean mBatteryAlphaRestoreNeeded = false;
 
+  private final Map<Integer, String> mMarqueeTexts = new HashMap<>();
+
   private ViewPropertyAnimator mCurrentAnimateIn;
   private ViewPropertyAnimator mCurrentAnimateOut;
   private ValueAnimator mBatteryProgressAnimator;
@@ -246,12 +250,14 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       getQuickSpaceView();
 
       if (!mIsLayoutSuppressed) {
-        post(
-            () -> {
-              if (!mDestroyed && mQuickspaceContent != null) {
-                requestLayout();
-              }
-            });
+        if (styleChanged || dataChanged || minimalModeChanged) {
+          post(
+              () -> {
+                if (!mDestroyed && mQuickspaceContent != null) {
+                  requestLayout();
+                }
+              });
+        }
         refreshColorStateList();
         updateColorForViews();
       }
@@ -492,15 +498,24 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
   private void maybeSetMarquee(TextView tv) {
     if (tv == null) return;
+    String currentText = tv.getText() != null ? tv.getText().toString() : "";
+    String lastText = mMarqueeTexts.get(tv.getId());
+    if (tv.getEllipsize() == TruncateAt.MARQUEE
+        && tv.isSelected()
+        && currentText.equals(lastText)) {
+      return;
+    }
+    mMarqueeTexts.put(tv.getId(), currentText);
+
     tv.setSelected(false);
     tv.setEllipsize(TruncateAt.END);
-    final float textWidth = tv.getPaint().measureText(tv.getText().toString());
+    final float textWidth = tv.getPaint().measureText(currentText);
     tv.post(
         () -> {
           android.text.Layout layout = tv.getLayout();
           if (layout != null && layout.getEllipsizedWidth() < textWidth) {
             tv.setEllipsize(TruncateAt.MARQUEE);
-            tv.setMarqueeRepeatLimit(1);
+            tv.setMarqueeRepeatLimit(-1);
             tv.setSelected(true);
           }
         });
@@ -1513,6 +1528,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     }
 
     mCurrentStyle = style;
+    mMarqueeTexts.clear();
     int indexOfChild = indexOfChild(mQuickspaceContent);
     if (mQuickspaceContent != null) {
       removeView(mQuickspaceContent);
@@ -1820,6 +1836,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     removeCallbacks(mDeferredUpdateRunnable);
 
     cancelAllAnimations();
+    mMarqueeTexts.clear();
 
     safeRemoveListener();
     clearClickListeners();
