@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 VoltageOS
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <string-array name="quickspace_psa_morning">
+        <item>Good morning!</item>
+        <item>Good morning, time to rock!</item>
+        <item>What a beautiful day!</item>
+        <item>Have a nice day!</item>
+        <item>What about a small 5 minutes nap?</item>
+        <item>Mornings are a fresh canvas for your daily masterpiece.</item>
+        <item>Embrace the sunrise of opportunity each morning.</item>
+        <item>In the early light, find the power to illuminate your path.</item>
+        <item>Your day begins with endless possibilities.</item>
+        <item>Every sunrise is a reminder that you can start anew.</item>
+        <item>Awake with purpose, conquer the day ahead.</item>
+        <item>Your thoughts can be the foundation of great achievements.</item>
+        <item>The world awakens, and so does your potential.</item>
+        <item>The first chapter in your daily adventure.</item>
+        <item>Let your morning routine be the launchpad for success.</item>
+        <item>Sunrise or not, your potential is always on the rise.</item>
+        <item>It\'s time for fresh ideas and bold actions.</item>
+        <item>The early bird catches the worm, but you can catch your dreams.</item>
+        <item>Find the courage to chase your aspirations.</item>
+        <item>Rise and shine, for greatness awaits.</item>
+        <item>The best time to start is now.</item>
+        <item>Good morning! New day, new possibilities.</item>
+        <item>The world is waiting for your energy.</item>
+        <item>Today is a blank page. Write something epic.</item>
+        <item>Rise like the sun — unstoppable and bright.</item>
+        <item>Mornings are for dreamers who take action.</item>
+        <item>Breathe in courage, exhale doubt.</item>
+        <item>Your first victory today is just getting up.</item>
+        <item>Make today so good that yesterday gets jealous.</item>
+        <item>Good morning, legend. Time to build your empire.</item>
+        <item>The morning sun doesn\'t ask permission to shine.</item>
+        <item>Start strong. Finish stronger.</item>
+        <item>Every morning is a second chance at life.</item>
+        <item>Let today be the day you become unstoppable.</item>
+        <item>Coffee in hand, goals in mind.</item>
+        <item>Be the reason the birds sing this morning.</item>
+        <item>Good morning, you beautiful disaster.</item>
+        <item>Wake up. Your phone already has more updates than you.</item>
+        <item>Congrats on booting up today. Level: Expert.</item>
+        <item>Morning. Time to ignore your responsibilities in 4K.</item>
+        <item>Rise and grind... or at least rise and scroll.</item>
+        <item>Good morning. Your battery is at 69% — make it count.</item>
+        <item>Another day, another chance to flash your life decisions.</item>
+        <item>Sun\'s up. Your motivation? Still loading...</item>
+        <item>Good morning, fellow de-Googled brother.</item>
+        <item>Time to pretend you\'re a functional adult again.</item>
+        <item>Good morning, sunshine. Your productivity is already disappointed.</item>
+        <item>Rise and shine... or just rise and lie to yourself again.</item>
+        <item>Wow, you woke up. Want a medal or just more copium?</item>
+        <item>Another beautiful morning to ignore your goals.</item>
+        <item>Good morning. Hope you enjoyed those 5 minutes of motivation.</item>
+        <item>Congrats on booting into reality. How’s the lag?</item>
+        <item>Time to pretend today will be different. Adorable.</item>
+        <item>Morning, champion. Your sleep schedule called — it’s disappointed.</item>
+        <item>Ah yes, the daily ritual of lying to yourself before coffee.</item>
+        <item>Good morning. Your dreams called, they’re not coming back.</item>
+    </string-array>
+    <string-array name="quickspace_psa_noon">
+        <item>Chase your dreams, not the minutes.</item>
+        <item>In every moment, a new opportunity.</item>
+        <item>Embrace the journey, not just the destination.</item>
+        <item>Today is a gift, that\'s why it\'s called the present.</item>
+        <item>Let your smile change the world.</item>
+        <item>Life is a story; make each chapter count.</item>
+        <item>Find joy in the ordinary moments.</item>
+        <item>The best is yet to come, keep it up.</item>
+        <item>Your chance to turn \'what if\' into \'what is.\'</item>
+        <item>Seize the day, starting right now.</item>
+        <item>Happiness is a choice you can make any time.</item>
+        <item>Believe in yourself, even on a sleepy afternoon.</item>
+        <item>Let your actions speak louder than the clock.</item>
+        <item>Your life is what you make of it; make it amazing.</item>
+        <item>Dream big, work hard, and never give up.</item>
+        <item>You are stronger than you think.</item>
+        <item>Every setback is a setup for a comeback.</item>
+        <item>Embrace the journey, not just the destination.</item>
+        <item>Chase your goals, not your fears.</item>
+        <item>Your potential is endless; unlock it.</item>
+        <item>Keep pushing. The afternoon glow is yours.</item>
+        <item>Midday check-in: You\'re doing better than you think.</item>
+        <item>Energy low? Purpose high.</item>
+        <item>Progress over perfection, always.</item>
+        <item>One focused hour can change everything.</item>
+        <item>You\'re halfway through the day — finish strong.</item>
+        <item>Small consistent steps beat occasional sprints.</item>
+        <item>Stay hungry, stay humble.</item>
+        <item>Your future self is cheering for you right now.</item>
+        <item>Turn "I wish" into "I will".</item>
+        <item>Keep moving. Momentum is magic.</item>
+        <item>The grind looks good on you.</item>
+        <item>Don\'t wait for motivation. Create it.</item>
+        <item>Midday already? Time flies when you\'re avoiding tasks.</item>
+        <item>Surviving on caffeine and questionable life choices.</item>
+        <item>Noon check: Still no OTA for your motivation?</item>
+        <item>Half the day wasted. The other half starts now.</item>
+        <item>Keep going king/queen, your ROM is still unstable too.</item>
+        <item>Lunch time = existential crisis time.</item>
+        <item>You\'re doing great. Don\'t let the clock gaslight you.</item>
+        <item>Afternoon depression sponsored by low battery.</item>
+        <item>Currently running on 2% hope and 98% copium.</item>
+        <item>Noon vibes: pretending to be productive.</item>
+        <item>Noon already? Impressive how fast you can waste time.</item>
+        <item>Midday crisis loading... 69% complete.</item>
+        <item>Still pretending to be productive? Iconic.</item>
+        <item>Lunch break = time to scroll and hate yourself.</item>
+        <item>Half the day gone. Zero progress achieved. Classic.</item>
+        <item>Noon vibes: caffeine and crippling regret.</item>
+        <item>You’re crushing it… at avoiding responsibilities.</item>
+        <item>Wow, you made it to noon. The bar was on the floor.</item>
+        <item>Keep going. Your future self is already embarrassed.</item>
+        <item>Afternoon special: existential dread with extra fries.</item>
+    </string-array>
+    <string-array name="quickspace_psa_early_evening">
+        <item>Embrace the present moment, no matter the hour.</item>
+        <item>In every dusk, find a new dawn of opportunity.</item>
+        <item>Life is a journey; enjoy the scenery along the way.</item>
+        <item>Your attitude shapes your reality.</item>
+        <item>Your story is still being written, even as the sun sets.</item>
+        <item>Capture the beauty in the ordinary moments.</item>
+        <item>It\'s time to reflect and reset.</item>
+        <item>Choose joy, no matter the time on the clock.</item>
+        <item>Opportunities don\'t clock out in the evening.</item>
+        <item>Be the reason someone smiles.</item>
+        <item>Your potential knows no bounds.</item>
+        <item>Moments of magic can happen at any hour.</item>
+        <item>Your life is what you make of it; make it extraordinary.</item>
+        <item>Stay curious, stay grateful.</item>
+        <item>Be the change you wish to see in the world.</item>
+        <item>Believe in yourself; you are capable of amazing things.</item>
+        <item>The only limit is the one you set for yourself.</item>
+        <item>Success begins with a single step.</item>
+        <item>The day is winding down, but your impact isn\'t.</item>
+        <item>Reflect. Adjust. Keep going.</item>
+        <item>Evenings are for gratitude and growth.</item>
+        <item>You\'ve already won today by showing up.</item>
+        <item>Let the sunset remind you that endings can be beautiful.</item>
+        <item>Rest is part of the process.</item>
+        <item>Take a deep breath. You\'ve earned it.</item>
+        <item>Tomorrow\'s success starts with tonight\'s peace.</item>
+        <item>Be proud of what you did today.</item>
+        <item>Even slow days move you forward.</item>
+        <item>Wind down with intention, not regret.</item>
+        <item>The best is still ahead.</item>
+        <item>Early evening: when regret meets productivity.</item>
+        <item>Sunset loading... 47% complete.</item>
+        <item>Time to reflect on why you flashed that last build.</item>
+        <item>Day\'s almost over. You almost survived.</item>
+        <item>Early evening mood: battery low, ego lower.</item>
+        <item>Congrats, you made it through another unstable day.</item>
+        <item>Touch grass before it gets dark, maybe?</item>
+        <item>Evening already? Damn, time for more bad decisions.</item>
+        <item>You\'re one reboot away from a better evening.</item>
+        <item>Early evening: the calm before night regrets.</item>
+        <item>Early evening: time to realize today was also a failure.</item>
+        <item>Sunset hits harder when you did nothing all day.</item>
+        <item>Congrats on surviving. Still no achievements though.</item>
+        <item>Time to reflect on how you wasted another day. Fun!</item>
+        <item>Early evening mood: tired, broke, and still flashing bad decisions.</item>
+        <item>Day’s almost over. Your goals are still untouched.</item>
+        <item>Wow, you made it to evening. Want applause?</item>
+        <item>Rest now. Tomorrow you’ll lie to yourself again.</item>
+        <item>Early evening: where motivation goes to die.</item>
+        <item>Another day survived. Zero growth detected.</item>
+    </string-array>
+    <string-array name="quickspace_psa_evening">
+        <item>Seize the night, for it holds its own mysteries.</item>
+        <item>In the quiet of the this evening, find serenity.</item>
+        <item>Life\'s greatest adventures can start in the darkness.</item>
+        <item>Your journey continues even after the sun has set.</item>
+        <item>Let the night be your canvas; paint it with dreams.</item>
+        <item>In the stillness of this evening, find your inner peace.</item>
+        <item>Stars shine brightest in the darkest hours.</item>
+        <item>Dream big, even in the late hours of the day.</item>
+        <item>Your life is a story waiting to be written.</item>
+        <item>It\'s time for reflection and renewal.</item>
+        <item>Late night thoughts can lead to early morning revelations.</item>
+        <item>Find joy in the stillness of this evening.</item>
+        <item>The night sky is a vast canvas of dreams.</item>
+        <item>Your potential knows no bedtime; pursue your passions.</item>
+        <item>Stay hopeful, even in the darkest hours.</item>
+        <item>In the midst of chaos, find your inner calm.</item>
+        <item>Stay positive, work hard, make it happen.</item>
+        <item>Let the night recharge your soul.</item>
+        <item>Evenings are made for big dreams and soft hearts.</item>
+        <item>The stars are out. Make a wish.</item>
+        <item>Peace begins the moment you stop rushing.</item>
+        <item>Tomorrow doesn\'t worry about today. Neither should you.</item>
+        <item>End the day with gratitude, not anxiety.</item>
+        <item>Night time is thinking time.</item>
+        <item>Rest well, warrior. You fought hard today.</item>
+        <item>The moon is proof that light can exist in darkness.</item>
+        <item>Let go of what no longer serves you.</item>
+        <item>Beautiful things are coming.</item>
+        <item>Close your eyes. Open your mind.</item>
+        <item>Evening vibes: overthinking in HD.</item>
+        <item>Night is young. Your sleep schedule? Ancient.</item>
+        <item>Finally time to ignore all your responsibilities.</item>
+        <item>Evening = peak "I\'ll fix my life tomorrow" hours.</item>
+        <item>Don\'t forget to charge your phone... and yourself.</item>
+        <item>Stars out, brainrot in.</item>
+        <item>Evening check-in: still de-Googled and dangerous.</item>
+        <item>Time to doomscroll responsibly.</item>
+        <item>Your ROM may be unstable but your vibe is immaculate.</item>
+        <item>Good evening, professional procrastinator.</item>
+        <item>Good evening. Still pretending you’ll sleep early?</item>
+        <item>Evening hours: peak time for bad life choices.</item>
+        <item>Time to doomscroll until your eyes burn. Healthy.</item>
+        <item>Evening reminder: you’re still not that guy.</item>
+        <item>Night falls. Your motivation already did hours ago.</item>
+        <item>Finally time to relax… and overthink everything.</item>
+        <item>Evening vibes: “I’ll fix my life tomorrow” ×100.</item>
+        <item>Congrats on making it through another mediocre day.</item>
+        <item>Stars are out. Your potential is still in bed.</item>
+        <item>Evening special: anxiety served fresh and hot.</item>
+    </string-array>
+    <string-array name="quickspace_psa_midnight">
+        <item>Nights are the quiet whispers of opportunity.</item>
+        <item>In the stillness of the night, find your inner strength.</item>
+        <item>Embrace the darkness, for it holds the keys to your dreams.</item>
+        <item>The world sleeps, but your potential is wide awake.</item>
+        <item>The night may be late, but your ambitions are timeless.</item>
+        <item>Stay curious, stay awake, and let nights guide you.</item>
+        <item>Find the courage to chase your dreams.</item>
+        <item>Great things never come from comfort zones.</item>
+        <item>You have the power to create your own destiny.</item>
+        <item>Happiness is a choice; choose it every day.</item>
+        <item>Life is what you make it, so make it count.</item>
+        <item>Stay focused, stay determined, stay unstoppable.</item>
+        <item>You are the author of your own story.</item>
+        <item>Strive for progress, not perfection.</item>
+        <item>Every day is a new beginning; make it a great one.</item>
+        <item>Inspire others by being your authentic self.</item>
+        <item>Your attitude determines your direction.</item>
+        <item>The quietest hours birth the loudest ideas.</item>
+        <item>While the world sleeps, legends plan.</item>
+        <item>Your 3 AM thoughts might change your life.</item>
+        <item>Creativity doesn\'t sleep. Neither should ambition.</item>
+        <item>The night belongs to those who dare.</item>
+        <item>Stay awake in purpose, not just in time.</item>
+        <item>Some dreams only visit at midnight.</item>
+        <item>Silence is the best canvas for ideas.</item>
+        <item>The deeper the night, the brighter your vision.</item>
+        <item>Future you is being built right now.</item>
+        <item>Keep going. History is made in moments like this.</item>
+        <item>Even the night is rooting for you.</item>
+        <item>Midnight: where bad ideas are born.</item>
+        <item>2 AM thoughts hitting harder than your last flash.</item>
+        <item>The void is staring back. Say hi.</item>
+        <item>While normies sleep, legends stay rooted.</item>
+        <item>Midnight hours: sponsored by anxiety and energy drinks.</item>
+        <item>You\'re not awake, you\'re just on night mode.</item>
+        <item>3 AM is just early morning for custom ROM users.</item>
+        <item>Go to sleep. Or flash another build. Your choice.</item>
+        <item>Midnight paranoia hits different on VoltageOS.</item>
+        <item>The night is dark and full of bootloops.</item>
+        <item>Midnight: where smart people sleep and you’re still here.</item>
+        <item>2 AM thoughts sponsored by poor decisions.</item>
+        <item>The void is calling. Still ignoring your sleep schedule?</item>
+        <item>While everyone sleeps, you stay awake being average.</item>
+        <item>Midnight hits different when you have no future plans.</item>
+        <item>3 AM club: members include you and your regrets.</item>
+        <item>Go to sleep. Or keep rotting. Your choice, king.</item>
+        <item>Night mode activated. Brain cells deactivated.</item>
+        <item>Midnight paranoia: even your phone is judging you.</item>
+    </string-array>
+    <string-array name="quickspace_psa_random">
+        <item>Make peace, not war</item>
+        <item>Oh hey, what\'s up?</item>
+        <item>How many screenshots do you take?</item>
+        <item>We didn\'t start the fire!</item>
+        <item>Time for some good music</item>
+        <item>Small steps, big impact!</item>
+        <item>Your potential is limitless!</item>
+        <item>Embrace challenges!</item>
+        <item>Believe in your journey!</item>
+        <item>Rise through challenges.</item>
+        <item>Your potential is boundless.</item>
+        <item>Courage is the key to progress</item>
+        <item>Seeds of success are planted in hard work</item>
+        <item>Believe in the possibility of the impossible</item>
+        <item>Your attitude determines your altitude</item>
+        <item>You need pornhub premium to see this</item>
+        <item>Starting from the ground zero</item>
+        <item>Do something nice today</item>
+        <item>Thank you for your support</item>
+        <item>Sanity for your Paranoia</item>
+        <item>What\'s on your mind?</item>
+        <item>Remember to check device\'s battery level!</item>
+        <item>Check your email/messages.</item>
+        <item>Check your to-do list if you have one.</item>
+        <item>You can disable quickspace via home settings.</item>
+        <item>Loving us? We don\'t have patreon</item>
+        <item>Most toxic Rom Ever.</item>
+        <item>Say hi to us on Telegram</item>
+        <item>Your time is limited live your own life</item>
+        <item>Time for some telegram spam!</item>
+        <item>Set goals, not limits</item>
+        <item>In the middle of difficulty lies opportunity</item>
+        <item>Dream big, work hard, stay focused</item>
+        <item>The only way to do great work is to love what you do</item>
+        <item>Believe you can and you\'re halfway there</item>
+        <item>Enjoy your day!</item>
+        <item>You\'re off the Grid. For real.</item>
+        <item>No Google, no mercy.</item>
+        <item>Privacy is not a feature. It\'s the weapon.</item>
+        <item>VoltageOS: Because trust issues are valid.</item>
+        <item>Flashing VoltageOS voids surveillance.</item>
+        <item>This ROM deletes cookies... and tracks.</item>
+        <item>Goodbye Play Store, hello black mirror.</item>
+        <item>De-Googled like it\’s 1984.</item>
+        <item>VoltageOS knows nothing. And that\’s good.</item>
+        <item>They can\’t track you if you never existed.</item>
+        <item>You chose privacy... and 17 manual setups.</item>
+        <item>VoltageOS: because suffering is freedom.</item>
+        <item>Welcome to the ROM that hates convenience.</item>
+        <item>No trackers. Just your own paranoia.</item>
+        <item>You disabled Play Services. Bold of you.</item>
+        <item>Updates? When the stars align.</item>
+        <item>This ROM respects your privacy... maybe too much.</item>
+        <item>Running VoltageOS? You must love pain.</item>
+        <item>Battery optimized. Sanity not included.</item>
+        <item>VoltageOS: where even the bugs fear telemetry.</item>
+        <item>Your OS is clean. Unlike your conscience.</item>
+        <item>De-Googled? You\'re just harder to monetize.</item>
+        <item>VoltageOS: perfect for hiding from yourself.</item>
+        <item>Don\'t worry, the void can\'t track you.</item>
+        <item>Flashed again? That\'s commitment... or boredom.</item>
+        <item>Custom ROMs: breaking things since Android Eclair.</item>
+        <item>Why have stability when you can have customization?</item>
+        <item>One ROM to rule them all. Until next week.</item>
+        <item>Factory reset is just a lifestyle choice.</item>
+        <item>Your warranty died for this. Respect.</item>
+        <item>99 problems but bloatware ain\'t one.</item>
+        <item>This ROM is powered by caffeine and blind optimism.</item>
+        <item>VoltageOS: because normal roms are too mainstream.</item>
+        <item>Welcome to the club. We have no OTA updates.</item>
+        <item>Pixel UI: Now with 12 identical ROMs!</item>
+        <item>Pixel ROMs: Like Google, but with more bootloops.</item>
+        <item>Pixel ROMs give you the look. Voltage gives you control.</item>
+        <item>Pixel UI is pretty. So is surveillance.</item>
+        <item>Voltage strips the fluff. Pixel just paints it beige.</item>
+        <item>VoltageOS: less Play Services, more peace of mind.</item>
+        <item>Pixel clones optimize for aesthetic. We optimize for autonomy.</item>
+        <item>Pixel-based ROMs: same Google, different wallpaper.</item>
+        <item>Voltage doesn\’t simulate freedom. It compiles it.</item>
+        <item>VoltageOS: freedom with a price tag of sanity</item>
+        <item>You left Google, but the void found you</item>
+        <item>Not a Pixel, not a problem</item>
+        <item>Surveillance detox starts here</item>
+        <item>This ROM bites back</item>
+        <item>Welcome to the dark side of AOSP</item>
+        <item>No ads, no trackers, no hope</item>
+        <item>VoltageOS: clean, cold, and indifferent</item>
+        <item>Where privacy meets paranoia</item>
+        <item>Use sandboxed GApps, microG, or nothing at all</item>
+        <item>VoltageOS plays nice with your choice of GApps</item>
+        <item>Sandboxed, microG, or stock — your rules</item>
+        <item>Pick your poison: GApps, microG, or clean air</item>
+        <item>Google? microG? None? VoltageOS doesn\’t judge</item>
+        <item>Some ROMs ship with spyware, they call it a feature</item>
+        <item>Preinstalled Play Services — because choice is scary</item>
+        <item>Flash once, get Google forever</item>
+        <item>They promise freedom, then boot with Gmail</item>
+        <item>Custom ROM life: flashing more than you\’re texting.</item>
+        <item>Pixel users get updates. Voltage users get surprises.</item>
+        <item>VoltageOS: because stable is just a myth anyway.</item>
+        <item>You flash VoltageOS for privacy, then tweet your location.</item>
+        <item>Custom ROM users: experts at troubleshooting what they broke.</item>
+        <item>Flashing ROMs so often, your phone has trust issues.</item>
+        <item>Flashed for privacy, broadcasted your life.</item>
+        <item>Custom ROM user: expert in self-inflicted bugs.</item>
+        <item>Privacy mode on, location services on too.</item>
+        <item>Updates delayed, patience not included.</item>
+        <item>Battery saver off, flashing mode on.</item>
+        <item>Rooted phone, unrooted life skills.</item>
+        <item>Play Integrity says no. VoltageOS says yes anyway.</item>
+        <item>Your phone is safe. Your soul? Not so much.</item>
+        <item>Privacy promised, paranoia delivered.</item>
+        <item>Flashed a privacy ROM, now Googling how to install GApps.</item>
+        <item>Asked for Pixel UI on a de-Googled ROM. Bold move.</item>
+        <item>Flashes VoltageOS, complains about no Play Store.</item>
+        <item>Wants privacy but keeps reinstalling GApps</item>
+        <item>Flashed for privacy, Googled how to reinstall Google.</item>
+        <item>Privacy ROM user, but addicted to Play Store.</item>
+        <item>Wants freedom, begs for Pixel launcher.</item>
+        <item>Google knows you better than you know yourself.</item>
+        <item>Life\’s too short for boring stock ROMs.</item>
+        <item>VoltageOS: privacy and fun, hand in hand.</item>
+        <item>Custom ROM life: 99% flashing, 1% actual use.</item>
+        <item>VoltageOS: because other ROMs was too mainstream.</item>
+        <item>When your phone restarts more than you do.</item>
+        <item>Flashing so much, even your charger is tired.</item>
+        <item>Breaking things just to fix them better.</item>
+        <item>Battery life depends on your level of optimism.</item>
+        <item>Turning bugs into features, one reboot at a time.</item>
+        <item>Flashing skills: 90% hope, 10% panic.</item>
+        <item>“It worked yesterday” is the new motto.</item>
+        <item>One dev to rule them all. And still no sleep.</item>
+        <item>One coder army: coffee, code, repeat.</item>
+        <item>Donate? Nah, we prefer thanks and bugs.</item>
+        <item>Other ROMs want cash. We want your respect.</item>
+        <item>Pay us? We\’re busy fixing your mess.</item>
+        <item>Donations accepted? Sorry, we\’re broke and proud.</item>
+        <item>They beg for cash; we break things for free.</item>
+        <item>Flash first, ask questions later</item>
+        <item>Battery life: myth or legend?</item>
+        <item>Updates coming... someday</item>
+        <item>Where bugs become features</item>
+        <item>Pixel wannabe, Voltage ready</item>
+        <item>Bricked? Try turning it off and on</item>
+        <item>Uninstall your worries here</item>
+        <item>Google who? Not us.</item>
+        <item>Warranty? Never heard of it.</item>
+        <item>Unstable? Just our way of life.</item>
+        <item>Less bloat, more reboot.</item>
+        <item>Download. Flash. Cry. Repeat.</item>
+        <item>Because stock is overrated.</item>
+        <item>Privacy so tight, even you can\'t find it.</item>
+        <item>Powered by caffeine and bugs.</item>
+        <item>Flashed it. Broke it. Fixed it. Bricked it again.</item>
+        <item>Privacy so good even your mom can\'t track you.</item>
+        <item>VoltageOS: Zero trust, maximum vibes.</item>
+        <item>De-Googled and still breathing. Impressive.</item>
+        <item>Custom ROM users don\'t sleep. They flash.</item>
+        <item>Warning: May cause extreme independence.</item>
+        <item>Google is watching... but not here.</item>
+        <item>Stability is temporary. Chaos is eternal.</item>
+        <item>You\'re not paranoid if they\'re actually tracking you.</item>
+        <item>Live laugh de-google.</item>
+        <item>OTA? We don\'t do that here.</item>
+        <item>Flashing VoltageOS is a personality trait.</item>
+        <item>Less tracking, more soul searching.</item>
+        <item>Your data belongs to you. Revolutionary, right?</item>
+        <item>Be kind. Rewind. Also flash latest build.</item>
+        <item>Touch grass. Then check battery stats.</item>
+        <item>You\'re built different. So is your ROM.</item>
+        <item>Google knows what you did last summer. VoltageOS doesn\'t even care.</item>
+        <item>De-Googled my phone so hard even my mom can\'t find me.</item>
+        <item>Flashed VoltageOS for privacy, then logged into Instagram. Peak intelligence.</item>
+        <item>Me installing microG: "This is fine" (it\'s not fine).</item>
+        <item>Privacy so strong even I don\'t know what I\'m doing anymore.</item>
+        <item>Google: "We value your privacy" → VoltageOS: "What privacy?"</item>
+        <item>Custom ROM users don\'t need therapy, we just reflash.</item>
+        <item>Me: Wants privacy. Also me: Enables location for Weather app.</item>
+        <item>VoltageOS - Because trusting Google is so last update.</item>
+        <item>Successfully avoided Google... still somehow got ads in my dreams.</item>
+        <item>Flashed VoltageOS for freedom, still checking if Google is watching. Classic.</item>
+        <item>De-Googled my phone so hard it started judging my life choices.</item>
+        <item>VoltageOS: Because selling your soul to Google is overrated.</item>
+        <item>Privacy enthusiast by day, "just one more GApp" by night.</item>
+        <item>Custom ROM life: 90% paranoia, 10% "it\'ll probably boot".</item>
+        <item>Google: "Your data is safe with us." VoltageOS: "Lmao sure buddy."</item>
+        <item>Successfully removed Play Services. Still somehow got a "recommended for you" ad.</item>
+        <item>Wanted privacy, ended up with trust issues and 17 backup ROMs.</item>
+        <item>VoltageOS users don\'t sleep. We just have night bootloop anxiety.</item>
+        <item>Step 1: Flash privacy ROM. Step 2: Install everything you escaped from.</item>
+        <item>De-Googled successfully. Proceeds to flash full Play Store. Masterful.</item>
+        <item>De-Googled my phone at 2AM. Re-Googled it by 2:07AM. Speedrun champion.</item>
+        <item>VoltageOS: "No Google here" → Me 10 minutes later: "Babe please come back".</item>
+        <item>Flashed privacy ROM, then made it a Pixel clone. Bold strategy.</item>
+        <item>De-Googled... then installed Pixel launcher. Why tho?</item>
+        <item>Privacy king until he wants that pure Pixel look.</item>
+        <item>Wanted freedom, ended up with Pixel UI and Google spyware.</item>
+        <item>Flash clean ROM → immediately turns it into budget Pixel.</item>
+        <item>Privacy enthusiast by day, Pixel wannabe by night.</item>
+        <item>De-Googled my phone then added everything Pixel users have.</item>
+        <item>Flash privacy ROM then cries because it doesn\'t feel like Pixel.</item>
+        <item>Big on privacy until the Pixel launcher calls his name.</item>
+        <item>Other ROMs: AI slop. VOS: Actually cooked with hate.</item>
+        <item>Downloading another AI ROM be like: "This is just Pixel with extra bloat".</item>
+        <item>AI slop ROMs drop every week. VOS drops reality checks.</item>
+        <item>Most ROMs are AI garbage. VoltageOS is handmade suffering.</item>
+        <item>AI-generated ROMs: 0 personality. VOS: personality disorder.</item>
+        <item>Other devs use AI. We use copium and spite.</item>
+        <item>Pixel UI + AI features = certified slop. VOS stays raw.</item>
+        <item>AI slop ROM users coping while VOS users are just built different.</item>
+        <item>Most devs just prompt AI now. VOS still uses suffering.</item>
+        <item>Another AI-assisted Pixel clone. How original.</item>
+        <item>Most ROMs are AI garbage. VOS is handmade garbage.</item>
+        <item>AI-assisted Pixel clone #69. So unique bro.</item>
+        <item>Most devs prompt AI now. VOS devs prompt therapy.</item>
+        <item>AI slop ROM dropped. VOS still undefeated in suffering.</item>
+        <item>AI made their ROM. VOS made your phone cry.</item>
+        <item>69 Pixel clone ROMs dropped this week. VOS still not like the others.</item>
+        <item>Another Pixel clone ROM? How original. VOS laughs in the corner.</item>
+        <item>Pixel UI ROM #47 just dropped. VOS remains undefeated in personality.</item>
+        <item>Most ROMs are just Pixel with extra copium. VOS is the glitch.</item>
+        <item>69 Pixel clones fighting for attention. VOS doesn\'t even try.</item>
+        <item>Pixel clone ROMs: same face, different name. VOS: actual chaos.</item>
+        <item>Downloading another Pixel wannabe. VOS users watching in pity.</item>
+        <item>Pixel clone #69 dropped with new icons. Still boring. VOS stays raw.</item>
+        <item>All these Pixel clones and yet VOS still hits different.</item>
+        <item>Loaded with AI bloat "features". VOS: zero slop, maximum privacy.</item>
+        <item>Pixel UI + Google AI = premium slop. VOS = actual privacy.</item>
+        <item>AI features for "better experience". VOS: experience is privacy.</item>
+        <item>They pushed 69 updates this hour. VOS still has stable code.</item>
+        <item>69 commits in one hour = peak "works on my machine". VOS stays stable.</item>
+        <item>Other ROMs dropping hot garbage every 10 minutes. VOS has stable code.</item>
+        <item>69 pushes this hour. VOS: one build that actually works.</item>
+        <item>Constantly pushing broken code. VOS just has stable suffering.</item>
+        <item>Update spam ROMs vs VOS stable king.</item>
+        <item>They pushed 69 times today. VOS users still on last month’s build.</item>
+        <item>Their users: chasing new AI slop. VOS users: enjoying actual privacy.</item>
+        <item>Pixel clone users coping. VOS users just built different.</item>
+        <item>Other ROM users reinstalling GApps again. VOS users laughing.</item>
+        <item>AI feature enjoyers vs VOS users who actually read the changelog.</item>
+        <item>They flash every week for "stability". VOS users flash once and suffer in peace.</item>
+        <item>AI slop fans vs VOS users with trust issues but clean data.</item>
+        <item>Pixel wannabes paying for personality. VOS users get it for free with pain.</item>
+        <item>Other ROM users: slaves to trends. VOS users: professional degenerates.</item>
+        <item>Claude wrote the code. Dev forgot to test it. Peak custom rom dev.</item>
+        <item>They paid Claude to code. Forgot to fix the bugs. VOS stays raw.</item>
+        <item>Claude cooked their ROM. Bugs still well done. VOS actually works.</item>
+        <item>Paid Claude for features, forgot debugging. VOS laughs in stability.</item>
+        <item>Claude generated their bugs for free. VOS bugs are handcrafted.</item>
+        <item>Their code is held together by hope and copium. VOS code actually works.</item>
+        <item>They ship broken code every week. VOS ships stable pain.</item>
+        <item>Sloppy code, paid builds, zero fixes. VOS does it better for free.</item>
+        <item>Their code looks like AI threw up. VOS code is pure unfiltered hate.</item>
+        <item>69 broken commits daily. VOS: one build that doesn\'t hate you as much.</item>
+        <item>Closed source ROMs stealing OSS code then locking it. VOS keeps it open and honest.</item>
+        <item>They steal from the community then hide their spyware. VOS is fully OSS.</item>
+        <item>Closed source = "trust me bro" ROMs. VOS: actual open privacy.</item>
+        <item>Stealing AOSP code then shipping closed garbage. VOS respects the community.</item>
+        <item>Closed source devs hiding shit in the code. VOS lets you read the mess.</item>
+        <item>They take OSS work, close the source, add telemetry. VOS doesn\'t betray.</item>
+        <item>Closed source ROMs: stolen code + hidden backdoors. VOS: transparent pain.</item>
+        <item>Stealing open source then going closed. Peak greed. VOS stays OSS.</item>
+        <item>You can\'t audit closed source. That\'s the point. VOS has nothing to hide.</item>
+        <item>Leeching off OSS then going closed. Greedy clowns. VOS keeps it real.</item>
+        <item>We make the features. They steal them and close the source. Classic.</item>
+        <item>VOS creates the feature. Closed ROMs steal and lock it. Adorable.</item>
+        <item>We build it. They copy it then go closed source. Greedy clowns.</item>
+        <item>Original features by VOS. Stolen and closed by them. Every time.</item>
+        <item>We make it open. They steal it and close the source. Predictable.</item>
+        <item>We do the work. They steal the feature and hide the code. Pathetic.</item>
+        <item>We innovate. Suddenly every Pixel ROM has it. Shocking.</item>
+        <item>Feature created by VOS. Now in 69 cheap Pixel clones. Flattering.</item>
+        <item>VOS adds something cool. 69 ROMs immediately copy-paste it.</item>
+        <item>Feature by VOS. Now standard in every Pixel wannabe ROM.</item>
+        <item>We create. They copy. Then act like it\'s their idea. Classic.</item>
+    </string-array>
+</resources>
