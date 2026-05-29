@@ -225,8 +225,4 @@
     <string name="home_screen_files_folder_icon_path_data" translatable="false">M10 4H4c-1.1 0,-1.99.9,-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2,-.9 2,-2V8c0,-1.1,-.9,-2,-2,-2h-8l-2,-2z</string>
     <integer name="home_screen_files_folder_icon_path_intrinsic_size">24</integer>
 
-    <!-- Burn-in protection for gesture navigation handle -->
-    <bool name="config_enableBurnInProtection">true</bool>
-    <integer name="config_burnInProtectionShiftInterval">60</integer>
-
 </resources>

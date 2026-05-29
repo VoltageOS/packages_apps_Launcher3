@@ -325,4 +325,8 @@
      <string name="sort_alphabetical">Sort by alphabet</string>
      <string name="sort_install_date">Sort by date of install</string>
      <string name="sort_usage">Sort by usage</string>
+
+    <string name="navbar_burn_in_protection_title">Navbar burn-in protection</string>
+    <string name="navbar_burn_in_protection_summary">Periodically shift the navigation handle to prevent display burn-in</string>
+    <string name="navbar_burn_in_interval_title">Shift interval</string>
 </resources>

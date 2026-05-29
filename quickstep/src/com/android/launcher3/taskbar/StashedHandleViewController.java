@@ -44,6 +44,7 @@ import androidx.annotation.Nullable;
 import com.android.launcher3.ConstantItem;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Flags;
+import com.android.launcher3.LauncherPrefChangeListener;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.anim.AnimatedFloat;
@@ -119,6 +120,7 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private boolean mBurnInProtectionEnabled;
     private long mBurnInShiftIntervalMs;
+    private final LauncherPrefChangeListener mBurnInPrefListener;
 
     // The bounds we want to clip to in the settled state when showing the stashed handle.
     private final Rect mStashedHandleBounds = new Rect();
@@ -143,15 +145,35 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
             StashedHandleView stashedHandleView) {
         mActivityRef = new WeakReference<>(activity);
         mPrefs = LauncherPrefs.get(activity);
+        mBurnInPrefListener = key -> {
+            if (LauncherPrefs.NAVBAR_BURN_IN_PROTECTION.getSharedPrefKey().equals(key)) {
+                mBurnInProtectionEnabled = mPrefs.get(LauncherPrefs.NAVBAR_BURN_IN_PROTECTION);
+                if (mBurnInProtectionEnabled) {
+                    startBurnInTimer();
+                } else {
+                    stopBurnInTimer();
+                    mTranslationXForBurnIn = 0;
+                    mTranslationYForBurnIn = 0;
+                    updateTranslationY();
+                }
+            } else if (LauncherPrefs.NAVBAR_BURN_IN_INTERVAL.getSharedPrefKey().equals(key)) {
+                mBurnInShiftIntervalMs = mPrefs.get(LauncherPrefs.NAVBAR_BURN_IN_INTERVAL) * 1000L;
+                if (mBurnInProtectionEnabled) {
+                    stopBurnInTimer();
+                    startBurnInTimer();
+                }
+            }
+        };
+
         mStashedHandleView = stashedHandleView;
         mTaskbarStashedHandleAlpha = new MultiValueAlpha(mStashedHandleView, NUM_ALPHA_CHANNELS);
         mTaskbarStashedHandleAlpha.setUpdateVisibility(true);
         mStashedHandleView.updateHandleColor(
                 mPrefs.get(STASHED_HANDLE_REGION_IS_DARK), false /* animate */);
-        Resources resources = mActivity.getResources();
+        Resources resources = activity.getResources();
 
-        mBurnInProtectionEnabled = resources.getBoolean(R.bool.config_enableBurnInProtection);
-        mBurnInShiftIntervalMs = resources.getInteger(R.integer.config_burnInProtectionShiftInterval) * 1000L;
+        mBurnInProtectionEnabled = mPrefs.get(LauncherPrefs.NAVBAR_BURN_IN_PROTECTION);
+        mBurnInShiftIntervalMs = mPrefs.get(LauncherPrefs.NAVBAR_BURN_IN_INTERVAL) * 1000L;
 
         mHorizontalMaxShift = resources.getDimension(R.dimen.burn_in_protection_horizontal_shift);
         mVerticalMaxShift = resources.getDimension(R.dimen.burn_in_protection_vertical_shift);
@@ -269,6 +291,8 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
                     mTaskStackChangeListener);
         }
         startBurnInTimer();
+        mPrefs.addListener(mBurnInPrefListener,
+                LauncherPrefs.NAVBAR_BURN_IN_PROTECTION, LauncherPrefs.NAVBAR_BURN_IN_INTERVAL);
     }
 
     /**
@@ -306,6 +330,8 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
             TaskStackChangeListeners.getInstance().unregisterTaskStackListener(
                     mTaskStackChangeListener);
         }
+        mPrefs.removeListener(mBurnInPrefListener,
+                LauncherPrefs.NAVBAR_BURN_IN_PROTECTION, LauncherPrefs.NAVBAR_BURN_IN_INTERVAL);
         stopBurnInTimer();
     }
 
