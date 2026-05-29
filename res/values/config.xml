@@ -208,8 +208,4 @@
 
     <string-array name="supported_overlay_apps" translatable="false"/>
 
-    <!-- Burn-in protection for gesture navigation handle -->
-    <bool name="config_enableBurnInProtection">true</bool>
-    <integer name="config_burnInProtectionShiftInterval">60</integer>
-
 </resources>

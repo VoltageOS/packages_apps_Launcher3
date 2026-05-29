@@ -29,6 +29,25 @@
         launcher:logIdOff="616"
         launcher:iconSpaceReserved="false" />
 
+    <SwitchPreferenceCompat
+        android:key="pref_navbar_burn_in_protection"
+        android:title="@string/navbar_burn_in_protection_title"
+        android:summary="@string/navbar_burn_in_protection_summary"
+        android:defaultValue="true"
+        android:persistent="true"
+        launcher:iconSpaceReserved="false" />
+
+    <com.android.launcher3.settings.preferences.CustomSeekBarPreference
+        android:key="pref_navbar_burn_in_interval"
+        android:title="@string/navbar_burn_in_interval_title"
+        android:persistent="true"
+        android:max="300"
+        android:defaultValue="60"
+        android:dependency="pref_navbar_burn_in_protection"
+        settings:min="15"
+        settings:units="s"
+        launcher:iconSpaceReserved="false" />
+
     <Preference
         android:key="pref_trust_apps"
         android:title="@string/trust_apps_manager_name" />
