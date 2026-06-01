@@ -121,6 +121,10 @@
     <string name="paused_apps_dialog_message">%1$s was directly paused from the launcher</string>
     <string name="paused_apps_drop_target_label">Pause app</string>
 
+    <!-- Notification badges -->
+    <string name="notification_badge_count_title">Notification count</string>
+    <string name="notification_badge_count_desc">Show unread counts on notification dots</string>
+
     <!-- App label -->
     <string name="icon_two_lines_title">Use two lines for app label</string>
 

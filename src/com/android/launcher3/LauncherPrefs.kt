@@ -266,6 +266,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField val APP_DRAWER_OPACITY = backedUpItem("pref_app_drawer_opacity", 60)
         @JvmField val DARK_STATUS_BAR = backedUpItem("pref_dark_status_bar", false)
         @JvmField val ALL_APPS_DARK_TEXT = backedUpItem("pref_all_apps_dark_text", false)
+        @JvmField val NOTIFICATION_BADGE_COUNT = backedUpItem("pref_notification_badge_count", false)
         @JvmField val DOCK_MUSIC_SEARCH = backedUpItem("pref_dock_music_search", false)
         @JvmField val DOCK_SEARCH = backedUpItem("pref_dock_search", true)
         @JvmField val DOCK_SEARCH_MODE = backedUpItem("pref_dock_search_mode", "google")
