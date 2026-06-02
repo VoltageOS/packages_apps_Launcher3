@@ -407,4 +407,9 @@
     <string name="navbar_burn_in_protection_title">Navbar burn-in protection</string>
     <string name="navbar_burn_in_protection_summary">Periodically shift the navigation handle to prevent display burn-in</string>
     <string name="navbar_burn_in_interval_title">Shift interval</string>
+
+    <!-- Swipe down to lock -->
+    <string name="swipe_down_to_lock_title">Swipe down on task to toggle lock</string>
+    <string name="swipe_down_to_lock_summary">Swipe down on a recent task card to lock or unlock it from being cleared</string>
+
 </resources>
