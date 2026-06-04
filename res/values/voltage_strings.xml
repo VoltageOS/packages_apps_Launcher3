@@ -224,11 +224,14 @@
     <string name="recents_clear_all_title">Clear all</string>
     <string name="recents_lens_title">Lens</string>
 
-    <!-- Freeform gesture -->
-    <string name="freeform_gesture_title">Use gesture in recents to start freeform mode</string>
-    <string name="freeform_gesture_summary">Swipe up from the app and release at the top of the recents screen to trigger freeform mode</string>
-    <string name="freeform_gesture_progress_title">Freeform swipe threshold</string>
-    <string name="freeform_gesture_progress_summary">Lower values trigger freeform earlier, higher values require swiping closer to the top</string>
+    <!-- Overview gesture -->
+    <string name="overview_gesture_title">Recent apps swipe action</string>
+    <string name="overview_gesture_summary">Swipe up on an app in Recents to trigger the selected action</string>
+    <string name="overview_gesture_action_title">Swipe up action</string>
+    <string name="overview_gesture_action_freeform">Open in floating window</string>
+    <string name="overview_gesture_action_split_screen">Start split screen</string>
+    <string name="overview_gesture_threshold_title">Swipe distance</string>
+    <string name="overview_gesture_threshold_summary">Lower values trigger sooner, higher values require a longer swipe</string>
     <string name="freeform_gesture_threshold_reached">Release to launch floating window</string>
 
     <!-- Parallax -->

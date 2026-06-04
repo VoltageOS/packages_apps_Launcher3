@@ -5304,6 +5304,23 @@ public abstract class RecentsView<
         }
     }
 
+    public void prepareForGestureSplitSelect(@Nullable TaskView taskView) {
+        mTouchDownToStartHome = false;
+        resetTouchState();
+        abortScrollerAnimation();
+
+        int pageToSnapTo = taskView == null ? getCurrentPage() : indexOfChild(taskView);
+        if (pageToSnapTo == -1) {
+            pageToSnapTo = getCurrentPage();
+        }
+        final int targetPage = pageToSnapTo;
+        if (isPageScrollsInitialized()) {
+            setCurrentPage(targetPage);
+        } else {
+            runOnPageScrollsInitialized(() -> setCurrentPage(targetPage));
+        }
+    }
+
     /**
      * Resets the visuals when exit modal state.
      */

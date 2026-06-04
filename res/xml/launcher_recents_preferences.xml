@@ -25,15 +25,25 @@
 
         <SwitchPreferenceCompat
             android:key="pref_start_freeform_by_gesture"
-            android:title="@string/freeform_gesture_title"
-            android:summary="@string/freeform_gesture_summary"
+            android:title="@string/overview_gesture_title"
+            android:summary="@string/overview_gesture_summary"
             android:defaultValue="false"
+            launcher:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:key="pref_overview_gesture_action"
+            android:title="@string/overview_gesture_action_title"
+            android:entries="@array/overview_gesture_action_entries"
+            android:entryValues="@array/overview_gesture_action_values"
+            android:defaultValue="freeform"
+            android:dependency="pref_start_freeform_by_gesture"
+            android:summary="%s"
             launcher:iconSpaceReserved="false" />
 
         <com.android.launcher3.settings.preferences.CustomSeekBarPreference
             android:key="pref_start_freeform_progress"
-            android:title="@string/freeform_gesture_progress_title"
-            android:summary="@string/freeform_gesture_progress_summary"
+            android:title="@string/overview_gesture_threshold_title"
+            android:summary="@string/overview_gesture_threshold_summary"
             android:defaultValue="20"
             android:min="10"
             android:max="50"
