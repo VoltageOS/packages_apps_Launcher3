@@ -1089,7 +1089,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
         } else if (mBlurBackgroundAtAppLaunch) {
             animatorSet.playTogether(appAnimator, getBackgroundBlurAnimator());
         } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
+            animatorSet.play(appAnimator);
         }
         return animatorSet;
     }
@@ -1234,7 +1234,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
         } else if (mBlurBackgroundAtAppLaunch) {
             animatorSet.playTogether(appAnimator, getBackgroundBlurAnimator());
         } else {
-            animatorSet.playTogether(appAnimator, getBackgroundAnimator());
+            animatorSet.play(appAnimator);
         }
         return animatorSet;
     }
@@ -1940,7 +1940,9 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                         new ScalingWorkspaceRevealAnim(mLauncher, rectFSpringAnim,
                                 rectFSpringAnim.getTargetRect(),
                                 !fromPredictiveBack /* playAlphaReveal */,
-                                true /* playBlur */).getAnimators());
+                                Utilities.blurBackgroundAtAppLaunch(
+                                        mLauncher.getApplicationContext())
+                                        /* playBlur */).getAnimators());
 
                 // We play StaggeredWorkspaceAnim as a part of the closing window animation.
                 playWorkspaceReveal = false;

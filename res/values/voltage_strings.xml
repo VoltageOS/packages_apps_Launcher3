@@ -419,7 +419,7 @@
     <string name="swipe_down_to_lock_title">Swipe down on task to toggle lock</string>
     <string name="swipe_down_to_lock_summary">Swipe down on a recent task card to lock or unlock it from being cleared</string>
 
-    <!-- Background blur at app launch-->
-    <string name="pref_blur_background_at_app_launch_title">Background blur at app launch</string>
-    <string name="pref_blur_background_at_app_launch_summary">Blur the background at app launch</string>
+    <!-- Background blur at app launch/close-->
+    <string name="pref_blur_background_at_app_launch_title">Background blur at app launch/close</string>
+    <string name="pref_blur_background_at_app_launch_summary">Blur the background during app launch and close animations</string>
 </resources>
