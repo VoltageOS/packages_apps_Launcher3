@@ -24,6 +24,7 @@
     <string name="action_lock">Lock/Unlock app</string>
     <string name="unlock_app">Unlocked app in recents</string>
     <string name="lock_app">Locked app in recents</string>
+    <string name="applock_blur_recents_label">App locked</string>
 
     <!-- General -->
     <string name="settings_title">Home settings</string>
@@ -223,6 +224,7 @@
     <string name="recents_screenshot_title">Screenshot</string>
     <string name="recents_clear_all_title">Clear all</string>
     <string name="recents_lens_title">Lens</string>
+    <string name="recents_applock_blur_title">Blur AppLock app previews</string>
 
     <!-- Overview gesture -->
     <string name="overview_gesture_title">Recent apps swipe action</string>

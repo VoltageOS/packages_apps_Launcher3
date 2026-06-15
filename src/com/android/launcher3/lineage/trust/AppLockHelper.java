@@ -17,18 +17,19 @@
  */
 package com.android.launcher3.lineage.trust;
 
-import android.app.AppLockData;
 import android.app.AppLockManager;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AppLockHelper {
 
     private AppLockManager mAppLockManager;
+    private Map<String, Boolean> mProtectedCache;
 
     @Nullable
     private static AppLockHelper sSingleton;
@@ -57,7 +58,18 @@ public class AppLockHelper {
     }
 
     public boolean isPackageProtected(@NonNull String packageName) {
-        return mAppLockManager.isPackageProtected(packageName);
+        if (mProtectedCache == null) {
+            mProtectedCache = new HashMap<>();
+        }
+        Boolean cached = mProtectedCache.get(packageName);
+        if (cached != null) return cached;
+        boolean result = mAppLockManager.isPackageProtected(packageName);
+        mProtectedCache.put(packageName, result);
+        return result;
+    }
+
+    public void invalidateCache() {
+        mProtectedCache = null;
     }
 
     public int getHiddenPackagesCount() {

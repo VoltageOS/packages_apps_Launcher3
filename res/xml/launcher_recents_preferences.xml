@@ -122,5 +122,12 @@
             android:defaultValue="true"
             android:persistent="true"
             launcher:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_recents_applock_blur"
+            android:title="@string/recents_applock_blur_title"
+            android:defaultValue="true"
+            android:persistent="true"
+            launcher:iconSpaceReserved="false" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

@@ -26,13 +26,18 @@ import android.app.WindowConfiguration.WINDOWING_MODE_FULLSCREEN
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.FloatProperty
 import android.util.Log
 import android.view.Display
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnClickListener
@@ -55,9 +60,11 @@ import com.android.launcher3.Flags.enableDesktopExplodedView
 import com.android.launcher3.Flags.enableRefactorDigitalWellbeingToast
 import com.android.launcher3.Flags.enableRefactorTaskContentView
 import com.android.launcher3.Flags.enableRefactorTaskThumbnail
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.android.launcher3.anim.AnimatedFloat
+import com.android.launcher3.lineage.trust.AppLockHelper
 import com.android.launcher3.logging.StatsLogManager.LauncherEvent
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.model.data.TaskViewItemInfo
@@ -331,6 +338,8 @@ constructor(
 
     var lockedPackageName: String? = null
         private set
+
+    private var appLockOverlay: View? = null
 
     private val systemGestureExclusionRectList = listOf(Rect()) // We only need 1 exclusion Rect
 
@@ -765,6 +774,7 @@ constructor(
         isBeingDismissed = false
         isLocked = false
         lockedPackageName = null
+        clearAppLockBlur()
         resetPersistentViewTransforms()
 
         groupTask = null
@@ -1912,10 +1922,56 @@ constructor(
         if (packageName == null) {
             isLocked = false
             chip?.setLockState(false)
+            updateAppLockBlurState()
             return
         }
         isLocked = LockedTaskManager.getInstance(context).isPackageLocked(packageName)
         chip?.setLockState(isLocked)
+        updateAppLockBlurState()
+    }
+
+    private fun clearAppLockBlur() {
+        appLockOverlay?.visibility = GONE
+        taskContainers.forEach {
+            (if (enableRefactorTaskContentView()) it.taskContentView
+             else it.thumbnailViewDeprecated).setRenderEffect(null)
+        }
+    }
+
+    private fun updateAppLockBlurState() {
+        val blurEnabled = LauncherPrefs.RECENTS_APPLOCK_BLUR.get(context)
+        var anyProtected = false
+        taskContainers.forEach { container ->
+            val pkg = container.task.key.packageName ?: return@forEach
+            val isProtected = blurEnabled &&
+                AppLockHelper.getInstance(context).isPackageProtected(pkg)
+            if (isProtected) anyProtected = true
+            (if (enableRefactorTaskContentView()) container.taskContentView
+             else container.thumbnailViewDeprecated).setRenderEffect(
+                if (isProtected)
+                    buildAppLockRenderEffect()
+                else null
+            )
+        }
+        if (anyProtected) {
+            if (appLockOverlay == null) {
+                appLockOverlay = LayoutInflater.from(context)
+                    .inflate(R.layout.task_applock_overlay, this, false)
+                addView(appLockOverlay)
+            }
+            appLockOverlay?.visibility = VISIBLE
+        } else {
+            appLockOverlay?.visibility = GONE
+        }
+    }
+
+    private fun buildAppLockRenderEffect(): RenderEffect {
+        val r = 50f * resources.displayMetrics.density
+        val blur = RenderEffect.createBlurEffect(r, r, Shader.TileMode.CLAMP)
+        val dim = RenderEffect.createColorFilterEffect(
+            PorterDuffColorFilter(0x66000000.toInt(), PorterDuff.Mode.SRC_OVER)
+        )
+        return RenderEffect.createChainEffect(dim, blur)
     }
 
     /**
