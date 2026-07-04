@@ -113,4 +113,8 @@
 
     <!-- Background opacity -->
     <string name="background_opacity_title">Background opacity</string>
+
+    <!-- Search bar -->
+    <string name="pref_show_hotseat_qsb_title">Show search bar</string>
+    <string name="pref_show_hotseat_qsb_summary">At the bottom of your home screen</string>
 </resources>

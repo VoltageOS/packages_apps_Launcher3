@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res-auto">
+    xmlns:launcher="http://schemas.android.com/apk/res-auto"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.launcher3">
 
     <PreferenceCategory
         android:title="@string/general_category_title">
@@ -59,6 +60,13 @@
             android:summary="@string/pref_show_google_now_summary"
             android:defaultValue="true"
             launcher:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        android:key="pref_show_hotseat_qsb"
+        android:title="@string/pref_show_hotseat_qsb_title"
+        android:summary="@string/pref_show_hotseat_qsb_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
 
         <SwitchPreferenceCompat
             android:key="pref_show_hotseat_bg"
