@@ -17,6 +17,7 @@
 package com.android.launcher3.settings;
 
 import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
+import static android.os.Process.myUserHandle;
 
 import static androidx.preference.PreferenceFragmentCompat.ARG_PREFERENCE_ROOT;
 
@@ -28,6 +29,7 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.LauncherApps;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -50,8 +52,10 @@ import androidx.preference.PreferenceScreen;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.BuildConfig;
+import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherFiles;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.display.DisplayController;
 import com.android.launcher3.display.LauncherDisplayInfo;
@@ -73,6 +77,10 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     public static final String FIXED_LANDSCAPE_MODE = "pref_fixed_landscape_mode";
 
     private static final String NOTIFICATION_DOTS_PREFERENCE_KEY = "pref_icon_badging";
+
+    private static final String SHOW_HOTSEAT_QSB_KEY = "pref_show_hotseat_qsb";
+
+    private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     public static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
 
@@ -295,6 +303,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
          * will remove that preference from the list.
          */
         protected boolean initPreference(Preference preference) {
+            LauncherApps launcherApps = getContext().getSystemService(LauncherApps.class);
             LauncherDisplayInfo info = DisplayController.INSTANCE.get(getContext()).getInfo();
             String key = preference.getKey();
             if (key == null) {
@@ -328,6 +337,9 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                             }
                     );
                     return !info.isLargeScreen(info.realBounds);
+                case SHOW_HOTSEAT_QSB_KEY:
+                    return Flags.enableQsbOnHotseat() && launcherApps != null &&
+                            launcherApps.isPackageEnabled(SEARCH_PACKAGE, myUserHandle());
             }
             return true;
         }
