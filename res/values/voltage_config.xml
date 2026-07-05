@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_drawer_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsAppDrawer$AppDrawerSettingsFragment</string>
+    <string name="home_screen_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsHomescreen$HomescreenSettingsFragment</string>
+    <string name="icons_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsIcons$IconsSettingsFragment</string>
+    <string name="misc_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsMisc$MiscSettingsFragment</string>
+    <string name="recents_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsRecents$RecentsSettingsFragment</string>
+</resources>
