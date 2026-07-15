@@ -43,6 +43,7 @@ import android.content.Context;
 import android.content.IIntentReceiver;
 import android.content.IIntentSender;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -149,6 +150,9 @@ public class TaskbarManagerImpl {
 
     public static final Uri GESTURE_NAVBAR_HEIGHT_MODE_URI = Settings.System.getUriFor(
             Settings.System.GESTURE_NAVBAR_HEIGHT_MODE);
+
+    public static final Uri NAV_BAR_IME = Settings.Secure.getUriFor(
+            "sysui_show_nav_bar_ime");
 
     private final Context mBaseContext;
     private final int mPrimaryDisplayId;
@@ -367,14 +371,21 @@ public class TaskbarManagerImpl {
                         v -> onTaskbarChanged(v, TaskbarActivityContext::isNavbarHintEnabled));
         cleanupTasks.addCloseable(getTaskbarUiThread(), enableNavbarHintSafeCloseable);
 
-        SettingsCache.OnChangeListener gestureNavbarLengthChangeListener =
-                v -> getTaskbarUiThread().execute(this::recreateTaskbars);
-        settingsCache.register(GESTURE_NAVBAR_LENGTH_MODE_URI, gestureNavbarLengthChangeListener);
-        cleanupTasks.addTask(getTaskbarUiThread(), () -> settingsCache.unregister(
-                GESTURE_NAVBAR_LENGTH_MODE_URI, gestureNavbarLengthChangeListener));
-        settingsCache.register(GESTURE_NAVBAR_HEIGHT_MODE_URI, gestureNavbarLengthChangeListener);
-        cleanupTasks.addTask(getTaskbarUiThread(), () -> settingsCache.unregister(
-                GESTURE_NAVBAR_HEIGHT_MODE_URI, gestureNavbarLengthChangeListener));
+        ContentObserver gestureNavbarSettingsObserver = new ContentObserver(
+                new Handler(getTaskbarUiThread().getLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                recreateTaskbars();
+            }
+        };
+        mBaseContext.getContentResolver().registerContentObserver(
+                GESTURE_NAVBAR_LENGTH_MODE_URI, false, gestureNavbarSettingsObserver);
+        mBaseContext.getContentResolver().registerContentObserver(
+                GESTURE_NAVBAR_HEIGHT_MODE_URI, false, gestureNavbarSettingsObserver);
+        mBaseContext.getContentResolver().registerContentObserver(
+                NAV_BAR_IME, false, gestureNavbarSettingsObserver);
+        cleanupTasks.addTask(getTaskbarUiThread(), () -> mBaseContext.getContentResolver()
+                .unregisterContentObserver(gestureNavbarSettingsObserver));
 
         SimpleBroadcastReceiver shutdownReceiver = new SimpleBroadcastReceiver(
                 mBaseContext,
