@@ -20,8 +20,6 @@ import static android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BA
 
 import static com.android.launcher3.EncryptionType.ENCRYPTED;
 import static com.android.launcher3.LauncherPrefs.nonRestorableItem;
-import static com.android.launcher3.taskbar.TaskbarManagerImpl.GESTURE_NAVBAR_HEIGHT_MODE_URI;
-import static com.android.launcher3.taskbar.TaskbarManagerImpl.GESTURE_NAVBAR_LENGTH_MODE_URI;
 import static com.android.launcher3.taskbar.TaskbarManagerImpl.NAVIGATION_BAR_HINT_URI;
 import static com.android.launcher3.taskbar.Utilities.getShapedTaskbarRadius;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_NAV_BAR_HIDDEN;
@@ -34,6 +32,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Outline;
 import android.graphics.Rect;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
@@ -141,8 +140,8 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
         DeviceProfile deviceProfile = activity.getDeviceProfile();
         Resources resources = activity.getResources();
 
-        int handleHeightMode = SettingsCache.INSTANCE.get(activity)
-                .getIntValue(GESTURE_NAVBAR_HEIGHT_MODE_URI, 3);
+        int handleHeightMode = Settings.System.getInt(activity.getContentResolver(),
+                Settings.System.GESTURE_NAVBAR_HEIGHT_MODE, 3);
         if (handleHeightMode == 0) {
             mStashedHandleHeight = resources
                     .getDimensionPixelSize(R.dimen.taskbar_stashed_handle_height_smallest);
@@ -160,8 +159,8 @@ public class StashedHandleViewController implements TaskbarControllers.LoggableT
                     .getDimensionPixelSize(R.dimen.taskbar_stashed_handle_height);
         }
 
-        int handleWidthMode = SettingsCache.INSTANCE.get(activity)
-                .getIntValue(GESTURE_NAVBAR_LENGTH_MODE_URI, 1);
+        int handleWidthMode = Settings.System.getInt(activity.getContentResolver(),
+                Settings.System.GESTURE_NAVBAR_LENGTH_MODE, 1);
         if (activity.isPhoneGestureNavMode() || activity.isTinyTaskbar()
                 || activity.isBubbleBarOnPhone()) {
             mTaskbarSize = resources.getDimensionPixelSize(R.dimen.taskbar_phone_size);
