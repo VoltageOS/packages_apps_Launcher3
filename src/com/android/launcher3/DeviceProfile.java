@@ -143,6 +143,7 @@ public class DeviceProfile {
 
     // Meminfo in overview
     public int memInfoMarginGesturePx;
+    public int memInfoMarginTaskbarPx;
     public int memInfoMarginTransientTaskbarPx;
     public int memInfoMarginThreeButtonPx;
     public boolean isTaskbarPresent;
@@ -254,6 +255,8 @@ public class DeviceProfile {
 
         memInfoMarginGesturePx = res.getDimensionPixelSize(
                 R.dimen.meminfo_bottom_margin_gesture);
+        memInfoMarginTaskbarPx = res.getDimensionPixelSize(
+                R.dimen.meminfo_bottom_margin_taskbar);
         memInfoMarginTransientTaskbarPx = res.getDimensionPixelSize(
                 R.dimen.meminfo_bottom_margin_transient_taskbar);
         memInfoMarginThreeButtonPx = res.getDimensionPixelSize(
