@@ -161,17 +161,7 @@ public class MemInfoView extends TextView implements Insettable {
 
     public void updateVerticalMargin(NavigationMode mode) {
         LayoutParams lp = (LayoutParams) getLayoutParams();
-        int bottomMargin;
-
-        if (!mDp.isTaskbarPresent && (mode == THREE_BUTTONS || mode == TWO_BUTTONS)) {
-            bottomMargin = mDp.memInfoMarginThreeButtonPx;
-        } else if (mDp.isTaskbarPresent && (mode == THREE_BUTTONS || mode == TWO_BUTTONS)) {
-            bottomMargin = mDp.memInfoMarginTaskbarPx;
-        } else if (mDp.isTaskbarPresent && !(mode == THREE_BUTTONS || mode == TWO_BUTTONS)) {
-            bottomMargin = mDp.memInfoMarginTransientTaskbarPx;
-        } else {
-            bottomMargin = mDp.memInfoMarginGesturePx;
-        }
+        int bottomMargin = mDp.getOverviewActionsClaimedSpaceBelow();
 
         lp.setMargins(lp.leftMargin, lp.topMargin, lp.rightMargin, bottomMargin);
         lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;

@@ -142,10 +142,7 @@ public class DeviceProfile {
     private TaskbarProfile mTaskbarProfile;
 
     // Meminfo in overview
-    public int memInfoMarginGesturePx;
-    public int memInfoMarginTaskbarPx;
-    public int memInfoMarginTransientTaskbarPx;
-    public int memInfoMarginThreeButtonPx;
+    public int memInfoHeight;
     public boolean isTaskbarPresent;
 
     /** Used only as an alternative to mocking when null values cannot be used. */
@@ -253,14 +250,8 @@ public class DeviceProfile {
 
         overviewProfile = OverviewProfile.Factory.createOverviewProfile(res);
 
-        memInfoMarginGesturePx = res.getDimensionPixelSize(
-                R.dimen.meminfo_bottom_margin_gesture);
-        memInfoMarginTaskbarPx = res.getDimensionPixelSize(
-                R.dimen.meminfo_bottom_margin_taskbar);
-        memInfoMarginTransientTaskbarPx = res.getDimensionPixelSize(
-                R.dimen.meminfo_bottom_margin_transient_taskbar);
-        memInfoMarginThreeButtonPx = res.getDimensionPixelSize(
-                R.dimen.meminfo_bottom_margin_three_button);
+        memInfoHeight = LauncherPrefs.RECENTS_MEMINFO.get(context) ? res.getDimensionPixelSize(
+                R.dimen.meminfo_claimed_height) : 0;
         isTaskbarPresent = mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent();
 
         mMetrics = res.getDisplayMetrics();
@@ -1147,7 +1138,7 @@ public class DeviceProfile {
         int overviewActionsSpace = mDeviceProperties.isLargeScreen()
                 ? 0
                 : (overviewProfile.getActionsTopMarginPx() + overviewProfile.getActionsHeight());
-        return overviewActionsSpace + getOverviewActionsClaimedSpaceBelow();
+        return overviewActionsSpace + memInfoHeight + getOverviewActionsClaimedSpaceBelow();
     }
 
     /**
