@@ -37,6 +37,7 @@ import com.android.launcher3.states.StateAnimationConfig.SKIP_OVERVIEW
 import com.android.quickstep.util.AnimUtils
 import com.android.quickstep.views.AddDesktopButton
 import com.android.quickstep.views.ClearAllButton
+import com.android.quickstep.views.MemInfoView
 import com.android.quickstep.views.RecentsView
 import com.android.quickstep.views.RecentsView.ADJACENT_PAGE_HORIZONTAL_OFFSET
 import com.android.quickstep.views.RecentsView.CONTENT_ALPHA
@@ -300,6 +301,16 @@ class RecentsViewStateController(private val launcher: QuickstepLauncher) :
                 if (state.areElementsVisible(launcherUiState, LauncherState.ADD_DESK_BUTTON)) 1f
                 else 0f,
                 LINEAR,
+            )
+        }
+        val memInfoAlpha =
+            if (state.areElementsVisible(launcherUiState, LauncherState.MEMINFO)) 1f else 0f
+        launcher.memInfoView?.let {
+            propertySetter.setFloat(
+                it,
+                MemInfoView.STATE_CTRL_ALPHA,
+                memInfoAlpha,
+                config.getInterpolator(ANIM_OVERVIEW_ACTIONS_FADE, LINEAR),
             )
         }
     }
