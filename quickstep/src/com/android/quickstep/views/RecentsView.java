@@ -806,6 +806,7 @@ public abstract class RecentsView<
     private TaskView mMovingTaskView;
 
     private OverviewActionsView mActionsView;
+    private MemInfoView mMemInfoView;
 
     @Nullable
     private DesktopRecentsTransitionController mDesktopRecentsTransitionController;
@@ -1037,7 +1038,8 @@ public abstract class RecentsView<
     public void init(OverviewActionsView actionsView, SplitSelectStateController splitController,
             @Nullable DesktopRecentsTransitionController desktopRecentsTransitionController,
             SurfaceTransactionApplier surfaceTransactionApplier,
-            @Nullable ViewGroup emptyRecentsMessageView) {
+            @Nullable ViewGroup emptyRecentsMessageView,
+            MemInfoView memInfoView) {
         // OverviewActionsView related.
         mIs3PLauncher = !mOverviewComponentObserver.isHomeAndOverviewSame();
         mActionsView = actionsView;
@@ -1048,6 +1050,7 @@ public abstract class RecentsView<
         // RecentsViewContainer provided dependencies.
         mSplitSelectStateController = splitController;
         mDesktopRecentsTransitionController = desktopRecentsTransitionController;
+        mMemInfoView = memInfoView;
         // Set in launcher to be in sync with the other Surface transactions e.g. in
         // BaseDepthController for applying blur.
         mSyncTransactionApplier = surfaceTransactionApplier;
@@ -2115,8 +2118,11 @@ public abstract class RecentsView<
         mClearAllButton.setFullscreenProgress(fullscreenProgress);
 
         // Fade out the actions view quickly (0.1 range)
-        mActionsView.getFullscreenAlpha().updateValue(
-                mapToRange(fullscreenProgress, 0, 0.1f, 1f, 0f, LINEAR));
+        float alpha = mapToRange(fullscreenProgress, 0, 0.1f, 1f, 0f, LINEAR);
+        mActionsView.getFullscreenAlpha().updateValue(alpha);
+        if (mMemInfoView != null) {
+            mMemInfoView.setAlpha(MemInfoView.ALPHA_FS_PROGRESS, alpha);
+        }
     }
 
     private void updateTaskStackListenerState() {

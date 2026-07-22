@@ -83,6 +83,9 @@ open class RecentsState(@JvmField val ordinal: Int, private val mFlags: Int) :
     /** For this state, whether overview actions should be shown. */
     fun hasOverviewActions() = hasFlag(FLAG_OVERVIEW_ACTIONS)
 
+    /** For this state, whether mem info view should be shown. */
+    fun hasMemInfoView() = hasFlag(FLAG_MEMINFO)
+
     /** For this state, whether live tile should be shown. */
     fun hasLiveTile() = hasFlag(FLAG_LIVE_TILE)
 
@@ -252,6 +255,7 @@ open class RecentsState(@JvmField val ordinal: Int, private val mFlags: Int) :
         private val FLAG_TASK_THUMBNAIL_SPLASH = BaseState.getFlag(8)
         private val FLAG_ADD_DESK_BUTTON = BaseState.getFlag(9)
         private val FLAG_IS_IN_OVERVIEW = BaseState.getFlag(10)
+        private val FLAG_MEMINFO = BaseState.getFlag(11)
 
         private const val PREDICTIVE_BACK_DURATION = 1000L
         private const val PREDICTIVE_BACK_MAX_RECENTS_SCALE_LAUNCH = 1.1f
@@ -282,7 +286,8 @@ open class RecentsState(@JvmField val ordinal: Int, private val mFlags: Int) :
                     FLAG_RECENTS_VIEW_VISIBLE or
                     FLAG_ADD_DESK_BUTTON or
                     FLAG_IS_IN_OVERVIEW or
-                    FLAG_IS_TASK_VIEW_INTERACTIVE),
+                    FLAG_IS_TASK_VIEW_INTERACTIVE or
+                    FLAG_MEMINFO),
             )
         @JvmField
         val MODAL_TASK: RecentsState =
@@ -295,7 +300,8 @@ open class RecentsState(@JvmField val ordinal: Int, private val mFlags: Int) :
                     FLAG_SCRIM or
                     FLAG_LIVE_TILE or
                     FLAG_RECENTS_VIEW_VISIBLE or
-                    FLAG_IS_IN_OVERVIEW),
+                    FLAG_IS_IN_OVERVIEW or
+                    FLAG_MEMINFO),
             )
         @JvmField
         val BACKGROUND_APP: RecentsState =

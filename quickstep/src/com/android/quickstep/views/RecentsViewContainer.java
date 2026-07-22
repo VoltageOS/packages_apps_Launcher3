@@ -216,4 +216,7 @@ public interface RecentsViewContainer extends ActivityContext, RecentsViewContai
      */
     void goToRecentsState(RecentsState recentsState, boolean animated,
             Animator.AnimatorListener listener);
+
+    @Nullable
+    MemInfoView getMemInfoView();
 }
