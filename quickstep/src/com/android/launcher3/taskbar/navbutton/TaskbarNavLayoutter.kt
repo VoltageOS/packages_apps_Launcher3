@@ -18,6 +18,7 @@ package com.android.launcher3.taskbar.navbutton
 
 import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -92,7 +93,20 @@ class TaskbarNavLayoutter(
         context: TaskbarActivityContext,
         isA11yButtonPersistent: Boolean,
     ) {
-        val navMarginEnd = calculateNavMarginEnd(context, isA11yButtonPersistent)
+        val layoutMode =
+            Settings.Secure.getInt(
+                context.contentResolver,
+                Settings.Secure.NAVBAR_LAYOUT_MODE,
+                0,
+            )
+        val endFactor =
+            when (layoutMode) {
+                2 -> 0.4f
+                3 -> 1.6f
+                else -> 1f
+            }
+        val navMarginEnd =
+            (endFactor * calculateNavMarginEnd(context, isA11yButtonPersistent).toFloat()).toInt()
 
         val navButtonParams =
             FrameLayout.LayoutParams(
@@ -109,8 +123,6 @@ class TaskbarNavLayoutter(
 
         navButtonContainer.orientation = LinearLayout.HORIZONTAL
         navButtonContainer.layoutParams = navButtonParams
-
-        addThreeButtons()
     }
 
     private fun calculateNavMarginEnd(
@@ -133,8 +145,15 @@ class TaskbarNavLayoutter(
     }
 
     private fun distributeNavButtonSpacing() {
+        val layoutMode =
+            Settings.Secure.getInt(
+                navButtonContainer.context.contentResolver,
+                Settings.Secure.NAVBAR_LAYOUT_MODE,
+                0,
+            )
         val spaceInBetween =
             resources.getDimensionPixelSize(R.dimen.taskbar_nav_button_space_inbetween)
+        val spaceInBetweenDiv = if (layoutMode == 0) 1 else 4
         val lastIndex = navButtonContainer.childCount - 1
 
         for (i in 0..lastIndex) {
@@ -145,15 +164,15 @@ class TaskbarNavLayoutter(
             when (i) {
                 0 -> {
                     params.marginStart = 0
-                    params.marginEnd = spaceInBetween
+                    params.marginEnd = spaceInBetween / spaceInBetweenDiv
                 }
                 lastIndex -> {
-                    params.marginStart = spaceInBetween
+                    params.marginStart = spaceInBetween / spaceInBetweenDiv
                     params.marginEnd = 0
                 }
                 else -> {
-                    params.marginStart = spaceInBetween
-                    params.marginEnd = spaceInBetween
+                    params.marginStart = (spaceInBetween / 2) / spaceInBetweenDiv
+                    params.marginEnd = (spaceInBetween / 2) / spaceInBetweenDiv
                 }
             }
         }
