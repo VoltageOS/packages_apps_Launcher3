@@ -1,5 +1,7 @@
 package com.android.launcher3.customization;
 
+import static com.android.launcher3.AbstractFloatingView.TYPE_OPTIONS_POPUP;
+
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,9 +23,9 @@ import com.android.launcher3.QuickstepTransitionManager;
 import com.android.launcher3.R;
 import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.ComponentKey;
-import com.android.launcher3.widget.WidgetsBottomSheet;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.PackageManagerHelper;
+import com.android.launcher3.views.AbstractSlideInView;
 
 import com.android.launcher3.settings.preference.IconPackPrefSetter;
 import com.android.launcher3.settings.preference.ReloadingListPreference;
@@ -32,7 +34,9 @@ import com.android.launcher3.util.AppReloader;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.THREAD_POOL_EXECUTOR;
 
-public class InfoBottomSheet extends WidgetsBottomSheet {
+public class InfoBottomSheet extends AbstractSlideInView<QuickstepLauncher> {
+    private static final long CLOSE_DURATION = 300;
+
     private final FragmentManager mFragmentManager;
     protected static Rect mSourceBounds;
     protected static Context mViewContext;
@@ -47,7 +51,15 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
 
     public InfoBottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mFragmentManager = QuickstepLauncher.getLauncher(context).getFragmentManager();
+        mFragmentManager = mActivityContext.getFragmentManager();
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mContent = findViewById(R.id.info_bottom_sheet_content);
+        mContent.setOutlineProvider(mViewOutlineProvider);
+        mContent.setClipToOutline(true);
     }
 
     public void configureBottomSheet(Rect sourceBounds, Context context) {
@@ -55,9 +67,7 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
         mViewContext = context;
     }
 
-    @Override
     public void populateAndShow(ItemInfo itemInfo) {
-        super.populateAndShow(itemInfo);
         TextView title = findViewById(R.id.title);
         title.setText((itemInfo.title == null || itemInfo.title.isEmpty()) 
             ? getContext().getResources().getString(R.string.app_info_title) 
@@ -66,6 +76,20 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
         PrefsFragment fragment =
                 (PrefsFragment) mFragmentManager.findFragmentById(R.id.sheet_prefs);
         fragment.loadForApp(itemInfo);
+
+        mIsOpen = true;
+        attachToContainer();
+        setUpDefaultOpenAnimation().getAnimationPlayer().start();
+    }
+
+    @Override
+    protected void handleClose(boolean animate) {
+        handleClose(animate, CLOSE_DURATION);
+    }
+
+    @Override
+    protected boolean isOfType(int type) {
+        return (type & TYPE_OPTIONS_POPUP) != 0;
     }
 
     @Override
@@ -77,10 +101,6 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
                     .commitAllowingStateLoss();
         }
         super.onDetachedFromWindow();
-    }
-
-    @Override
-    public void onWidgetsBound() {
     }
 
     public static class PrefsFragment extends PreferenceFragment
