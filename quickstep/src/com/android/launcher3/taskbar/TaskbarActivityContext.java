@@ -49,6 +49,7 @@ import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_D
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_NOTIFICATION_PANEL_VISIBLE;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_VOICE_INTERACTION_WINDOW_SHOWING;
 import static com.android.launcher3.taskbar.TaskbarManagerImpl.ENABLE_TASKBAR_URI;
+import static com.android.launcher3.taskbar.TaskbarManagerImpl.NAVIGATION_BAR_HINT_URI;
 import static com.android.wm.shell.Flags.enableBubbleBar;
 import static com.android.wm.shell.Flags.enableBubbleBarOnPhones;
 import static com.android.wm.shell.Flags.enableTinyTaskbar;
@@ -1616,14 +1617,12 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
     public int getDefaultTaskbarWindowSize() {
         Resources resources = getResources();
 
-        if (isGestureNav() && !mIsNavbarHintEnabled) {
-            return 0;
-        }
-
         if (isPhoneMode()) {
             return isThreeButtonNav() ?
                     resources.getDimensionPixelSize(R.dimen.taskbar_phone_size) :
-                    resources.getDimensionPixelSize(R.dimen.taskbar_stashed_size);
+                    SettingsCache.INSTANCE.get(this).getValue(NAVIGATION_BAR_HINT_URI) ?
+                    resources.getDimensionPixelSize(R.dimen.taskbar_stashed_size) :
+                    0;
         }
 
         int bubbleBarTop = mControllers.bubbleControllers.map(bubbleControllers ->
