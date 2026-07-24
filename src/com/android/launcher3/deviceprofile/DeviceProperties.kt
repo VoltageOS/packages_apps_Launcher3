@@ -16,8 +16,11 @@
 
 package com.android.launcher3.deviceprofile
 
+import android.content.Context
 import android.graphics.Rect
 import com.android.launcher3.display.LauncherDisplayInfo
+import com.android.launcher3.taskbar.TaskbarManagerImpl.ENABLE_TASKBAR_URI
+import com.android.launcher3.util.SettingsCache
 import com.android.launcher3.util.WindowBounds
 import com.android.wm.shell.Flags
 import kotlin.math.max
@@ -57,6 +60,7 @@ data class DeviceProperties(
     companion object Factory {
         // b/419264328 adding here all the improvements/cleanup for this class
         fun createDeviceProperties(
+            context: Context? = null,
             info: LauncherDisplayInfo,
             windowBounds: WindowBounds,
             deviceConfiguration: DeviceConfiguration,
@@ -70,8 +74,13 @@ data class DeviceProperties(
             val heightPx = windowBounds.bounds.height()
             val availableWidthPx = windowBounds.availableSize.x
             val availableHeightPx = windowBounds.availableSize.y
+            val enableTaskbar = context?.let {
+                SettingsCache.INSTANCE.get(it).getIntValue(
+                    ENABLE_TASKBAR_URI, if (isLargeScreen) 1 else 0
+                ) != 0
+            } ?: (Flags.enableTinyTaskbar() || isLargeScreen)
             val taskbarOrBubbleBarOnPhones =
-                Flags.enableTinyTaskbar() ||
+                enableTaskbar ||
                     (Flags.enableBubbleBar() && Flags.enableBubbleBarOnPhones())
             return DeviceProperties(
                 windowX = windowX,
