@@ -18,6 +18,7 @@
         android:id="@+id/info_bottom_sheet_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_rounded_corner_bottom_sheet"
         android:paddingTop="@dimen/bottom_sheet_handle_margin"
         android:orientation="vertical">
 

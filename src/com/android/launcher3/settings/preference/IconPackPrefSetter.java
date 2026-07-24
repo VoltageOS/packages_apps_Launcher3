@@ -47,7 +47,7 @@ public class IconPackPrefSetter implements ReloadingListPreference.OnReloadListe
         CharSequence[] values = new String[keys.length];
         int i = 0;
 
-        keys[i] = mContext.getResources().getString(R.string.pref_value_default);
+        keys[i] = mContext.getResources().getString(R.string.icon_pack_default_label);
         values[i++] = packList.containsKey(globalPack) ? "" : globalPack;
 
         List<Map.Entry<String, CharSequence>> packs = new ArrayList<>(packList.entrySet());
