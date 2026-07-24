@@ -15,6 +15,7 @@
  */
 package com.android.launcher3.model;
 
+import static com.android.launcher3.BuildConfig.USE_QUICKSPACE_VIEW;
 import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
 
 import android.util.SparseArray;
@@ -60,6 +61,9 @@ public class WorkspaceItemSpaceFinder {
      */
     public WorkspaceItemCoordinates findSpaceForItem(ArrayList<ItemInfo> addItemsFinal, int spanX,
             int spanY, IntSet excludedScreens) {
+        if (USE_QUICKSPACE_VIEW) {
+            excludedScreens.add(FIRST_SCREEN_ID);
+        }
         return findSpaceForItem(
                 addItemsFinal, spanX, spanY, excludedScreens,
                 /* startingFrom= */ new WorkspaceItemCoordinates(

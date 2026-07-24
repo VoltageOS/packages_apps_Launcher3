@@ -31,6 +31,7 @@ import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherModel
 import com.android.launcher3.LauncherPrefs
+import com.android.launcher3.Workspace
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT
 import com.android.launcher3.LauncherSettings.Favorites.DESKTOP_ICON_FLAG
@@ -468,7 +469,12 @@ constructor(
         }
 
         if (!occupied.containsKey(item.screenId)) {
-            occupied.put(item.screenId, GridOccupancy(countX + 1, countY + 1))
+            val screen = GridOccupancy(countX + 1, countY + 1)
+            if (item.screenId == Workspace.FIRST_SCREEN_ID
+                    && LauncherPrefs.SHOW_QUICKSPACE.get(context)) {
+                screen.markCells(0, 0, countX, 1, true)
+            }
+            occupied.put(item.screenId, screen)
         }
         val occupancy = occupied[item.screenId]
 

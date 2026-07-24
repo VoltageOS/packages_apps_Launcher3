@@ -721,12 +721,34 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         super.onViewAdded(child);
     }
 
+    private View mFirstPagePinnedItem;
+
     /**
      * Initializes and binds the first page
      */
     public void bindAndInitFirstWorkspaceScreen() {
         // Add the first page
-        insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
+        CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
+        if (!LauncherPrefs.SHOW_QUICKSPACE.get(getContext())) {
+            mFirstPagePinnedItem = null;
+            return;
+        }
+
+        if (mFirstPagePinnedItem == null) {
+            // As workspace does not touch the edges, we do not need a full
+            // width first page pinned item.
+            mFirstPagePinnedItem = LayoutInflater.from(getContext())
+                    .inflate(R.layout.reserved_container_workspace, firstPage, false);
+        }
+
+        int cellHSpan = mLauncher.getDeviceProfile().inv.numSearchContainerColumns;
+        CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, 1);
+        lp.canReorder = false;
+        if (!firstPage.addViewToCellLayout(
+                mFirstPagePinnedItem, 0, R.id.reserved_container_workspace, lp, true)) {
+            Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
+            mFirstPagePinnedItem = null;
+        }
     }
 
     public void removeAllWorkspaceScreens() {
@@ -1150,7 +1172,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             int id = mWorkspaceScreens.keyAt(i);
             CellLayout cl = mWorkspaceScreens.valueAt(i);
             // FIRST_SCREEN_ID can never be removed.
-            if (canRemoveEmptyScreen(id, cl)) removeScreens.add(id);
+            boolean isQsbScreen = id == FIRST_SCREEN_ID && BuildConfig.USE_QUICKSPACE_VIEW;
+            if (!isQsbScreen && canRemoveEmptyScreen(id, cl)) removeScreens.add(id);
         }
 
         // When two panel home is enabled we only remove an empty page if both visible pages are

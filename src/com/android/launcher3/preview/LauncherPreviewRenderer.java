@@ -49,7 +49,11 @@ import androidx.annotation.UiThread;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
+
+import com.android.launcher3.BuildConfig;
 import com.android.launcher3.CellLayout;
+import com.android.launcher3.celllayout.CellLayoutLayoutParams;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Hotseat;
 import com.android.launcher3.InsettableFrameLayout;
@@ -372,6 +376,20 @@ public class LauncherPreviewRenderer extends BaseContext
                 .filter(currentScreenContentFilter(IntSet.wrap(mWorkspaceScreens.keySet())))
                 .forEach(this::inflateAndAdd);
         populateHotseatPredictions(itemIdMap);
+
+        // Add first page QSB
+        if (BuildConfig.USE_QUICKSPACE_VIEW) {
+            CellLayout firstScreen = mWorkspaceScreens.get(FIRST_SCREEN_ID);
+            if (firstScreen != null) {
+                View qsb = mHomeElementInflater.inflate(R.layout.reserved_container_workspace, firstScreen, false);
+                qsb.setId(R.id.reserved_container_workspace);
+
+                CellLayoutLayoutParams lp = new CellLayoutLayoutParams(
+                        0, 0, firstScreen.getCountX(), 1);
+                lp.canReorder = false;
+                firstScreen.addViewToCellLayout(qsb, 0, R.id.reserved_container_workspace, lp, true);
+            }
+        }
 
         measureAndLayoutRootView();
         dispatchVisibilityAggregated(mRootView, true);

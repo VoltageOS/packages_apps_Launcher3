@@ -197,6 +197,7 @@ import com.android.launcher3.popup.PopupContainer;
 import com.android.launcher3.popup.PopupController;
 import com.android.launcher3.popup.SystemShortcut;
 import com.android.launcher3.popup.WorkspaceLongPressOptions;
+import com.android.launcher3.quickspace.QuickSpaceView;
 import com.android.launcher3.statemanager.StateManager;
 import com.android.launcher3.statemanager.StateManager.StateHandler;
 import com.android.launcher3.statemanager.StatefulActivity;
@@ -935,6 +936,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     protected void onStop() {
         super.onStop();
+        if (mQuickSpace != null) {
+            mQuickSpace.onPause();
+        }
         hideKeyboard();
         logStopAndResume(false /* isResume */);
         mAppWidgetHolder.setActivityStarted(false);
@@ -1111,6 +1115,11 @@ public class Launcher extends StatefulActivity<LauncherState>
     protected void onResume() {
         TraceHelper.INSTANCE.beginSection(ON_RESUME_EVT);
         super.onResume();
+
+        if (mQuickSpace != null) {
+            mQuickSpace.onResume();
+        }
+
         mLauncherUiState.setIsResumedActivity(true);
         DragView.removeAllViews(this);
         TraceHelper.INSTANCE.endSection();
@@ -1124,6 +1133,11 @@ public class Launcher extends StatefulActivity<LauncherState>
         ItemInstallQueue.INSTANCE.get(this).pauseModelPush(FLAG_ACTIVITY_PAUSED);
 
         super.onPause();
+
+        if (mQuickSpace != null) {
+            mQuickSpace.onPause();
+        }
+
         mLauncherUiState.setIsResumedActivity(false);
         mDragController.cancelDrag();
         mLastTouchUpTime = -1;
@@ -1206,6 +1220,9 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         // Setup Scrim
         mScrimView = findViewById(R.id.scrim_view);
+
+        // QuickSpace
+        mQuickSpace = findViewById(R.id.reserved_container_workspace);
 
         // Setup the drag controller (drop targets have to be added in reverse order in priority)
         mDropTargetBar.setup(mDragController);
@@ -1605,6 +1622,10 @@ public class Launcher extends StatefulActivity<LauncherState>
         LauncherAppState.getIDP(this).removeOnChangeListener(this);
         mOverlayManager.onActivityDestroyed();
         PillColorProvider.getInstance(mWorkspace.getContext()).unregisterObserver();
+
+        if (mQuickSpace != null) {
+            mQuickSpace.onDestroy();
+        }
     }
 
     public LauncherAccessibilityDelegate getAccessibilityDelegate() {
@@ -2886,6 +2907,9 @@ public class Launcher extends StatefulActivity<LauncherState>
     public OnClickListener getItemOnClickListener() {
         return ItemClickHandler.INSTANCE;
     }
+
+    // QuickSpace
+    private QuickSpaceView mQuickSpace;
 
     @Override
     public void onTopResumedActivityChanged(boolean isTopResumed) {
