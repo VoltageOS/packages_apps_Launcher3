@@ -5,4 +5,7 @@
     <string name="icons_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsIcons$IconsSettingsFragment</string>
     <string name="misc_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsMisc$MiscSettingsFragment</string>
     <string name="recents_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsRecents$RecentsSettingsFragment</string>
+
+    <!-- Quickspace -->
+    <item type="id" name="reserved_container_workspace" />
 </resources>
