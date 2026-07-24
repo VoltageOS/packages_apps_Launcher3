@@ -691,7 +691,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
      * single window for taskbar and navbar.
      */
     public boolean isPhoneMode() {
-        if (mDeviceProfile.getDeviceProperties().getTaskbarConfiguration().isTaskbarPresent() &&
+        if (!mDeviceProfile.getDeviceProperties().isPhone() &&
                 !(SettingsCache.INSTANCE.get(this).getIntValue(ENABLE_TASKBAR_URI,
                 mDeviceProfile.getDeviceProperties().isLargeScreen() ? 1 : 0) != 0)) {
             return true;
