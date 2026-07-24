@@ -80,8 +80,7 @@ data class DeviceProperties(
                 ) != 0
             } ?: (Flags.enableTinyTaskbar() || isLargeScreen)
             val taskbarOrBubbleBarOnPhones =
-                enableTaskbar ||
-                    (Flags.enableBubbleBar() && Flags.enableBubbleBarOnPhones())
+                Flags.enableBubbleBar() && Flags.enableBubbleBarOnPhones()
             return DeviceProperties(
                 windowX = windowX,
                 windowY = windowY,
@@ -100,7 +99,7 @@ data class DeviceProperties(
                 taskbarConfiguration =
                     TaskbarConfiguration(
                         isTaskbarPresent =
-                            (isLargeScreen ||
+                            (enableTaskbar ||
                                 (taskbarOrBubbleBarOnPhones &&
                                     deviceConfiguration.isGestureMode)) && isTaskbarDrawnInProcess
                     ),
