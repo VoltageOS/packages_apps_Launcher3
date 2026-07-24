@@ -1,10 +1,9 @@
 package com.android.launcher3.customization;
 
-import android.app.ActivityOptions;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
@@ -18,11 +17,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.launcher3.model.data.ItemInfo;
-import com.android.launcher3.Launcher;
+import com.android.launcher3.QuickstepTransitionManager;
 import com.android.launcher3.R;
+import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.widget.WidgetsBottomSheet;
+import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.PackageManagerHelper;
+
+import com.android.launcher3.settings.preference.IconPackPrefSetter;
+import com.android.launcher3.settings.preference.ReloadingListPreference;
+import com.android.launcher3.util.AppReloader;
+
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import static com.android.launcher3.util.Executors.THREAD_POOL_EXECUTOR;
 
 public class InfoBottomSheet extends WidgetsBottomSheet {
     private final FragmentManager mFragmentManager;
@@ -39,7 +47,7 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
 
     public InfoBottomSheet(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mFragmentManager = Launcher.getLauncher(context).getFragmentManager();
+        mFragmentManager = QuickstepLauncher.getLauncher(context).getFragmentManager();
     }
 
     public void configureBottomSheet(Rect sourceBounds, Context context) {
@@ -62,7 +70,7 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
 
     @Override
     public void onDetachedFromWindow() {
-        Fragment pf = mFragmentManager.findFragmentById(R.id.sheet_prefs);
+        android.app.Fragment pf = mFragmentManager.findFragmentById(R.id.sheet_prefs);
         if (pf != null) {
             mFragmentManager.beginTransaction()
                     .remove(pf)
@@ -89,11 +97,31 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
 
         private ComponentName mComponent;
         private ComponentKey mKey;
+        private QuickstepTransitionManager mAppTransitionManager;
+        private QuickstepLauncher mLauncher;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             mContext = getActivity();
+            mLauncher = (QuickstepLauncher) QuickstepLauncher.getLauncher(mContext);
+            mAppTransitionManager = new QuickstepTransitionManager(mLauncher);
+            mAppTransitionManager.registerRemoteAnimations();
+            mAppTransitionManager.registerRemoteTransitions();
+        }
+
+        private QuickstepTransitionManager getAppTransitionManager() {
+            return mAppTransitionManager;
+        }
+
+        public ActivityOptionsWrapper getActivityLaunchOptions(View v) {
+            return mAppTransitionManager.getActivityLaunchOptions(v, mItemInfo);
+        }
+
+        @Override
+        public void onDestroy() {
+            mAppTransitionManager.onActivityDestroyed();
+            super.onDestroy();
         }
 
         @Override
@@ -113,39 +141,73 @@ public class InfoBottomSheet extends WidgetsBottomSheet {
             mComponent = itemInfo.getTargetComponent();
             mItemInfo = itemInfo;
             mKey = new ComponentKey(mComponent, itemInfo.user);
-            MetadataExtractor extractor = new MetadataExtractor(mContext, mComponent);
 
-            Preference iconPack = findPreference(KEY_ICON_PACK);
-            iconPack.setOnPreferenceChangeListener(this);
-            iconPack.setSummary(R.string.app_info_icon_pack_none);
-            findPreference(KEY_SOURCE).setSummary(extractor.getSource());
-            findPreference(KEY_LAST_UPDATE).setSummary(extractor.getLastUpdate());
-            findPreference(KEY_VERSION).setSummary(mContext.getString(
-                    R.string.app_info_version_value,
-                    extractor.getVersionName(),
-                    extractor.getVersionCode()));
-            findPreference(KEY_MORE).setOnPreferenceClickListener(this);
+            ReloadingListPreference icons = (ReloadingListPreference) findPreference(KEY_ICON_PACK);
+            icons.setValue(IconDatabase.getByComponent(mContext, mKey));
+            icons.setOnReloadListener(ctx -> new IconPackPrefSetter(ctx, mComponent));
+            icons.setOnPreferenceChangeListener(this);
+
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                MetadataExtractor extractor = new MetadataExtractor(mContext, mComponent);
+
+                CharSequence source = extractor.getSource();
+                CharSequence lastUpdate = extractor.getLastUpdate();
+                CharSequence version = mContext.getString(
+                        R.string.app_info_version_value,
+                        extractor.getVersionName(),
+                        extractor.getVersionCode());
+                Intent marketIntent = extractor.getMarketIntent();
+
+                MAIN_EXECUTOR.execute(() -> {
+                    Preference sourcePref = findPreference(KEY_SOURCE);
+                    Preference lastUpdatePref = findPreference(KEY_LAST_UPDATE);
+                    Preference versionPref = findPreference(KEY_VERSION);
+                    Preference morePref = findPreference(KEY_MORE);
+
+                    sourcePref.setSummary(source);
+                    lastUpdatePref.setSummary(lastUpdate);
+                    versionPref.setSummary(version);
+                    morePref.setOnPreferenceClickListener(this);
+
+                    if (marketIntent != null) {
+                        sourcePref.setOnPreferenceClickListener(
+                                pref -> tryStartActivity(marketIntent));
+                    }
+                });
+            });
+        }
+
+        private boolean tryStartActivity(Intent intent) {
+            Bundle opts = getAppTransitionManager()
+                    .getActivityLaunchOptions(getView(), mItemInfo)
+                    .toBundle();
+            try {
+                mLauncher.startActivity(intent, opts);
+            } catch (Exception ignored) {
+            }
+            return false;
         }
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            if (KEY_ICON_PACK.equals(preference.getKey())) {
-                // Reload in launcher.
+            if (newValue.equals(IconDatabase.getGlobal(mContext))) {
+                IconDatabase.resetForComponent(mContext, mKey);
+            } else {
+                IconDatabase.setForComponent(mContext, mKey, (String) newValue);
             }
-            return false;
+            AppReloader.get(mContext).reload(mKey);
+            return true;
         }
 
         private void onMoreClick() {
             PackageManagerHelper.startDetailsActivityForInfo(InfoBottomSheet.mViewContext, mItemInfo,
-                    InfoBottomSheet.mSourceBounds, ActivityOptions.makeBasic().toBundle());
+                    InfoBottomSheet.mSourceBounds, android.app.ActivityOptions.makeBasic().toBundle());
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            if (KEY_MORE.equals(preference.getKey())) {
-                  onMoreClick();
-            }
-            return false;
+            onMoreClick();
+            return true;
         }
     }
 }
