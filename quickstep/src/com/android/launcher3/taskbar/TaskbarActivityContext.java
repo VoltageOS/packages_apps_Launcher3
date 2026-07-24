@@ -48,6 +48,7 @@ import static com.android.quickstep.util.AnimUtils.completeRunnableListCallback;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_DUAL_SHADE_ENABLED;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_NOTIFICATION_PANEL_VISIBLE;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_VOICE_INTERACTION_WINDOW_SHOWING;
+import static com.android.launcher3.taskbar.TaskbarManagerImpl.ENABLE_TASKBAR_URI;
 import static com.android.wm.shell.Flags.enableBubbleBar;
 import static com.android.wm.shell.Flags.enableBubbleBarOnPhones;
 import static com.android.wm.shell.Flags.enableTinyTaskbar;
@@ -691,7 +692,8 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
      */
     public boolean isPhoneMode() {
         if (mDeviceProfile.getDeviceProperties().getTaskbarConfiguration().isTaskbarPresent() &&
-                !isTaskbarEnabled()) {
+                !(SettingsCache.INSTANCE.get(this).getIntValue(ENABLE_TASKBAR_URI,
+                mDeviceProfile.getDeviceProperties().isLargeScreen() ? 1 : 0) != 0)) {
             return true;
         }
         return isDeviceProfileForPhoneMode(mDeviceProfile);
@@ -728,8 +730,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
 
     /** Returns {@code true} iff a tiny version of taskbar is shown on phone. */
     public boolean isTinyTaskbar() {
-        return enableTinyTaskbar()
-                && mDeviceProfile.getDeviceProperties().isPhone()
+        return mDeviceProfile.getDeviceProperties().isPhone()
                 && mDeviceProfile.getDeviceProperties().getTaskbarConfiguration()
                 .isTaskbarPresent();
     }

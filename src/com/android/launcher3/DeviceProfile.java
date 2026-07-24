@@ -837,7 +837,8 @@ public class DeviceProfile {
      */
     public Rect getHotseatLayoutPadding(Context context) {
         boolean isTaskbarPresent = mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent() &&
-                SettingsCache.INSTANCE.get(context).getValue(ENABLE_TASKBAR_URI);
+                SettingsCache.INSTANCE.get(context)
+                .getIntValue(ENABLE_TASKBAR_URI, mDeviceProperties.isLargeScreen() ? 1 : 0) != 0;
         Rect hotseatBarPadding = new Rect();
         if (isVerticalBarLayout()) {
             // The hotseat icons will be placed in the middle of the hotseat cells.
@@ -1778,10 +1779,15 @@ public class DeviceProfile {
                 mDisplayOptionSpec = createDefaultDisplayOptionSpec(mInfo, mWindowBounds,
                         mIsMultiDisplay, mInv);
             }
+            Context context = getContext(mInfo, mWindowBounds.isLandscape()
+                            ? Configuration.ORIENTATION_LANDSCAPE
+                            : Configuration.ORIENTATION_PORTRAIT,
+                    mWindowBounds);
             return new DeviceProfile(
                     mInv,
                     mInfo,
                     DeviceProperties.Factory.createDeviceProperties(
+                            context,
                             mInfo,
                             mWindowBounds,
                             new DeviceConfiguration(
