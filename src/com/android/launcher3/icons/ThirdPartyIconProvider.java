@@ -6,6 +6,7 @@ import android.content.pm.ComponentInfo;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 
+import com.android.launcher3.customization.IconDatabase;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.graphics.ThemeManager;
@@ -50,5 +51,24 @@ public class ThirdPartyIconProvider extends LauncherIconProvider {
         }
         icon.setChangingConfigurations(icon.getChangingConfigurations() | CONFIG_HINT_NO_WRAP);
         return icon;
+    }
+
+    @Override
+    protected ThemeData getThemeDataForPackage(String packageName) {
+        if (!IconDatabase.getGlobal(mContext).isEmpty()) {
+            return null;
+        }
+        return super.getThemeDataForPackage(packageName);
+    }
+
+    @Override
+    public void updateSystemState() {
+        super.updateSystemState();
+        String pack = IconDatabase.getGlobal(mContext);
+        if (!pack.isEmpty()) {
+            mSystemState = mSystemState.withTheme(
+                    mThemeManager.getIconState().getThemeCode() + ":" + pack,
+                    mThemeManager.getIconState().isCircle());
+        }
     }
 }
