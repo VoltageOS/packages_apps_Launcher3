@@ -17,11 +17,13 @@
 package com.android.launcher3.model;
 
 import static com.android.launcher3.AbstractFloatingView.TYPE_SNACKBAR;
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.UserHandle;
 
 import androidx.annotation.AnyThread;
@@ -33,6 +35,7 @@ import com.android.launcher3.UndoDeleteController;
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
+import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.tasks.AddWorkspaceItemsTask;
 import com.android.launcher3.shortcuts.ShortcutKey;
@@ -117,6 +120,16 @@ public class ItemInstallQueue {
             }
         });
         flushInstallQueue();
+    }
+
+    @AnyThread
+    public void queueItem(AppInfo appInfo) {
+        Intent launchIntent = appInfo.getIntent();
+        if (launchIntent == null) {
+            return;
+        }
+        queueItem(new SerializedItemItem(ITEM_TYPE_APPLICATION, appInfo.user,
+                new Intent(launchIntent)));
     }
 
     @WorkerThread

@@ -80,6 +80,9 @@ public class AccessibilityActionsView extends View implements StateListener<Laun
         Launcher l = Launcher.getLauncher(getContext());
         if (action == R.string.all_apps_button_label) {
             l.getActivityComponent().getKeyboardStateManager().setLaunchedFromA11y(true);
+            if (!l.canOpenAllApps()) {
+                return true;
+            }
             l.getStateManager().goToState(ALL_APPS);
             return true;
         }

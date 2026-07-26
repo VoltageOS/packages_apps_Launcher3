@@ -98,6 +98,7 @@ import android.media.permission.SafeCloseable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IRemoteCallback;
+import android.os.Process;
 import android.os.SystemProperties;
 import android.os.Trace;
 import android.os.UserHandle;
@@ -807,16 +808,22 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                 list.add(getDeviceProfile().isVerticalBarLayout()
                         ? new TransposedQuickSwitchTouchController(this)
                         : new QuickSwitchTouchController(this));
-                list.add(new PortraitStatesTouchController(this));
+                if (canOpenAllApps()) {
+                    list.add(new PortraitStatesTouchController(this));
+                }
                 break;
             case THREE_BUTTONS:
                 list.add(new NoButtonQuickSwitchTouchController(this));
                 list.add(new NavBarToHomeTouchController(this, splitAnimator));
                 list.add(new NoButtonNavbarToOverviewTouchController(this, splitAnimator));
-                list.add(new PortraitStatesTouchController(this));
+                if (canOpenAllApps()) {
+                    list.add(new PortraitStatesTouchController(this));
+                }
                 break;
             default:
-                list.add(new PortraitStatesTouchController(this));
+                if (canOpenAllApps()) {
+                    list.add(new PortraitStatesTouchController(this));
+                }
                 break;
         }
         list.add(new StatusBarTouchController(this, () -> this.isInState(LauncherState.NORMAL)));
@@ -1803,9 +1810,10 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
      * that our app was updated after the suspension took place and may have different resource IDs.
      */
     private void updateSuspensions() {
+        final UserHandle currentUser = Process.myUserHandle();
         final Map<UserHandle, List<String>> pausedAppsByUser =
                 Stream.of(getAppsView().getAppsStore().getApps())
-                        .filter(i -> getPackageName().equals(
+                        .filter(i -> currentUser.equals(i.user) && getPackageName().equals(
                                 getSuspendingPackage(i.getTargetPackage(), i.user)))
                         .collect(Collectors.groupingBy((ItemInfo item) -> item.user,
                                 Collectors.mapping(item -> item.getTargetPackage(),

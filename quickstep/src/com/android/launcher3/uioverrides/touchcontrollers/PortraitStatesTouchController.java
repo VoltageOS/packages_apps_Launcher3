@@ -56,6 +56,9 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
 
     @Override
     protected boolean canInterceptTouch(MotionEvent ev) {
+        if (mLauncher.isInState(ALL_APPS) && !mLauncher.canOpenAllApps()) {
+            return false;
+        }
         // If we are swiping to all apps instead of overview, allow it from anywhere.
         boolean interceptAnywhere = mLauncher.isInState(NORMAL);
         if (mCurrentAnimation != null) {
@@ -95,7 +98,7 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
         if (fromState == ALL_APPS && !isDragTowardPositive) {
             return NORMAL;
         } else if (fromState == NORMAL && shouldOpenAllApps(isDragTowardPositive)) {
-            return ALL_APPS;
+            return mLauncher.canOpenAllApps() ? ALL_APPS : NORMAL;
         }
         return fromState;
     }

@@ -25,6 +25,7 @@ import android.os.UserHandle;
 import androidx.annotation.NonNull;
 
 import com.android.launcher3.LauncherModel.ModelUpdateTask;
+import com.android.launcher3.allapps.AppDrawerStyle;
 import com.android.launcher3.logging.FileLog;
 import com.android.launcher3.model.AllAppsList;
 import com.android.launcher3.model.BgDataModel;
@@ -38,6 +39,7 @@ import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.WorkspaceItemCoordinates;
 import com.android.launcher3.model.data.WorkspaceItemFactory;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
+import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.util.ApplicationInfoWrapper;
 import com.android.launcher3.util.IntSet;
 
@@ -90,6 +92,11 @@ public class AddWorkspaceItemsTask implements ModelUpdateTask {
                 }
                 if (item == null) continue;
                 if (item.itemType == ITEM_TYPE_APPLICATION) {
+                    // Short-circuit this logic if the icon belongs to a private space user
+                    if (item.user != null && UserCache.getInstance(context).getUserInfo(item.user).isPrivate()) {
+                        continue;
+                    }
+
                     var targetPackage = item.getTargetPackage();
                     if (targetPackage == null) continue;
 
@@ -101,7 +108,8 @@ public class AddWorkspaceItemsTask implements ModelUpdateTask {
                     }
 
                     // b/139663018 Short-circuit this logic if the icon is a system app
-                    if (new ApplicationInfoWrapper(context, targetPackage, item.user).isSystem()) {
+                    if (!AppDrawerStyle.isIos(AppDrawerStyle.get(context))
+                            && new ApplicationInfoWrapper(context, targetPackage, item.user).isSystem()) {
                         continue;
                     }
 
@@ -117,8 +125,14 @@ public class AddWorkspaceItemsTask implements ModelUpdateTask {
                 }
 
                 // Find appropriate space for the item.
-                WorkspaceItemCoordinates coords = mItemSpaceFinder.findSpaceForItem(addedItemsFinal,
-                        item.spanX, item.spanY, excludedScreens);
+                WorkspaceItemCoordinates coords;
+                try {
+                    coords = mItemSpaceFinder.findSpaceForItem(addedItemsFinal,
+                            item.spanX, item.spanY, excludedScreens);
+                } catch (RuntimeException e) {
+                    FileLog.e(LOG, "Skipping item, no space found: " + item, e);
+                    continue;
+                }
 
                 // Save the WorkspaceItemInfo for binding in the workspace
                 coords.applyTo(item);

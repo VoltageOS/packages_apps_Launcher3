@@ -31,5 +31,6 @@
     <dimen name="quickspace_alternate_title_size">18sp</dimen>
     <dimen name="quickspace_alternate_subtitle_size">16sp</dimen>
 
-     <dimen name="all_apps_search_bar_bottom_padding_extra">16dp</dimen>
+    <dimen name="all_apps_search_bar_bottom_padding_extra">16dp</dimen>
+    <dimen name="all_apps_page_indicator_bottom_margin">32dp</dimen>
 </resources>
