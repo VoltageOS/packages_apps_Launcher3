@@ -96,7 +96,9 @@ object WorkspaceLongPressOptions {
             ) { ac, _, _ ->
                 (ac as? Launcher)?.apply {
                     activityComponent.keyboardStateManager.launchedFromA11y = true
-                    stateManager.goToState(LauncherState.ALL_APPS)
+                    if (canOpenAllApps()) {
+                        stateManager.goToState(LauncherState.ALL_APPS)
+                    }
                 }
             }
         )

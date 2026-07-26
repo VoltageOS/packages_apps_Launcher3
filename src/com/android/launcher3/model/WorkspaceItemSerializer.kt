@@ -101,11 +101,18 @@ constructor(
     private val packageInstaller: InstallSessionHelper,
 ) {
 
-    private fun createAppTarget(packageName: String, user: UserHandle): WorkspaceItemInfo? {
+    private fun createAppTarget(
+        packageName: String,
+        user: UserHandle,
+        requestedComponent: ComponentName? = null,
+    ): WorkspaceItemInfo? {
         val laiList =
             context.getSystemService(LauncherApps::class.java)!!.getActivityList(packageName, user)
 
-        val lai = laiList.getOrNull(0)
+        val lai =
+            (if (requestedComponent != null)
+                laiList.firstOrNull { it.componentName == requestedComponent }
+            else null) ?: laiList.getOrNull(0)
         if (lai != null) {
             val si = AppInfo(context, lai, user).makeWorkspaceItem(context)
             iconCache.getTitleAndIcon(si, DESKTOP_ICON_FLAG)
@@ -122,7 +129,9 @@ constructor(
         val si = WorkspaceItemInfo()
         si.user = user
         si.itemType = ITEM_TYPE_APPLICATION
-        si.intent = AppInfo.makeLaunchIntent(ComponentName(packageName, "")).setPackage(packageName)
+        si.intent =
+            AppInfo.makeLaunchIntent(requestedComponent ?: ComponentName(packageName, ""))
+                .setPackage(packageName)
         si.status = WorkspaceItemInfo.FLAG_AUTOINSTALL_ICON
         si.setProgressLevel(
             (sessionInfo.getProgress() * 100).toInt(),
@@ -138,8 +147,10 @@ constructor(
     fun decode(item: SerializedItemItem): ItemInfo? {
         when (item.itemType) {
             ITEM_TYPE_APPLICATION -> {
-                val packageName = item.intent.getPackage() ?: return null
-                return createAppTarget(packageName, item.user)
+                val requestedComponent = item.intent.component
+                val packageName =
+                    item.intent.getPackage() ?: requestedComponent?.packageName ?: return null
+                return createAppTarget(packageName, item.user, requestedComponent)
             }
 
             ITEM_TYPE_DEEP_SHORTCUT ->

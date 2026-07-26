@@ -250,6 +250,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         ) {
             launcher.stateManager.goToState(LauncherState.NORMAL)
         }
+        launcher.syncWorkspaceForIosStyle()
         Trace.endAsyncSection(TraceEvents.DISPLAY_ALL_APPS_TRACE_METHOD_NAME, SINGLE_TRACE_COOKIE)
     }
 
