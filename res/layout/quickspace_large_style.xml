@@ -12,7 +12,7 @@
     <!-- Day of the Week -->
     <TextView
         android:id="@+id/quickspace_day_of_week"
-        android:fontFamily="google-sans-medium"
+        android:fontFamily="@*android:string/config_headlineFontFamily"
         android:paddingStart="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:paddingStart="16dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="google-sans-flex"
+        android:fontFamily="@*android:string/config_headlineFontFamily"
         android:textColor="?workspaceTextColor"
         android:textSize="80sp"
         android:format12Hour="h:mm"
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
-        android:fontFamily="google-sans-flex"
+        android:fontFamily="@*android:string/config_bodyFontFamily"
         android:textColor="?workspaceTextColor"
         android:textSize="@dimen/quickspace_subtitle_size"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?workspaceTextColor"
-                android:fontFamily="google-sans-flex"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
                 android:textSize="@dimen/quickspace_subtitle_size"
                 android:singleLine="true"/>
         </LinearLayout>
@@ -128,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?workspaceTextColor"
-            android:fontFamily="google-sans-flex"
+            android:fontFamily="@*android:string/config_bodyFontFamily"
             android:textSize="@dimen/quickspace_subtitle_size"
             android:visibility="gone" />
 
@@ -211,7 +211,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="?workspaceTextColor"
                 android:textSize="16sp"
-                android:fontFamily="google-sans-medium"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
                 android:ellipsize="end"
                 android:singleLine="true" />
 
@@ -225,7 +225,7 @@
                 android:background="@drawable/bg_battery_level_tag"
                 android:textColor="?android:attr/textColorPrimaryInverse"
                 android:textSize="12sp"
-                android:fontFamily="google-sans-medium"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
                 android:singleLine="true"/>
 
             <!-- Dots Indicator -->
