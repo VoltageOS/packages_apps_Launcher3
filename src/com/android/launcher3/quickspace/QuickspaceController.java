@@ -280,6 +280,7 @@ public class QuickspaceController
 
   private void startPsaScheduling() {
     if (mPsaScheduled || mDestroyed) return;
+    if (!LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.get(mContext)) return;
 
     mPsaScheduled = true;
     long lastUpdateTime = getPrefs().getLong(PREF_KEY_LAST_PSA_UPDATE_TIME, 0);
@@ -474,6 +475,8 @@ public class QuickspaceController
   public void onPause() {
     mHandler.removeCallbacks(mOnDataUpdatedRunnable);
     mHandler.removeCallbacks(mWeatherRunnable);
+    mHandler.removeCallbacks(mMediaUpdateRunnable);
+    stopPsaScheduling();
   }
 
   public void onResume() {
@@ -481,6 +484,7 @@ public class QuickspaceController
     updateMediaController();
     if (mBatteryController != null) mBatteryController.onResume();
     mIsResuming = false;
+    if (!mListeners.isEmpty()) startPsaScheduling();
     notifyListeners();
   }
 

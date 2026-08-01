@@ -76,22 +76,30 @@ public class QuickBatteryController {
         public void onReceive(Context context, Intent intent) {
           if (ACTION_BLUETOOTH_BATTERY_UPDATE.equals(intent.getAction())) {
             updateBluetoothDevices(intent);
+            refreshDeviceList();
           } else if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
-            updatePhoneBattery(intent);
+            if (!updatePhoneBattery(intent)) return;
+            refreshDeviceList();
           }
-          refreshDeviceList();
         }
       };
 
-  private void updatePhoneBattery(Intent intent) {
+  private boolean updatePhoneBattery(Intent intent) {
     int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
     int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
     boolean isCharging =
         status == BatteryManager.BATTERY_STATUS_CHARGING
             || status == BatteryManager.BATTERY_STATUS_FULL;
 
+    if (mPhoneDevice != null
+        && mPhoneDevice.level == level
+        && mPhoneDevice.isCharging == isCharging) {
+      return false;
+    }
+
     String name = getPhoneName();
     mPhoneDevice = new BatteryDevice(name, level, false, "device_phone", isCharging);
+    return true;
   }
 
   private void updateBluetoothDevices(Intent intent) {
