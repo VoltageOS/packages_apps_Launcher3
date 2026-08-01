@@ -526,7 +526,7 @@ public final class TaskbarOverlayController
     }
 
     private boolean supportsTaskbarBehindShade() {
-        return Flags.enableTaskbarBehindShade()
+        return true
                 && !(mTaskbarContext.getApplicationContext() instanceof TaskbarBootAppContext);
     }
 }
