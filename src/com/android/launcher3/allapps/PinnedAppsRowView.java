@@ -17,6 +17,7 @@ package com.android.launcher3.allapps;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Process;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -179,8 +180,11 @@ public class PinnedAppsRowView extends HorizontalScrollView implements FloatingH
         }
 
         List<AppInfo> pinnedApps = new ArrayList<>();
+        android.os.UserHandle mainUser = Process.myUserHandle();
+
         for (AppInfo info : allApps) {
-            if (pinnedComponents.contains(info.componentName.flattenToString())) {
+            if (mainUser.equals(info.user)
+                    && pinnedComponents.contains(info.componentName.flattenToString())) {
                 pinnedApps.add(info);
             }
         }
