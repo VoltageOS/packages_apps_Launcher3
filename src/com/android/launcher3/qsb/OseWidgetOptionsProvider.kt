@@ -60,7 +60,10 @@ constructor(
     fun appWidgetSupportsReconfigure(): Boolean {
         val providerInfo = oseWidgetManager.providerInfo.value
         val featureFlags = providerInfo?.widgetFeatures ?: 0
-        val canReconfigure = (featureFlags and WIDGET_FEATURE_RECONFIGURABLE) != 0
+        val canReconfigure =
+            (featureFlags and WIDGET_FEATURE_RECONFIGURABLE) != 0 ||
+                (DockSearchWidgetHelper.isCustomWidgetEnabled(activityContext.asContext()) &&
+                    DockSearchWidgetHelper.supportsConfiguration(providerInfo))
         if (DEBUG) {
             Log.i(
                 TAG,

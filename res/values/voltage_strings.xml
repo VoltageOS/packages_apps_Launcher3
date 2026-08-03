@@ -131,6 +131,12 @@
     <string name="pref_show_hotseat_qsb_title">Show search bar</string>
     <string name="pref_show_hotseat_qsb_summary">At the bottom of your home screen</string>
 
+    <!-- Third-party search widget -->
+    <string name="dock_search_widget_title">Search widget</string>
+    <string name="dock_search_widget_summary">Use a compatible third-party search widget in the dock</string>
+    <string name="dock_search_widget_picker_title">Select search widget</string>
+    <string name="dock_search_widget_default">Default search widget</string>
+
     <string name="drawer_style_title">App drawer style</string>
     <string name="drawer_style_summary_ios_forced">App drawer disabled in iOS style</string>
     <string-array name="app_drawer_style_entries">

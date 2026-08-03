@@ -31,6 +31,8 @@ import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
 import static com.android.launcher3.LauncherAnimUtils.WORKSPACE_SCALE_PROPERTY_FACTORY;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_PENDING_APPWIDGET;
+import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_DOCK_SEARCH_WIDGET;
+import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CONFIGURE_DOCK_SEARCH_WIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREATE_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_CREATE_SHORTCUT;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_HOME_ROLE;
@@ -197,6 +199,7 @@ import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.PredictedContainerInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.pm.PinRequestHelper;
+import com.android.launcher3.qsb.OseWidgetManager;
 import com.android.launcher3.popup.PopupContainer;
 import com.android.launcher3.popup.PopupController;
 import com.android.launcher3.popup.SystemShortcut;
@@ -770,6 +773,16 @@ public class Launcher extends StatefulActivity<LauncherState>
             return;
         }
 
+        if (requestCode == REQUEST_BIND_DOCK_SEARCH_WIDGET) {
+            LauncherComponentProvider.get(this).getOseWidgetManager()
+                    .handleBindActivityResult(resultCode, data, this);
+            return;
+        }
+
+        if (requestCode == REQUEST_CONFIGURE_DOCK_SEARCH_WIDGET) {
+            return;
+        }
+
         // Reset the startActivity waiting flag
         final PendingRequestArgs requestArgs = mPendingRequestArgs;
         setWaitingForResult(null);
@@ -1136,6 +1149,14 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         mLauncherUiState.setIsResumedActivity(true);
         DragView.removeAllViews(this);
+        OseWidgetManager dockWidgetManager =
+                LauncherComponentProvider.get(this).getOseWidgetManager();
+        if (!dockWidgetManager.tryStartPendingBindActivity(this)) {
+            dockWidgetManager.tryStartPendingConfigActivity(this);
+            getMainThreadHandler().post(
+                    () -> dockWidgetManager.tryStartPendingConfigActivity(this));
+        }
+
         TraceHelper.INSTANCE.endSection();
 
         LauncherAppState.INSTANCE.executeIfCreated(app -> app.checkIfRestartNeeded());
