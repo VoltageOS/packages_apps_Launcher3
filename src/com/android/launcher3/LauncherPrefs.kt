@@ -414,6 +414,16 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
         @JvmField val SHOW_HOTSEAT_QSB = backedUpItem("pref_show_hotseat_qsb", false)
 
+        @JvmField val DOCK_SEARCH_WIDGET = backedUpItem("pref_dock_search_widget", "")
+
+        @JvmField
+        val DOCK_SEARCH_WIDGET_PENDING_CONFIG =
+            nonRestorableItem(
+                "pref_dock_search_widget_pending_config",
+                false,
+                EncryptionType.ENCRYPTED,
+            )
+
         @JvmStatic
         fun isHotseatQsbEnabled(context: Context): Boolean {
             if (!Flags.enableQsbOnHotseat()) {
@@ -426,6 +436,15 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
                 true
             }
         }
+
+        @JvmStatic
+        fun isCustomSearchWidgetEnabled(context: Context): Boolean =
+            isHotseatQsbEnabled(context) &&
+                try {
+                    get(context).get(DOCK_SEARCH_WIDGET).isNotEmpty()
+                } catch (ignored: IllegalStateException) {
+                    false
+                }
 
         @JvmStatic
         fun <T> backedUpItem(
