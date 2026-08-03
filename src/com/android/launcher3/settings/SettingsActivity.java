@@ -80,6 +80,8 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
 
     private static final String SHOW_HOTSEAT_QSB_KEY = "pref_show_hotseat_qsb";
 
+    private static final String DOCK_SEARCH_WIDGET_KEY = "pref_dock_search_widget";
+
     private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
     public static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
@@ -337,9 +339,19 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                             }
                     );
                     return !info.isLargeScreen(info.realBounds);
-                case SHOW_HOTSEAT_QSB_KEY:
-                    return Flags.enableQsbOnHotseat() && launcherApps != null &&
-                            launcherApps.isPackageEnabled(SEARCH_PACKAGE, myUserHandle());
+                case SHOW_HOTSEAT_QSB_KEY: {
+                    if (!Flags.enableQsbOnHotseat()) {
+                        return false;
+                    }
+                    boolean hasGsa = launcherApps != null
+                            && launcherApps.isPackageEnabled(SEARCH_PACKAGE, myUserHandle());
+                    return hasGsa || com.android.launcher3.qsb.DockSearchWidgetHelper
+                            .hasEligibleSearchWidget(getContext());
+                }
+                case DOCK_SEARCH_WIDGET_KEY:
+                    return Flags.enableQsbOnHotseat()
+                            && com.android.launcher3.qsb.DockSearchWidgetHelper
+                                    .hasEligibleSearchWidget(getContext());
             }
             return true;
         }

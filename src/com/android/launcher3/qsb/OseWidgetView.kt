@@ -17,6 +17,7 @@
 package com.android.launcher3.qsb
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
@@ -151,9 +152,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
                         title,
                         null,
                     )
-                    // Since we don't have a valid appInfo, just open the default browser
-                    // Set the data to a blank page uri
-                    view.setOnClickIntent(Intent(Intent.ACTION_VIEW).setData("http://".toUri()))
+                    view.setOnClickIntent(getDefaultBrowserSearchIntent())
                 } else {
                     appInfo.title = title
                     view.applyFromApplicationInfo(appInfo)
@@ -175,6 +174,27 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             SafeCloseable { appsStore.removeUpdateListener(updateListener) }
         }
         return view
+    }
+
+    private fun getDefaultBrowserSearchIntent(): Intent {
+        val pm = context.packageManager
+        val blankPageIntent = Intent(Intent.ACTION_VIEW).setData("http://".toUri())
+        val browserPkg =
+            runCatching { pm.resolveActivity(blankPageIntent, PackageManager.MATCH_DEFAULT_ONLY) }
+                .getOrNull()
+                ?.activityInfo
+                ?.packageName
+        for (action in arrayOf(Intent.ACTION_WEB_SEARCH, Intent.ACTION_SEARCH)) {
+            val searchIntent =
+                Intent(action).putExtra(SearchManager.EXTRA_NEW_SEARCH, true).apply {
+                    if (browserPkg != null) setPackage(browserPkg)
+                }
+            if (runCatching { pm.resolveActivity(searchIntent, 0) }.getOrNull() != null) {
+                return searchIntent
+            }
+        }
+        return browserPkg?.let { runCatching { pm.getLaunchIntentForPackage(it) }.getOrNull() }
+            ?: blankPageIntent
     }
 
     fun View.setOnClickIntent(intent: Intent) = setOnClickListener {
