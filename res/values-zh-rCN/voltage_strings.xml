@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2022 crDroid Android Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <!-- Application name -->
+    <string name="voltage_app_name" translatable="false">Voltage Home</string>
+
+    <!-- Folder titles -->
+    <string name="google_folder_title" translatable="false">Google</string>
+
+    <!-- Lock -->
+    <string name="action_lock">锁定/解锁应用</string>
+    <string name="unlock_app">最近任务中的应用已解锁</string>
+    <string name="lock_app">最近任务中的应用已锁定</string>
+    <string name="applock_blur_recents_label">应用已锁定</string>
+
+    <!-- General -->
+    <string name="settings_title">主屏幕设置</string>
+
+    <!-- Categories -->
+    <string name="home_category_title">主屏幕</string>
+    <string name="home_category_summary">设置 Google 即时面板等</string>
+    <string name="icons_category_title">图标</string>
+    <string name="icons_category_summary">设置图标大小等</string>
+    <string name="app_drawer_category_title">应用抽屉</string>
+    <string name="app_drawer_category_summary">自定义应用抽屉</string>
+    <string name="recents_category_title">最近任务</string>
+    <string name="recents_category_summary">改造概览屏幕</string>
+    <string name="misc_category_title">其他</string>
+    <string name="misc_category_summary">其他选项</string>
+    <string name="general_category_title">常规</string>
+    <string name="interface_category_title">界面</string>
+    <string name="quickspace_category_title">快速概览</string>
+    <string name="search_bar_category_title">搜索栏</string>
+    <string name="actions_category_title">快捷操作</string>
+
+    <!-- Developer options -->
+    <string name="dev_options_title">开发者选项</string>
+    <string name="dev_options_summary">启用一些隐藏功能，风险自负</string>
+
+    <!-- Settings title to show Google Now at -1 screen on launcher. [CHAR LIMIT=50] -->
+    <string name="title_show_google_app">滑动以访问 Google 应用</string>
+    <string name="pref_show_google_now_summary" translatable="false">@string/msg_minus_one_on_left</string>
+    <!-- Settings message explaining when the -1 screen is available on an LTR device. [CHAR LIMIT=100] -->
+    <string name="msg_minus_one_on_left">从主屏幕向右滑动时</string>
+    <!-- Settings message explaining when the -1 screen is available on an RTL device. [CHAR LIMIT=100] -->
+    <string name="msg_minus_one_on_right">从主屏幕向左滑动时</string>
+
+    <!-- All apps icon customizations -->
+    <string name="pref_icon_customization_title">在抽屉中使用图标自定义</string>
+    <string name="pref_icon_customization_summary">遵循主屏幕上使用的图标自定义</string>
+
+    <!-- Suggestions -->
+    <string name="suggestion_pref_screen_title">建议</string>
+    <string name="suggestion_pref_screen_desc">用于所有应用和主屏幕建议</string>
+
+    <!-- Restart launcher -->
+    <string name="pref_restart_title">重启</string>
+    <string name="pref_restart_summary">手动重启启动器以应用任何待处理的设置</string>
+    <string name="restarting_launcher">正在重启启动器…</string>
+    <string name="restarting_launcher_changes">正在重启启动器以应用更改…</string>
+    <string name="updating_launcher_components">正在重启启动器以更新启动器组件…</string>
+
+    <!-- DT2S -->
+    <string name="pref_sleep_gesture_title">双击休眠</string>
+    <string name="pref_sleep_gesture_summary">在主屏幕空白处双击以关闭屏幕</string>
+    <string name="pref_sleep_gesture_haptic_title">双击休眠时振动</string>
+    <string name="pref_sleep_gesture_haptic_summary">双击休眠手势时提供触感反馈</string>
+
+    <string name="auto_add_shortcuts_forced_ios_summary">在 iOS 风格激活时自动启用</string>
+
+    <!-- Edit workspace -->
+    <string name="settings_lock_layout_title">锁定布局</string>
+    <string name="settings_lock_layout_summary_on">无法在主屏幕上添加、移除和移动图标及小部件</string>
+    <string name="settings_lock_layout_summary_off">可以在主屏幕上添加、移除和移动图标及小部件</string>
+    <string name="settings_edit_widgets_error">无法向主屏幕添加小部件</string>
+
+    <!-- Hide labels -->
+    <string name="desktop_show_labels">主屏幕图标标签</string>
+    <string name="drawer_show_labels">抽屉内图标标签</string>
+
+    <!-- All apps themed icons -->
+    <string name="pref_themed_icons_title">在抽屉中使用主题图标</string>
+    <string name="pref_themed_icons_summary">遵循主屏幕上使用的主题图标</string>
+    
+    <string name="themed_icons_overlay_title">覆盖主题图标</string>
+    <string name="themed_icons_overlay_summary">为没有原生主题图标的应用使用自定义主题图标映射</string>
+
+    <!-- Trust apps -->
+    <string name="trust_apps_manager_name">隐藏和受保护的应用</string>
+    <string name="trust_apps_auth_manager">解锁以管理隐藏和受保护的应用</string>
+    <string name="trust_apps_auth_open_app">验证身份以打开 %1$s</string>
+    <string name="trust_apps_loading">加载中…</string>
+    <string name="trust_apps_no_lock_error">请设置安全的锁屏以限制应用访问</string>
+    <string name="trust_apps_help">帮助</string>
+    <string name="trust_apps_info_hidden">隐藏的应用及其小部件将从抽屉中隐藏</string>
+    <string name="trust_apps_info_protected">受保护的应用需要验证身份才能从启动器打开</string>
+
+    <!-- Icon size -->
+    <string name="icon_size_title">图标大小</string>
+
+    <!-- Font size -->
+    <string name="font_size_title">字体大小</string>
+
+    <!-- Pause apps shortcut -->
+    <string name="pause">暂停</string>
+    <string name="pause_apps_dialog_title">暂停 %1$s？</string>
+    <string name="pause_apps_dialog_message">%1$s 的通知将被暂停</string>
+    <string name="paused_apps_dialog_title">应用已暂停</string>
+    <string name="paused_apps_dialog_message">%1$s 已从启动器直接暂停</string>
+    <string name="paused_apps_drop_target_label">暂停应用</string>
+
+    <!-- Notification badges -->
+    <string name="notification_badge_count_title">通知计数</string>
+    <string name="notification_badge_count_desc">在通知圆点上显示未读数量</string>
+
+    <!-- App label -->
+    <string name="icon_two_lines_title">应用标签使用两行</string>
+
+    <!-- Kill App recents action shortcut -->
+    <string name="recent_task_option_kill_app">终止</string>
+    <string name="recents_app_killed">应用已终止</string>
+
+    <!-- Row Height -->
+    <string name="row_height_title">行高</string>
+
+    <!-- Hotseat Background -->
+    <string name="hotseat_bg_title">底座背景</string>
+    <string name="hotseat_bg_summary">为应用底座添加半透明背景</string>
+
+    <!-- Background opacity -->
+    <string name="background_opacity_title">背景不透明度</string>
+
+    <!-- Stroke -->
+    <string name="stroke_width_title">描边</string>
+
+    <!-- Hotseat searchbar -->
+    <string name="label_search">搜索</string>
+    <string name="label_lens">Google 镜头</string>
+    <string name="label_voice_search">语音搜索</string>
+    <string name="label_gemini_search">AI 模式</string>
+    <string name="dock_music_search_title">音乐搜索</string>
+    <string name="dock_music_search_summary">按下麦克风图标时启动音乐搜索</string>
+    <string name="dock_suggestion_hide_for_now">暂时隐藏</string>
+    <string name="dock_search_title">搜索栏</string>
+    <string name="dock_search_summary">在底部底座中显示搜索栏</string>
+    <string name="dock_search_mode_title">搜索栏类型</string>
+    <string name="dock_search_mode_google">Google 搜索栏</string>
+    <string name="dock_search_mode_widget">搜索小部件</string>
+    <string name="dock_search_unavailable">未安装支持的搜索提供程序</string>
+    <string name="dock_theme_title">主题图标</string>
+    <string name="dock_theme_summary">为搜索栏使用主题图标</string>
+    <string name="search_radius_title">圆角半径</string>
+
+    <string name="drawer_style_title">应用抽屉风格</string>
+    <string name="drawer_style_summary_ios_forced">iOS 风格中禁用应用抽屉</string>
+    <string-array name="app_drawer_style_entries">
+        <item>常规（底部工作表）</item>
+        <item>传统全屏</item>
+        <item>横向列表</item>
+        <item>垂直（OneUI 分页）</item>
+        <item>iOS 风格</item>
+    </string-array>
+    <string-array name="app_drawer_style_values" translatable="false">
+        <item>normal</item>
+        <item>fullscreen</item>
+        <item>horizontal_list</item>
+        <item>vertical</item>
+        <item>ios</item>
+    </string-array>
+    <!-- App drawer searchbar -->
+    <string name="drawer_search_title">应用搜索栏位置</string>
+    <string-array name="allapps_search_placement_entries">
+        <item>隐藏</item>
+        <item>顶部</item>
+        <item>底部</item>
+    </string-array>
+    <string-array name="allapps_search_placement_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- Pinned Apps -->
+    <string name="pref_pinned_apps_enabled_title">启用固定应用</string>
+    <string name="pref_pinned_apps_enabled_summary">在搜索栏下方显示一排固定应用</string>
+    <string name="pref_pinned_apps_list_title">固定应用列表</string>
+    <string name="pref_pinned_apps_list_summary">选择要固定的应用</string>
+
+    <!-- Wallpaper scrolling -->
+    <string name="allow_wallpaper_scrolling">壁纸滚动</string>
+    <string name="allow_wallpaper_scrolling_summary">多屏幕壁纸滚动效果</string>
+
+    <!-- Wallpaper zooming -->
+    <string name="allow_wallpaper_zooming">壁纸缩放</string>
+    <string name="allow_wallpaper_zooming_summary">使用抽屉或最近任务时放大或缩小壁纸</string>
+
+    <!-- Homescreen Statusbar -->
+    <string name="show_statusbar_title">状态栏</string>
+
+    <!-- Top shadow -->
+    <string name="show_top_shadow">顶部阴影</string>
+
+    <!-- Memory info -->
+    <string name="meminfo_text">可用 %1$s | %2$s</string>
+    <string name="recents_meminfo_title">内存信息</string>
+    <string name="recents_meminfo_zram_title">ZRAM 信息</string>
+
+    <!-- Recents icons -->
+    <string name="recents_chips_title">使用紧凑操作设计</string>
+    <string name="recents_chips_summary">当操作项过多时可能需要启用</string>
+    <string name="recents_screenshot_title">截屏</string>
+    <string name="recents_clear_all_title">全部清除</string>
+    <string name="recents_lens_title">镜头</string>
+    <string name="recents_applock_blur_title">模糊 AppLock 应用预览</string>
+
+    <!-- Overview gesture -->
+    <string name="overview_gesture_title">最近任务滑动操作</string>
+    <string name="overview_gesture_summary">在最近任务中向上滑动应用可触发所选操作</string>
+    <string name="overview_gesture_action_title">向上滑动操作</string>
+    <string name="overview_gesture_action_freeform">在悬浮窗中打开</string>
+    <string name="overview_gesture_action_split_screen">启动分屏</string>
+    <string name="overview_gesture_threshold_title">滑动距离</string>
+    <string name="overview_gesture_threshold_summary">值越小触发越早，值越大需要更长的滑动</string>
+    <string name="freeform_gesture_threshold_reached">释放以启动悬浮窗</string>
+
+    <!-- Parallax -->
+    <string name="short_parallax_title">允许短视差</string>
+    <string name="short_parallax_summary">在较少页面时启用完整壁纸滚动效果，而不是裁剪壁纸</string>
+    <string name="single_page_center_title">单页居中</string>
+    <string name="single_page_center_summary">仅使用单页时将壁纸居中</string>
+
+    <!-- App drawer scrollbar -->
+    <string name="drawer_scrollbar_title">滚动条</string>
+    <string name="drawer_scrollbar_summary">在应用抽屉侧面显示滚动条</string>
+
+    <!-- Dark Status Bar -->
+    <string name="perf_dark_status_bar_title">深色状态栏</string>
+    <string name="perf_dark_status_bar_summary">主屏幕上始终使用深色状态栏</string>
+
+    <!-- Background blur -->
+    <string name="background_blur_title">背景模糊深度</string>
+    <string name="background_blur_summary">设置最近任务和应用抽屉的背景模糊等级</string>
+
+    <!-- Open keyboard -->
+    <string name="drawer_open_keyboard_title">滑动启动搜索</string>
+    <string name="drawer_open_keyboard_summary">当应用抽屉可见时自动打开键盘</string>
+
+    <!-- QuickSpace -->
+    <string name="show_quickspace_title">概览</string>
+    <string name="show_quickspace_summary">在主屏幕顶部显示</string>
+    <string name="quickspace_date_format" translatable="false">EEE, MMM d</string>
+    <string name="quickspace_date_format_minimalistic" translatable="false">EEEE, MMMM d</string>
+
+    <!-- Quickspace new style -->
+    <string name="quickspace_style_title">概览风格</string>
+    <string-array name="quickspace_style_entries">
+        <item>默认</item>
+        <item>扩展</item>
+        <item>Voltage</item>
+        <item>Voltage 分页风格</item>
+    </string-array>
+    <string-array name="quickspace_style_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <!-- Quickspace clock accent -->
+    <string name="quickspace_voltage_accent_title">强调色时钟</string>
+    <string name="quickspace_voltage_accent_summary">在 Voltage 风格中为时钟的第一个数字着色</string>
+    <string name="quickspace_voltage_minimal_title">极简模式</string>
+    <string name="quickspace_voltage_minimal_summary">将 Voltage 辅助内容折叠为可点击的快捷图标</string>
+
+    <!-- QuickSpace: QuickEvent: Greetings -->
+    <string name="quickspace_grt_morning">早上好。</string>
+    <string name="quickspace_grt_evening">晚上好。</string>
+    <string name="quickspace_grt_afternoon">下午好。</string>
+    <string name="quickspace_grt_night">晚安。</string>
+    <string name="quickspace_grt_general">你好。</string>
+    <string name="quickspace_ext_one">今天是</string>
+    <string name="quickspace_ext_two">现在是</string>
+
+    <!-- QuickSpace: QuickEvent: Ambient Play -->
+    <string name="qe_now_playing_unknown_artist">未知艺术家</string>
+    <string name="qe_now_playing_ext_one">正在播放</string>
+    <string name="qe_now_playing_by">来自</string>
+
+    <!-- Quickspace Now Playing -->
+    <string name="quickspace_now_playing_title">正在播放</string>
+    <string name="quickspace_now_playing_summary">显示当前播放的歌曲</string>
+
+    <!-- Quickspace alternative view -->
+    <string name="quickspace_alternate_style_title">扩展风格</string>
+    <string name="quickspace_alternate_style_summary">切换到扩展风格</string>
+
+    <!-- Quickspace PSA - Custom messages for the glance -->
+    <string name="quickspace_psa_title">随机消息</string>
+    <string name="quickspace_psa_summary">通过随机消息让您的助手更生动</string>
+
+    <string name="intent_no_app_clock_found">找不到日历或时钟活动</string>
+
+    <!-- QuickSpace: QuickEvent: Weather -->
+    <string name="quick_event_ambient_weather_title">天气更新</string>
+    <string name="quick_event_ambient_weather_summary">显示当前天气更新</string>
+    <string name="quick_event_ambient_weather_enabled_info">需要启用天气服务</string>
+    <string name="quick_event_weather_clouds">多云</string>
+    <string name="quick_event_weather_rain">下雨</string>
+    <string name="quick_event_weather_clear">晴天</string>
+    <string name="quick_event_weather_storm">暴风雨</string>
+    <string name="quick_event_weather_snow">下雪</string>
+    <string name="quick_event_weather_wind">大风</string>
+    <string name="quick_event_weather_mist">有雾</string>
+    <string name="quick_event_weather_city_title">当前位置</string>
+    <string name="quick_event_weather_city_summary">显示当前天气位置</string>
+    <string name="quick_event_weather_text_title">当前状况</string>
+    <string name="quick_event_weather_text_summary">显示当前天气状况摘要</string>
+
+    <string name="quickspace_battery_title">设备电池</string>
+    <string name="quickspace_battery_summary">在 Voltage 风格中显示手机和已连接蓝牙设备的电池电量</string>
+
+    <!-- Dark App Drawer Text -->
+    <string name="all_apps_dark_text_title">深色应用标签</string>
+    <string name="all_apps_dark_text_summary">在应用抽屉中始终使用深色文本作为应用标签</string>
+
+    <!-- AppInfo -->
+    <string name="app_info_title">应用信息</string>
+    <string name="app_info_version_value" translatable="false">%1$s (%2$d)</string>
+    <string name="app_info_source">来源</string>
+    <string name="app_info_source_system">系统</string>
+    <string name="app_info_last_update">最后更新</string>
+    <string name="app_info_version">版本</string>
+    <string name="app_info_more">更多</string>
+
+    <!-- Icon pack -->
+    <string name="icon_pack_title">图标包</string>
+    <string name="icon_pack_default_label">默认</string>
+    <string name="icon_pack_add">安装更多</string>
+    <string name="icon_pack_no_market">没有可用的应用商店</string>
+
+    <string name="pref_tablet_overview_style_title">使用平板概览风格（需重启）</string>
+    <string name="pref_tablet_overview_style_summary_on">概览/最近任务使用平板风格</string>
+    <string name="pref_tablet_overview_style_summary_off">概览/最近任务使用手机风格</string>
+
+    <!-- Additional shape options in customization picker -->
+    <string name="pebble_shape_title">卵石</string>
+    <string name="vessel_shape_title">容器</string>
+    <string name="pure_square_shape_title">纯方形</string>
+    <string name="squircle_shape_title">圆角方形</string>
+    <string name="tapered_rect_shape_title">锥形矩形</string>
+    <string name="teardrop_shape_title">泪滴</string>
+    <string name="rounded_rect_shape_title">圆角矩形</string>
+    <string name="cloudy_shape_title">云朵</string>
+    <string name="cylindrical_shape_title">圆柱</string>
+    <string name="flower_shape_title">花朵</string>
+    <string name="heart_shape_title">心形</string>
+    <string name="hexagon_shape_title">六边形</string>
+    <string name="ios_style_shape_title">iOS 风格</string>
+    <string name="leaf_shape_title">树叶</string>
+    <string name="meow_shape_title">喵形</string>
+    <string name="samsung_style_shape_title">三星风格</string>
+    <string name="scroll_shape_title">卷轴</string>
+    <string name="stretched_shape_title">拉伸</string>
+
+    <!-- clear home screen -->
+    <string name="home_screen_actions">主屏幕操作</string>
+    <string name="remove_all_views_from_home_screen">清空主屏幕</string>
+    <string name="remove_all_views_from_home_screen_desc">主屏幕将被清空。是否继续？</string>
+    <!-- Message shown when all home screen views are removed -->
+    <string name="home_screen_all_views_removed_msg">主屏幕已清空</string>
+
+    <!-- app drawer sorting -->
+     <string name="sort_alphabetical">按字母排序</string>
+     <string name="sort_install_date">按安装日期排序</string>
+     <string name="sort_usage">按使用频率排序</string>
+
+    <!-- Dock Suggestions -->
+    <string name="dock_suggestion_mode_title">智能底座建议</string>
+    <string name="dock_suggestion_mode_summary">用应用建议填充空底座槽位</string>
+    <string name="dock_suggestion_pin">固定到底座</string>
+    <string name="dock_suggestion_mode_off">关闭</string>
+    <string name="dock_suggestion_mode_recent">最近应用</string>
+    <string name="dock_suggestion_mode_top_apps">常用应用</string>
+    <string name="dock_suggestion_mode_smart">智能</string>
+    <string-array name="dock_suggestion_mode_entries">
+        <item>@string/dock_suggestion_mode_off</item>
+        <item>@string/dock_suggestion_mode_recent</item>
+        <item>@string/dock_suggestion_mode_top_apps</item>
+        <item>@string/dock_suggestion_mode_smart</item>
+    </string-array>
+    <string-array name="dock_suggestion_mode_values" translatable="false">
+        <item>off</item>
+        <item>recent</item>
+        <item>top_apps</item>
+        <item>smart</item>
+    </string-array>
+
+    <!-- Dock Recents: Permission onboarding dialog -->
+    <string name="dock_recents_permission_title">需要使用权限</string>
+    <string name="dock_recents_permission_message">为了用您最近使用的应用填充空底座槽位，VoltageOS 启动器需要使用权限。\n\n前往 设置 → 应用 → 特殊权限 → 使用权限，并为主屏幕启用它。</string>
+    <string name="dock_recents_permission_grant">授予权限</string>
+
+    <string name="navbar_burn_in_protection_title">导航栏防烧屏</string>
+    <string name="navbar_burn_in_protection_summary">定期移动导航手柄以防止屏幕烧屏</string>
+    <string name="navbar_burn_in_interval_title">移动间隔</string>
+
+    <!-- Swipe down to lock -->
+    <string name="swipe_down_to_lock_title">在任务上向下滑动以切换锁定</string>
+    <string name="swipe_down_to_lock_summary">在最近任务卡片上向下滑动以锁定或解锁，防止被清除</string>
+
+    <!-- Background blur at app launch/close-->
+    <string name="pref_blur_background_at_app_launch_title">应用启动/关闭时背景模糊</string>
+    <string name="pref_blur_background_at_app_launch_summary">在应用启动和关闭动画期间模糊背景</string>
+</resources>
