@@ -143,8 +143,8 @@
 
 <SwitchPreferenceCompat
     android:key="pref_quickspace_black_text"
-    android:title="Black Text"
-    android:summary="Force black text on QuickSpace"
+    android:title="@string/quickspace_black_text_title"
+    android:summary="@string/quickspace_black_text_summary"
     android:defaultValue="false"
     android:persistent="true" />
 
