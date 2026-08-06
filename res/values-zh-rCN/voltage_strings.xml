@@ -264,6 +264,10 @@
     <string name="quickspace_date_format" translatable="false">EEE, MMM d</string>
     <string name="quickspace_date_format_minimalistic" translatable="false">EEEE, MMMM d</string>
 
+    <!-- QuickSpace black text -->
+    <string name="quickspace_black_text_title">黑色文本</string>
+    <string name="quickspace_black_text_summary">在概览中强制使用黑色文本</string>
+
     <!-- Quickspace new style -->
     <string name="quickspace_style_title">概览风格</string>
     <string-array name="quickspace_style_entries">
