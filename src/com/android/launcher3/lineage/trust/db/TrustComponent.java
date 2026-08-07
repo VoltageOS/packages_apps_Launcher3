@@ -27,15 +27,18 @@ public class TrustComponent {
     private final String mLabel;
 
     private boolean mIsHidden;
-    private boolean mIsProtected;
+    private final boolean mIsAppLockSupported;
+    private final boolean mIsAppLockEnabled;
 
     public TrustComponent(@NonNull String packageName, @NonNull Drawable icon,
-                          @NonNull String label, boolean isHidden, boolean isProtected) {
+                          @NonNull String label, boolean isHidden, boolean isAppLockSupported,
+                          boolean isAppLockEnabled) {
         mPackageName = packageName;
         mIcon = icon;
         mLabel = label;
         mIsHidden = isHidden;
-        mIsProtected = isProtected;
+        mIsAppLockSupported = isAppLockSupported;
+        mIsAppLockEnabled = isAppLockEnabled;
     }
 
     @NonNull
@@ -57,16 +60,16 @@ public class TrustComponent {
         return mIsHidden;
     }
 
-    public boolean isProtected() {
-        return mIsProtected;
+    public boolean isAppLockEnabled() {
+        return mIsAppLockEnabled;
+    }
+
+    public boolean isAppLockSupported() {
+        return mIsAppLockSupported;
     }
 
     public void invertVisibility() {
         mIsHidden = !mIsHidden;
-    }
-
-    public void invertProtection() {
-        mIsProtected = !mIsProtected;
     }
 
     @Override
@@ -76,17 +79,15 @@ public class TrustComponent {
         }
 
         TrustComponent otherComponent = (TrustComponent) other;
-        return otherComponent.getPackageName().equals(mPackageName) &&
-                otherComponent.isHidden() == mIsHidden;
+        return otherComponent.getPackageName().equals(mPackageName)
+                && otherComponent.isHidden() == mIsHidden
+                && otherComponent.isAppLockEnabled() == mIsAppLockEnabled
+                && otherComponent.isAppLockSupported() == mIsAppLockSupported;
     }
 
     @Override
     public int hashCode() {
-        return mPackageName.hashCode() + (mIsHidden ? 1 : 0);
-    }
-
-    public enum Kind {
-        HIDDEN,
-        PROTECTED,
+        return mPackageName.hashCode() + (mIsHidden ? 1 : 0) + (mIsAppLockEnabled ? 2 : 0)
+                + (mIsAppLockSupported ? 4 : 0);
     }
 }
