@@ -15,21 +15,18 @@
  */
 package com.android.launcher3.lineage.trust;
 
-import static com.android.launcher3.lineage.trust.db.TrustComponent.Kind.HIDDEN;
-import static com.android.launcher3.lineage.trust.db.TrustComponent.Kind.PROTECTED;
-
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,7 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
-import com.android.launcher3.Utilities;
+import com.android.internal.content.PackageMonitor;
 import com.android.launcher3.lineage.trust.db.TrustComponent;
 import com.android.launcher3.lineage.trust.db.TrustDatabaseHelper;
 
@@ -65,6 +62,18 @@ public class TrustAppsActivity extends CollapsingToolbarBaseActivity implements
     private TrustDatabaseHelper mDbHelper;
     private TrustAppsAdapter mAdapter;
     private String mUpdatedPackageName;
+
+    private final PackageMonitor mPackageMonitor = new PackageMonitor() {
+        @Override
+        public void onPackageAppLockEnabled(String packageName) {
+            loadComponents();
+        }
+
+        @Override
+        public void onPackageAppLockDisabled(String packageName) {
+            loadComponents();
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstance) {
@@ -88,8 +97,7 @@ public class TrustAppsActivity extends CollapsingToolbarBaseActivity implements
             return WindowInsetsCompat.CONSUMED;
         });
 
-        final boolean hasSecureKeyguard = Utilities.hasSecureKeyguard(this);
-        mAdapter = new TrustAppsAdapter(this, hasSecureKeyguard);
+        mAdapter = new TrustAppsAdapter(this);
         mDbHelper = TrustDatabaseHelper.getInstance(this);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -98,7 +106,6 @@ public class TrustAppsActivity extends CollapsingToolbarBaseActivity implements
 
         showOnBoarding(false);
 
-        new LoadTrustComponentsTask(mDbHelper, getPackageManager(), this).execute();
     }
 
     @Override
@@ -125,13 +132,13 @@ public class TrustAppsActivity extends CollapsingToolbarBaseActivity implements
     @Override
     public void onHiddenItemChanged(@NonNull TrustComponent component) {
         mUpdatedPackageName = component.getPackageName();
-        new UpdateItemTask(mDbHelper, this, HIDDEN).execute(component);
+        new UpdateItemTask(mDbHelper, this).execute(component);
     }
 
     @Override
-    public void onProtectedItemChanged(@NonNull TrustComponent component) {
-        mUpdatedPackageName = component.getPackageName();
-        new UpdateItemTask(mDbHelper, this, PROTECTED).execute(component);
+    public void onAppLockSettingsRequested() {
+        startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS)
+                .setPackage("com.android.settings"));
     }
 
     @Override
@@ -152,6 +159,24 @@ public class TrustAppsActivity extends CollapsingToolbarBaseActivity implements
         mLoadingView.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter.update(result);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPackageMonitor.register(this, getMainLooper(), UserHandle.of(UserHandle.myUserId()),
+                false);
+        loadComponents();
+    }
+
+    @Override
+    protected void onPause() {
+        mPackageMonitor.unregister();
+        super.onPause();
+    }
+
+    private void loadComponents() {
+        new LoadTrustComponentsTask(mDbHelper, getPackageManager(), this).execute();
     }
 
     private void showOnBoarding(boolean forceShow) {

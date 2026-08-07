@@ -27,15 +27,11 @@ public class UpdateItemTask extends AsyncTask<TrustComponent, Void, Boolean> {
     private TrustDatabaseHelper mDbHelper;
     @NonNull
     private UpdateCallback mCallback;
-    @NonNull
-    private TrustComponent.Kind mKind;
 
     UpdateItemTask(@NonNull TrustDatabaseHelper dbHelper,
-            @NonNull UpdateCallback callback,
-            @NonNull TrustComponent.Kind kind) {
+            @NonNull UpdateCallback callback) {
         mDbHelper = dbHelper;
         mCallback = callback;
-        mKind = kind;
     }
 
     @Override
@@ -47,21 +43,10 @@ public class UpdateItemTask extends AsyncTask<TrustComponent, Void, Boolean> {
         TrustComponent component = trustComponents[0];
         String pkgName = component.getPackageName();
 
-        switch (mKind) {
-            case HIDDEN:
-                if (component.isHidden()) {
-                    mDbHelper.addHiddenApp(pkgName);
-                } else {
-                    mDbHelper.removeHiddenApp(pkgName);
-                }
-                break;
-            case PROTECTED:
-                if (component.isProtected()) {
-                    mDbHelper.addProtectedApp(pkgName);
-                } else {
-                    mDbHelper.removeProtectedApp(pkgName);
-                }
-                break;
+        if (component.isHidden()) {
+            mDbHelper.addHiddenApp(pkgName);
+        } else {
+            mDbHelper.removeHiddenApp(pkgName);
         }
         return true;
     }
