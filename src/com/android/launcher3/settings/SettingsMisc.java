@@ -42,7 +42,6 @@ import com.android.launcher3.R;
 import com.android.launcher3.display.DisplayController;
 import com.android.launcher3.display.LauncherDisplayInfo;
 import com.android.launcher3.util.SafeCloseable;
-import com.android.launcher3.Utilities;
 import com.android.launcher3.lineage.trust.TrustAppsActivity;
 import com.android.launcher3.util.SettingsCache;
 
@@ -294,11 +293,8 @@ public class SettingsMisc extends CollapsingToolbarBaseActivity
                     return !info.isLargeScreen(info.realBounds);
                 case KEY_TRUST_APPS:
                     preference.setOnPreferenceClickListener(p -> {
-                        Utilities.showLockScreen(getActivity(),
-                                getString(R.string.trust_apps_manager_name), () -> {
-                            Intent intent = new Intent(getActivity(), TrustAppsActivity.class);
-                            startActivity(intent);
-                        });
+                        Intent intent = new Intent(getActivity(), TrustAppsActivity.class);
+                        startActivity(intent);
                         return true;
                     });
                     return true;

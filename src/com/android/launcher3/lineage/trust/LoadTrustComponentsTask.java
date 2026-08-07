@@ -16,6 +16,7 @@
 package com.android.launcher3.lineage.trust;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
@@ -64,14 +65,26 @@ public class LoadTrustComponentsTask extends AsyncTask<Void, Integer, List<Trust
             ResolveInfo app = apps.get(i);
             try {
                 String pkgName = app.activityInfo.packageName;
-                String label = mPackageManager.getApplicationLabel(
-                        mPackageManager.getApplicationInfo(pkgName,
-                                PackageManager.GET_META_DATA)).toString();
+                ApplicationInfo applicationInfo;
+                boolean isAppLockSupported = false;
+                boolean isAppLockEnabled = false;
+                try {
+                    applicationInfo = mPackageManager.getApplicationInfo(pkgName,
+                            PackageManager.ApplicationInfoFlags.of(
+                                    PackageManager.GET_APP_LOCK_INFO));
+                    isAppLockSupported = applicationInfo.isAppLockSupported;
+                    isAppLockEnabled = applicationInfo.isAppLockEnabled;
+                } catch (SecurityException e) {
+                    // The AppLock API is only available to LOCK_APPS role holders.
+                    applicationInfo = mPackageManager.getApplicationInfo(pkgName,
+                            PackageManager.ApplicationInfoFlags.of(PackageManager.GET_META_DATA));
+                }
+                String label = mPackageManager.getApplicationLabel(applicationInfo).toString();
                 Drawable icon = app.loadIcon(mPackageManager);
                 boolean isHidden = mDbHelper.isPackageHidden(pkgName);
-                boolean isProtected = mDbHelper.isPackageProtected(pkgName);
 
-                list.add(new TrustComponent(pkgName, icon, label, isHidden, isProtected));
+                list.add(new TrustComponent(pkgName, icon, label, isHidden, isAppLockSupported,
+                        isAppLockEnabled));
 
                 publishProgress(Math.round(i * 100f / numPackages));
             } catch (PackageManager.NameNotFoundException ignored) {
