@@ -22,6 +22,7 @@ import android.graphics.Color;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherUiState;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.allapps.AllAppsTransitionController;
 import com.android.launcher3.statehandlers.DepthController;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
@@ -105,8 +106,12 @@ public class BackgroundAppState extends OverviewState {
 
     @Override
     protected float getDepthUnchecked(ActivityContext context) {
-        if (Launcher.getLauncher(context.asContext()).areDesktopTasksVisible()) {
-            // Don't blur the background while desktop tasks are visible
+        Launcher launcher = Launcher.getLauncher(context.asContext());
+
+        if (launcher.areDesktopTasksVisible() || !Utilities.blurBackgroundAtAppLaunch(
+                launcher.getApplicationContext())) {
+            // Don't blur the background while desktop tasks are visible or when app
+            // launch/close blur is disabled
             return DepthController.DEPTH_0_PERCENT;
         } else {
             return DepthController.DEPTH_70_PERCENT;
