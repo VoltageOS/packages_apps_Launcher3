@@ -24,6 +24,7 @@ import com.android.launcher3.dagger.DaggerLauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;
 import com.android.launcher3.dagger.LauncherComponentProvider;
+import com.android.launcher3.lineage.trust.AppLockStateMonitor;
 import com.android.launcher3.util.TraceHelper;
 
 import kotlin.jvm.functions.Function1;
@@ -34,10 +35,15 @@ import kotlin.jvm.functions.Function1;
 public class LauncherApplication extends Application implements AppFunctionConfiguration.Provider {
 
     private volatile LauncherBaseAppComponent mAppComponent;
+    private AppLockStateMonitor mAppLockStateMonitor;
+
     @Override
     public void onCreate() {
         super.onCreate();
         LauncherComponentProvider.get(this).getMainProcessInitializer().init(this);
+        mAppLockStateMonitor = new AppLockStateMonitor(this);
+        mAppLockStateMonitor.register(this, getMainLooper(),
+                android.os.UserHandle.of(android.os.UserHandle.myUserId()), false);
     }
 
     public LauncherAppComponent getAppComponent() {
