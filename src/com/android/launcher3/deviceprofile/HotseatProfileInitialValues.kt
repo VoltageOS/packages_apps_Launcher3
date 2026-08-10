@@ -292,24 +292,11 @@ data class HotseatProfileInitialValues(
             var hotseatQsbSpace = if (qsbHeight > 0) pxFromDp(inv.hotseatQsbSpace[typeIndex], metrics) else 0
             var hotseatBarBottomSpace = pxFromDp(inv.hotseatBarBottomSpace[typeIndex], metrics)
 
-            var minQsbMargin = if (qsbHeight > 0) res.getDimensionPixelSize(R.dimen.min_qsb_margin) else 0
+            val minQsbMargin = if (qsbHeight > 0) res.getDimensionPixelSize(R.dimen.min_qsb_margin) else 0
 
             var barBottomSpacePx = 0
             // Have a little space between the inset and the QSB
             if (deviceProperties.insets.bottom + minQsbMargin > hotseatBarBottomSpace) {
-                val availableSpace: Int =
-                    hotseatQsbSpace - (deviceProperties.insets.bottom - hotseatBarBottomSpace)
-
-                // Only change the spaces if there is space
-                if (availableSpace > 0) {
-                    // Make sure there is enough space between hotseat/QSB and QSB/navBar
-                    if (availableSpace < minQsbMargin * 2) {
-                        minQsbMargin = availableSpace / 2
-                        hotseatQsbSpace = minQsbMargin
-                    } else {
-                        hotseatQsbSpace -= minQsbMargin
-                    }
-                }
                 barBottomSpacePx = deviceProperties.insets.bottom + minQsbMargin
             } else {
                 barBottomSpacePx = hotseatBarBottomSpace
