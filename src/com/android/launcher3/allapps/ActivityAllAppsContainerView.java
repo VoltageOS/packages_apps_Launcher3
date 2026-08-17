@@ -1423,21 +1423,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             setPadding(grid.getAllAppsProfile().getLeftRightMargin(), topPadding,
                     grid.getAllAppsProfile().getLeftRightMargin(), 0);
         }
-        if (mSearchContainer != null && mSearchContainer.getLayoutParams() instanceof MarginLayoutParams) {
-            MarginLayoutParams searchLp = (MarginLayoutParams) mSearchContainer.getLayoutParams();
-            String searchPlacement = LauncherPrefs.ALL_APPS_SEARCH_PLACEMENT.get(getContext());
-            if ("2".equals(searchPlacement) && !isSearchBarFloating()) {
-                int extraMargin = getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_bottom_padding_extra);
-                int bottomPaddingArea = Math.max(insets.bottom, mNavBarScrimHeight);
-                if (bottomPaddingArea == 0) {
-                    bottomPaddingArea = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, getResources().getDisplayMetrics());
-                }
-                searchLp.bottomMargin = bottomPaddingArea + extraMargin + (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
-            } else {
-                searchLp.bottomMargin = 0;
-            }
-            mSearchContainer.setLayoutParams(searchLp);
-        }
+        updateBottomSearchContainerMargin(0);
         InsettableFrameLayout.dispatchInsets(this, insets);
     }
 
@@ -1459,7 +1445,32 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
         mNavBarScrimHeight = computeNavBarScrimHeight(insets);
         applyAdapterSideAndBottomPaddings(mActivityContext.getDeviceProfile());
+        updateBottomSearchContainerMargin(insets.getInsets(WindowInsets.Type.ime()).bottom);
         return super.dispatchApplyWindowInsets(insets);
+    }
+
+    private void updateBottomSearchContainerMargin(int imeInset) {
+        if (mSearchContainer == null
+                || !(mSearchContainer.getLayoutParams() instanceof MarginLayoutParams)) {
+            return;
+        }
+
+        MarginLayoutParams searchLp = (MarginLayoutParams) mSearchContainer.getLayoutParams();
+        String searchPlacement = LauncherPrefs.ALL_APPS_SEARCH_PLACEMENT.get(getContext());
+        if ("2".equals(searchPlacement) && !isSearchBarFloating()) {
+            int extraMargin = getResources().getDimensionPixelSize(
+                    R.dimen.all_apps_search_bar_bottom_padding_extra);
+            int bottomInset = Math.max(imeInset, Math.max(mInsets.bottom, mNavBarScrimHeight));
+            if (bottomInset == 0) {
+                bottomInset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32,
+                        getResources().getDisplayMetrics());
+            }
+            searchLp.bottomMargin = bottomInset + extraMargin + (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
+        } else {
+            searchLp.bottomMargin = 0;
+        }
+        mSearchContainer.setLayoutParams(searchLp);
     }
 
     @Override
