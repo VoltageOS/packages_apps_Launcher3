@@ -360,7 +360,8 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
         mIsNavBarKidsMode = settingsCache.getValue(URI_NAV_BAR_KIDS_MODE);
         mIsTaskbarEnabled = settingsCache.getValue(URI_ENABLE_TASKBAR);
         mIsNavbarHintEnabled = settingsCache.getValue(URI_NAVIGATION_BAR_HINT);
-        mImeDrawsImeNavBar = Settings.Secure.getInt(
+        mImeDrawsImeNavBar = getNavigationMode() != NavigationMode.THREE_BUTTONS
+                && Settings.Secure.getInt(
                 getContentResolver(), URI_NAV_BAR_IME.getLastPathSegment(), 1) != 0;
         mBubbleFeatureConfig =
                 new BubbleFeatureConfigImpl(mWindowContext, getDesktopState(mWindowContext));
@@ -627,7 +628,8 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
  *                     for the taskbar create/recreate process.
      */
     public void init(@NonNull TaskbarSharedState sharedState, boolean userUnlocked, int duration) {
-        mImeDrawsImeNavBar = Settings.Secure.getInt(
+        mImeDrawsImeNavBar = getNavigationMode() != NavigationMode.THREE_BUTTONS
+                && Settings.Secure.getInt(
                 getContentResolver(), URI_NAV_BAR_IME.getLastPathSegment(), 1) != 0;
         mLastRequestedNonFullscreenSize = getDefaultTaskbarWindowSize();
         mWindowLayoutParams = createAllWindowParams();
