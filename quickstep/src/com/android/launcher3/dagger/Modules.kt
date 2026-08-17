@@ -337,6 +337,7 @@ object TaskOverlayModule {
         listOf(
             TaskShortcutFactory.APP_INFO,
             TaskShortcutFactory.KILL_APP,
+            TaskShortcutFactory.BUBBLE,
             TaskShortcutFactory.SPLIT_SELECT,
             TaskShortcutFactory.UNINSTALL,
             TaskShortcutFactory.LOCK_APP,
