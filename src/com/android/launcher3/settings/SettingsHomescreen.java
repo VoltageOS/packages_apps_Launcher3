@@ -11,9 +11,11 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -126,6 +128,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.SHOW_QUICKSPACE_WEATHER_TEXT.getSharedPrefKey().equals(key) ||
+                LauncherPrefs.SHOW_QUICKSPACE_CALENDAR.getSharedPrefKey().equals(key) ||
                 LauncherPrefs.QUICKSPACE_VOLTAGE_ACCENT.getSharedPrefKey().equals(key)) {
             LauncherAppState.INSTANCE.executeIfCreated(app -> app.setNeedsRestart());
         }
@@ -186,6 +189,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private static final String KEY_VOLTAGE_ACCENT = "pref_quickspace_voltage_accent";
         private static final String KEY_VOLTAGE_MINIMAL = "pref_quickspace_voltage_minimal";
         private static final String KEY_QUICKSPACE_BATTERY = "pref_quickspace_battery";
+        private static final int REQUEST_READ_CALENDAR = 1;
 
         private static final String KEY_CLEAR_HOME_SCREEN = "pref_clear_home_screen";
 
@@ -193,6 +197,7 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
         private Preference mVoltageAccent;
         private Preference mVoltageMinimal;
         private Preference mQuickspaceBattery;
+        private Preference mQuickspaceCalendar;
         private Preference mQuickspaceWeatherCity;
         private Preference mQuickspaceWeatherText;
 
@@ -240,6 +245,8 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             mVoltageAccent = screen.findPreference(KEY_VOLTAGE_ACCENT);
             mVoltageMinimal = screen.findPreference(KEY_VOLTAGE_MINIMAL);
             mQuickspaceBattery = screen.findPreference(KEY_QUICKSPACE_BATTERY);
+            mQuickspaceCalendar = screen.findPreference(
+                    LauncherPrefs.SHOW_QUICKSPACE_CALENDAR.getSharedPrefKey());
             mQuickspaceWeatherCity =
                     screen.findPreference(LauncherPrefs.SHOW_QUICKSPACE_WEATHER_CITY.getSharedPrefKey());
             mQuickspaceWeatherText =
@@ -431,6 +438,26 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             if (LauncherPrefs.APP_DRAWER_STYLE.getSharedPrefKey().equals(key)) {
                 updateAutoAddIconsPreferenceState();
             }
+            if (LauncherPrefs.SHOW_QUICKSPACE_CALENDAR.getSharedPrefKey().equals(key)
+                    && LauncherPrefs.SHOW_QUICKSPACE_CALENDAR.get(getContext())
+                    && getContext().checkSelfPermission(Manifest.permission.READ_CALENDAR)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] {Manifest.permission.READ_CALENDAR}, REQUEST_READ_CALENDAR);
+            }
+        }
+
+        @Override
+        public void onRequestPermissionsResult(
+                int requestCode, String[] permissions, int[] grantResults) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode != REQUEST_READ_CALENDAR) return;
+            boolean granted = grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (!granted
+                    && mQuickspaceCalendar instanceof androidx.preference.TwoStatePreference) {
+                ((androidx.preference.TwoStatePreference) mQuickspaceCalendar)
+                        .setChecked(false);
+            }
         }
 
         private void updateAutoAddIconsPreferenceState() {
@@ -457,23 +484,31 @@ public class SettingsHomescreen extends CollapsingToolbarBaseActivity
             }
 
             String quickspaceStyle = mQuickspaceStyle.getValue();
-            boolean isVoltageFamilyStyle = "2".equals(quickspaceStyle) || "3".equals(quickspaceStyle);
+            boolean isVoltageFamilyStyle = "2".equals(quickspaceStyle) || "3".equals(quickspaceStyle)
+                    || "4".equals(quickspaceStyle);
+            boolean isVoltageMinimalStyle = "2".equals(quickspaceStyle) || "3".equals(quickspaceStyle);
+            boolean isVoltageAccentStyle = "2".equals(quickspaceStyle) || "3".equals(quickspaceStyle);
             boolean isVoltagePagedStyle = "3".equals(quickspaceStyle);
+            boolean isVoltageVerticalStyle = "4".equals(quickspaceStyle);
 
             if (mVoltageAccent != null) {
-                mVoltageAccent.setVisible(isVoltageFamilyStyle);
+                mVoltageAccent.setVisible(isVoltageAccentStyle);
             }
 
             if (mVoltageMinimal != null) {
-                mVoltageMinimal.setVisible(isVoltageFamilyStyle);
+                mVoltageMinimal.setVisible(isVoltageMinimalStyle);
             }
 
             if (mQuickspaceBattery != null) {
                 mQuickspaceBattery.setVisible(isVoltageFamilyStyle);
             }
 
+            if (mQuickspaceCalendar != null) {
+                mQuickspaceCalendar.setVisible(isVoltageFamilyStyle);
+            }
+
             if (mQuickspaceWeatherCity != null) {
-                mQuickspaceWeatherCity.setVisible(!isVoltagePagedStyle);
+                mQuickspaceWeatherCity.setVisible(!isVoltagePagedStyle && !isVoltageVerticalStyle);
             }
 
             if (mQuickspaceWeatherText != null) {

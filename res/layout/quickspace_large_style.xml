@@ -48,12 +48,20 @@
         app:constraint_referenced_ids="quickspace_date,quick_event_weather_content" />
 
     <include
+        layout="@layout/quickspace_calendar_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/date_weather_barrier" />
+
+    <include
         android:id="@+id/quickspace_minimal_icons_row"
         layout="@layout/quickspace_minimal_icons_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/date_weather_barrier" />
+        app:layout_constraintTop_toBottomOf="@id/quickspace_calendar_content" />
 
     <include
         android:id="@+id/quickspace_weather_expanded_row"
@@ -139,7 +147,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="quickspace_minimal_icons_row,quickspace_weather_expanded_row,contextual_info_row" />
+        app:constraint_referenced_ids="quickspace_calendar_content,quickspace_minimal_icons_row,quickspace_weather_expanded_row,contextual_info_row" />
 
     <!-- Battery Pill -->
     <FrameLayout

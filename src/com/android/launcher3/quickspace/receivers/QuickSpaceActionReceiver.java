@@ -45,12 +45,12 @@ public class QuickSpaceActionReceiver {
         mCalendarClickListener = new OnClickListener() {
             @Override
             public void onClick(View view) {
-                openGoogleCalendar(view);
+                openCalendar(view);
             }
         };
     }
 
-    private void openGoogleCalendar(View view) {
+    private void openCalendar(View view) {
         final Uri content_URI = CalendarContract.CONTENT_URI;
         final Uri.Builder appendPath = content_URI.buildUpon().appendPath("time");
         ContentUris.appendId(appendPath, System.currentTimeMillis());
@@ -60,7 +60,21 @@ public class QuickSpaceActionReceiver {
         try {
             Launcher.getLauncher(mContext).startActivitySafely(view, addFlags, null);
         } catch (ActivityNotFoundException ex) {
-            mLauncherApps.startAppDetailsActivity(new ComponentName("com.google.android.googlequicksearchbox", ""), Process.myUserHandle(), null, null);
+            Intent calendarIntent = new Intent(Intent.ACTION_MAIN)
+                    .addCategory(Intent.CATEGORY_APP_CALENDAR)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            Launcher.getLauncher(mContext).startActivitySafely(view, calendarIntent, null);
+        }
+    }
+
+    private void openCalendarEvent(View view, long eventId) {
+        Intent intent = new Intent(Intent.ACTION_VIEW)
+                .setData(ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        try {
+            Launcher.getLauncher(mContext).startActivitySafely(view, intent, null);
+        } catch (ActivityNotFoundException ex) {
+            openCalendar(view);
         }
     }
 
@@ -93,6 +107,10 @@ public class QuickSpaceActionReceiver {
 
     public OnClickListener getCalendarAction() {
         return mCalendarClickListener;
+    }
+
+    public OnClickListener getCalendarEventAction(long eventId) {
+        return view -> openCalendarEvent(view, eventId);
     }
 
     public OnClickListener getWeatherAction(boolean hasGoogleApp) {

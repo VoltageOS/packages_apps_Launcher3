@@ -30,6 +30,23 @@
     <dimen name="quickspace_subtitle_size">16sp</dimen>
     <dimen name="quickspace_alternate_title_size">18sp</dimen>
     <dimen name="quickspace_alternate_subtitle_size">16sp</dimen>
+    <dimen name="quickspace_vertical_outer_padding">12dp</dimen>
+    <dimen name="quickspace_vertical_wordmark_padding">4dp</dimen>
+    <dimen name="quickspace_vertical_rule_margin">8dp</dimen>
+    <dimen name="quickspace_vertical_wordmark_min_size">18sp</dimen>
+    <dimen name="quickspace_vertical_wordmark_max_size">40sp</dimen>
+    <dimen name="quickspace_vertical_date_size">26sp</dimen>
+    <dimen name="quickspace_vertical_value_size">14sp</dimen>
+    <dimen name="quickspace_vertical_label_size">10sp</dimen>
+    <dimen name="quickspace_vertical_row_gap">8dp</dimen>
+    <dimen name="quickspace_vertical_marker_size">3dp</dimen>
+    <dimen name="quickspace_vertical_marker_gap">9dp</dimen>
+    <dimen name="quickspace_vertical_marker_top_margin">4dp</dimen>
+    <dimen name="quickspace_vertical_label_gap">6dp</dimen>
+    <dimen name="quickspace_vertical_divider_inset">12dp</dimen>
+    <dimen name="quickspace_vertical_divider_gap">5dp</dimen>
+    <dimen name="quickspace_vertical_compact_height">140dp</dimen>
+    <dimen name="quickspace_vertical_shadow_radius">1.25dp</dimen>
 
     <dimen name="all_apps_search_bar_bottom_padding_extra">16dp</dimen>
     <dimen name="all_apps_page_indicator_bottom_margin">32dp</dimen>

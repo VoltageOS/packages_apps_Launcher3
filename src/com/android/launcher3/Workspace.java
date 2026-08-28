@@ -749,7 +749,10 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         int cellVSpan = 1;
         if (style == 2 || style == 3) {
             cellVSpan = minimalMode ? 2 : 3;
+        } else if (style == 4) {
+            cellVSpan = 2;
         }
+        cellVSpan = Math.max(1, Math.min(cellVSpan, firstPage.getCountY()));
         CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
 
         lp.canReorder = false;
@@ -1620,7 +1623,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
             int cellHSpan = mLauncher.getDeviceProfile().inv.numSearchContainerColumns;
             int style = Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(getContext()));
-            int cellVSpan = (style == 2 || style == 3) ? 2 : 1;
+            int cellVSpan = (style == 2 || style == 3 || style == 4) ? 2 : 1;
+            cellVSpan = Math.max(1, Math.min(cellVSpan, firstPage.getCountY()));
             CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
             lp.canReorder = false;
             firstPage.addViewToCellLayout(
