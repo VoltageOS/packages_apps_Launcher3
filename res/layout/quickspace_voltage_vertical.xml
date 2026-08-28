@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 VoltageOS
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<com.android.launcher3.quickspace.views.VoltageVerticalView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quickspace_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:baselineAligned="false"
+    android:gravity="top"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/quickspace_vertical_outer_padding"
+    android:paddingEnd="@dimen/quickspace_vertical_outer_padding"
+    android:paddingTop="@dimen/quickspace_vertical_outer_padding"
+    android:paddingBottom="@dimen/quickspace_vertical_outer_padding">
+
+    <com.android.launcher3.quickspace.views.VerticalWordmarkView
+        android:id="@+id/quickspace_vertical_wordmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:paddingStart="@dimen/quickspace_vertical_wordmark_padding"
+        android:paddingEnd="@dimen/quickspace_vertical_wordmark_padding" />
+
+    <View
+        android:id="@+id/quickspace_vertical_rule"
+        android:layout_width="0.5dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/quickspace_vertical_rule_margin"
+        android:layout_marginEnd="@dimen/quickspace_vertical_rule_margin"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/quickspace_vertical_details"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/quickspace_vertical_date"
+            style="@style/QuickSpaceText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@*android:string/config_headlineFontFamily"
+            android:maxLines="1"
+            android:textSize="@dimen/quickspace_vertical_date_size" />
+
+        <LinearLayout
+            android:id="@+id/quickspace_vertical_weather_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/quickspace_vertical_row_gap"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/quickspace_vertical_weather_marker"
+                android:layout_width="@dimen/quickspace_vertical_marker_size"
+                android:layout_height="@dimen/quickspace_vertical_marker_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/quickspace_vertical_marker_gap" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_weather_label"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/quickspace_vertical_label_gap"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:text="@string/quickspace_vertical_weather"
+                android:textSize="@dimen/quickspace_vertical_label_size" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_weather_value"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:textSize="@dimen/quickspace_vertical_value_size" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/quickspace_vertical_weather_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="@dimen/quickspace_vertical_divider_inset"
+            android:layout_marginTop="@dimen/quickspace_vertical_divider_gap"
+            android:layout_marginBottom="@dimen/quickspace_vertical_divider_gap"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/quickspace_vertical_calendar_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/quickspace_vertical_calendar_marker"
+                android:layout_width="@dimen/quickspace_vertical_marker_size"
+                android:layout_height="@dimen/quickspace_vertical_marker_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/quickspace_vertical_marker_gap" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_calendar_label"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/quickspace_vertical_label_gap"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:text="@string/quickspace_vertical_calendar"
+                android:textSize="@dimen/quickspace_vertical_label_size" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_calendar_value"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:textSize="@dimen/quickspace_vertical_value_size" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/quickspace_vertical_calendar_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="@dimen/quickspace_vertical_divider_inset"
+            android:layout_marginTop="@dimen/quickspace_vertical_divider_gap"
+            android:layout_marginBottom="@dimen/quickspace_vertical_divider_gap"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/quickspace_vertical_event_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/quickspace_vertical_event_marker"
+                    android:layout_width="@dimen/quickspace_vertical_marker_size"
+                    android:layout_height="@dimen/quickspace_vertical_marker_size"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/quickspace_vertical_marker_gap" />
+
+                <TextView
+                    android:id="@+id/quickspace_vertical_event_label"
+                    style="@style/QuickSpaceSubText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:fontFamily="@*android:string/config_bodyFontFamily"
+                    android:maxLines="1"
+                    android:textSize="@dimen/quickspace_vertical_label_size" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/quickspace_vertical_event_value"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quickspace_vertical_divider_inset"
+                android:ellipsize="end"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="2"
+                android:textSize="@dimen/quickspace_vertical_value_size" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/quickspace_vertical_event_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="@dimen/quickspace_vertical_divider_inset"
+            android:layout_marginTop="@dimen/quickspace_vertical_divider_gap"
+            android:layout_marginBottom="@dimen/quickspace_vertical_divider_gap"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/quickspace_vertical_battery_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/quickspace_vertical_battery_marker"
+                android:layout_width="@dimen/quickspace_vertical_marker_size"
+                android:layout_height="@dimen/quickspace_vertical_marker_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/quickspace_vertical_marker_gap" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_battery_label"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/quickspace_vertical_label_gap"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:text="@string/quickspace_vertical_battery"
+                android:textSize="@dimen/quickspace_vertical_label_size" />
+
+            <TextView
+                android:id="@+id/quickspace_vertical_battery_value"
+                style="@style/QuickSpaceSubText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:maxLines="1"
+                android:textSize="@dimen/quickspace_vertical_value_size" />
+        </LinearLayout>
+    </LinearLayout>
+</com.android.launcher3.quickspace.views.VoltageVerticalView>

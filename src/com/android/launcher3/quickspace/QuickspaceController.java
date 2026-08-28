@@ -50,6 +50,7 @@ public class QuickspaceController
   private final Map<String, Integer> mConditionMap;
   private QuickEventsController mEventsController;
   private QuickBatteryController mBatteryController;
+  private QuickCalendarController mCalendarController;
 
   private OmniJawsClient mWeatherClient;
   private OmniJawsClient.WeatherInfo mWeatherInfo;
@@ -139,6 +140,7 @@ public class QuickspaceController
     mConditionMap = initializeConditionMap();
     mEventsController = new QuickEventsController(context);
     mBatteryController = new QuickBatteryController(context, this);
+    mCalendarController = new QuickCalendarController(context, this::notifyListeners);
 
     mPsaRunnable =
         new Runnable() {
@@ -243,6 +245,9 @@ public class QuickspaceController
     initializeMediaIfNeeded();
 
     mEventsController.initQuickEvents();
+    if (mCalendarController != null) {
+      mCalendarController.onResume();
+    }
 
     if (!mPsaScheduled) {
       startPsaScheduling();
@@ -262,6 +267,9 @@ public class QuickspaceController
         () -> {
           initializeWeatherIfNeeded();
           initializeMediaIfNeeded();
+          if (mCalendarController != null) {
+            mCalendarController.onResume();
+          }
           MAIN_EXECUTOR.execute(() -> notifyListeners());
         });
   }
@@ -342,6 +350,10 @@ public class QuickspaceController
     if (mBatteryController != null) {
       mBatteryController.onPause();
     }
+
+    if (mCalendarController != null) {
+      mCalendarController.onPause();
+    }
   }
 
   public boolean isQuickEvent() {
@@ -354,6 +366,10 @@ public class QuickspaceController
 
   public QuickBatteryController getBatteryController() {
     return mBatteryController;
+  }
+
+  public QuickCalendarController getCalendarController() {
+    return mCalendarController;
   }
 
   public boolean isWeatherAvailable() {
@@ -403,6 +419,11 @@ public class QuickspaceController
       return null;
     }
     return mWeatherInfo.temp + mWeatherInfo.tempUnits;
+  }
+
+  public String getWeatherCondition() {
+    if (mWeatherInfo == null || mWeatherInfo.condition == null) return null;
+    return getConditionText(mWeatherInfo.condition);
   }
 
   public String getWeatherStateKey() {
@@ -477,12 +498,14 @@ public class QuickspaceController
     mHandler.removeCallbacks(mWeatherRunnable);
     mHandler.removeCallbacks(mMediaUpdateRunnable);
     stopPsaScheduling();
+    if (mCalendarController != null) mCalendarController.onPause();
   }
 
   public void onResume() {
     mIsResuming = true;
     updateMediaController();
     if (mBatteryController != null) mBatteryController.onResume();
+    if (mCalendarController != null) mCalendarController.onResume();
     mIsResuming = false;
     if (!mListeners.isEmpty()) startPsaScheduling();
     notifyListeners();
@@ -520,6 +543,8 @@ public class QuickspaceController
     mConditionImage = null;
     mEventsController = null;
     mBatteryController = null;
+    if (mCalendarController != null) mCalendarController.onDestroy();
+    mCalendarController = null;
     mCachedWeatherTemp = null;
 
     mWeatherCacheTime = 0;

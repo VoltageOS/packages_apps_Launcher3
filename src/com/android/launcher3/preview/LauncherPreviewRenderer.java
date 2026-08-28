@@ -384,8 +384,18 @@ public class LauncherPreviewRenderer extends BaseContext
                 View qsb = mHomeElementInflater.inflate(R.layout.reserved_container_workspace, firstScreen, false);
                 qsb.setId(R.id.reserved_container_workspace);
 
+                int quickSpaceStyle = Integer.parseInt(
+                        LauncherPrefs.QUICKSPACE_UI_STYLE.get(this));
+                boolean minimalMode = LauncherPrefs.QUICKSPACE_VOLTAGE_MINIMAL.get(this);
+                int quickSpaceSpanY = 1;
+                if (quickSpaceStyle == 2 || quickSpaceStyle == 3) {
+                    quickSpaceSpanY = minimalMode ? 2 : 3;
+                } else if (quickSpaceStyle == 4) {
+                    quickSpaceSpanY = 2;
+                }
+                quickSpaceSpanY = Math.max(1, Math.min(quickSpaceSpanY, firstScreen.getCountY()));
                 CellLayoutLayoutParams lp = new CellLayoutLayoutParams(
-                        0, 0, firstScreen.getCountX(), 1);
+                        0, 0, firstScreen.getCountX(), quickSpaceSpanY);
                 lp.canReorder = false;
                 firstScreen.addViewToCellLayout(qsb, 0, R.id.reserved_container_workspace, lp, true);
             }

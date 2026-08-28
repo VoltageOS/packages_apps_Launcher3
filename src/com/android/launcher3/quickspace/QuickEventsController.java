@@ -640,6 +640,7 @@ public class QuickEventsController {
     }
 
     public String getPSAMessage() {
+        if (!LauncherPrefs.SHOW_QUICKSPACE_PSONALITY.get(mContext)) return null;
         if (mActiveContextualEvent != null && !mActiveContextualEvent.isExpired()) {
             return mActiveContextualEvent.message;
         }
@@ -669,6 +670,14 @@ public class QuickEventsController {
 
     public boolean isNowPlaying() {
         return mPlayingActive;
+    }
+
+    public String getNowPlayingTitle() {
+        return mNowPlayingTitle;
+    }
+
+    public String getNowPlayingArtist() {
+        return mNowPlayingArtist;
     }
 
     public void onResume() {
