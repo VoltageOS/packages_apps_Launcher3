@@ -28,6 +28,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.icu.text.DateFormat;
 import android.net.Uri;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
@@ -56,8 +57,10 @@ import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.quickspace.QuickspaceController.OnDataListener;
 import com.android.launcher3.quickspace.receivers.QuickSpaceActionReceiver;
 import com.android.launcher3.quickspace.views.AccentedTextClock;
+import com.android.launcher3.quickspace.views.VoltageVerticalView;
 import com.android.launcher3.util.Themes;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class QuickSpaceView extends FrameLayout implements OnDataListener {
@@ -82,6 +85,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private static final int MINIMAL_ITEM_NOW_PLAYING = 2;
   private static final int MINIMAL_ITEM_BATTERY = 3;
   private static final int MINIMAL_ITEM_PSA = 4;
+  private static final int MINIMAL_ITEM_CALENDAR = 5;
 
   public ColorStateList mColorStateList;
   public BubbleTextView mBubbleTextView;
@@ -117,6 +121,9 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   public ImageView mWeatherIconSub;
   public TextView mWeatherTempSub;
   public View mWeatherDivider;
+  public View mCalendarContent;
+  public ImageView mCalendarIcon;
+  public TextView mCalendarText;
   public ViewGroup mMinimalIconsRow;
   public View mMinimalWeatherChip;
   public ImageView mMinimalWeatherChipIcon;
@@ -126,6 +133,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   public ImageView mMinimalBatteryChipIcon;
   public View mMinimalPsaChip;
   public ImageView mMinimalPsaChipIcon;
+  public View mMinimalCalendarChip;
+  public ImageView mMinimalCalendarChipIcon;
   public ViewGroup mExpandedWeatherRow;
   public ImageView mExpandedWeatherIcon;
   public TextView mExpandedWeatherTemp;
@@ -165,6 +174,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private int mLastWeatherTempHash = 0;
   private int mLastActionTitleHash = 0;
   private int mLastPsaMessageHash = 0;
+  private long mLastCalendarEventId = -1;
+  private int mLastCalendarEventHash = 0;
   private long mLastUpdateTime = 0;
 
   private QuickSpaceActionReceiver mActionReceiver;
@@ -201,6 +212,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
   private int mCurrentStyle = -1;
   private int mExpandedMinimalItem = MINIMAL_ITEM_NONE;
+  private QuickSpaceStyleBinder mBinder;
 
   public QuickSpaceView(Context context, AttributeSet set) {
     super(context, set);
@@ -277,6 +289,11 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     }
 
     switch (style) {
+      case 4:
+        if (mBinder != null) {
+          mBinder.onDataUpdated(!mIsLayoutSuppressed);
+        }
+        break;
       case 2:
       case 3:
         loadLargeStyle();
@@ -294,11 +311,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       return false;
     }
 
-    long currentTime = System.currentTimeMillis();
-    if (currentTime - mLastUpdateTime < MIN_UPDATE_INTERVAL) {
-      return false;
-    }
-
     if (mController == null) {
       return false;
     }
@@ -308,10 +320,35 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       return false;
     }
 
+    QuickCalendarController calendarController = mController.getCalendarController();
+    QuickCalendarController.CalendarEvent calendarEvent =
+        calendarController == null ? null : calendarController.getEvent();
+    long calendarId = calendarEvent == null ? -1 : calendarEvent.getId();
+    int calendarHash =
+        calendarEvent == null
+            ? 0
+            : (calendarEvent.getTitle()
+                    + '|'
+                    + calendarEvent.getStartTime()
+                    + '|'
+                    + calendarEvent.getEndTime()
+                    + '|'
+                    + calendarEvent.isAllDay())
+                .hashCode();
+    boolean calendarChanged =
+        mLastCalendarEventId != calendarId || mLastCalendarEventHash != calendarHash;
+
+    long currentTime = System.currentTimeMillis();
+    if (!calendarChanged && currentTime - mLastUpdateTime < MIN_UPDATE_INTERVAL) {
+      return false;
+    }
+
     boolean currentNowPlayingState = eventController.isNowPlaying();
     if (mLastNowPlayingState != currentNowPlayingState) {
       mLastNowPlayingState = currentNowPlayingState;
       mLastUpdateTime = currentTime;
+      mLastCalendarEventId = calendarId;
+      mLastCalendarEventHash = calendarHash;
       return true;
     }
 
@@ -350,7 +387,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
             || mLastBatteryLevel != batteryLevel
             || batteryVisible != lastBatteryVisible
             || mLastDeviceCount != deviceCount
-            || mLastChargingState != isCharging;
+            || mLastChargingState != isCharging
+            || calendarChanged;
 
     if (changed) {
       mLastEventTitleHash = eventTitleHash;
@@ -361,6 +399,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       mLastChargingState = isCharging;
       mLastUpdateTime = currentTime;
       mLastDeviceCount = deviceCount;
+      mLastCalendarEventId = calendarId;
+      mLastCalendarEventHash = calendarHash;
 
       mLastEventTitle = currentEventTitle != null ? currentEventTitle : "";
       mLastWeatherTemp = currentWeatherState != null ? currentWeatherState : "";
@@ -604,6 +644,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   private boolean hasVisibleMinimalChip() {
     return isViewVisible(mMinimalWeatherChip)
         || isViewVisible(mMinimalNowPlayingChip)
+        || isViewVisible(mMinimalCalendarChip)
         || isViewVisible(mMinimalBatteryChip)
         || isViewVisible(mMinimalPsaChip);
   }
@@ -644,7 +685,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       boolean showWeather,
       boolean showNowPlaying,
       boolean showBattery,
-      boolean showPsa) {
+      boolean showPsa,
+      boolean showCalendar) {
     if (mMinimalIconsRow == null) return;
 
     if (!minimalMode) {
@@ -665,6 +707,12 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         MINIMAL_ITEM_NOW_PLAYING,
         "Now playing");
     bindMinimalChip(
+        mMinimalCalendarChip,
+        mMinimalCalendarChipIcon,
+        showCalendar,
+        MINIMAL_ITEM_CALENDAR,
+        "Calendar");
+    bindMinimalChip(
         mMinimalBatteryChip,
         mMinimalBatteryChipIcon,
         showBattery,
@@ -679,6 +727,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     if ((mExpandedMinimalItem == MINIMAL_ITEM_WEATHER && !showWeather)
         || (mExpandedMinimalItem == MINIMAL_ITEM_NOW_PLAYING && !showNowPlaying)
+        || (mExpandedMinimalItem == MINIMAL_ITEM_CALENDAR && !showCalendar)
         || (mExpandedMinimalItem == MINIMAL_ITEM_BATTERY && !showBattery)
         || (mExpandedMinimalItem == MINIMAL_ITEM_PSA && !showPsa)) {
       mExpandedMinimalItem = MINIMAL_ITEM_NONE;
@@ -697,6 +746,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         mMinimalNowPlayingChip,
         mMinimalNowPlayingChipIcon,
         mExpandedMinimalItem == MINIMAL_ITEM_NOW_PLAYING);
+    updateMinimalChipAppearance(
+        mMinimalCalendarChip,
+        mMinimalCalendarChipIcon,
+        mExpandedMinimalItem == MINIMAL_ITEM_CALENDAR);
     updateMinimalChipAppearance(
         mMinimalBatteryChip, mMinimalBatteryChipIcon, mExpandedMinimalItem == MINIMAL_ITEM_BATTERY);
     updateMinimalChipAppearance(
@@ -729,6 +782,70 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         isPackageEnabled("com.google.android.googlequicksearchbox", getContext());
     mExpandedWeatherRow.setOnClickListener(getActionReceiver().getWeatherAction(hasGoogleApp));
     bindWeather(mExpandedWeatherRow, mExpandedWeatherTemp, mExpandedWeatherIcon, temperatureOnly, null);
+  }
+
+  private boolean shouldShowCalendar() {
+    if (!LauncherPrefs.SHOW_QUICKSPACE_CALENDAR.get(getContext())) {
+      return false;
+    }
+    if (mController == null || mController.getCalendarController() == null) {
+      return false;
+    }
+    QuickCalendarController.CalendarEvent event = mController.getCalendarController().getEvent();
+    return event != null && !TextUtils.isEmpty(event.getTitle());
+  }
+
+  private String getCalendarText(QuickCalendarController.CalendarEvent event) {
+    if (event == null || TextUtils.isEmpty(event.getTitle())) return null;
+    Locale locale = getResources().getConfiguration().getLocales().get(0);
+    android.icu.util.TimeZone zone = android.icu.util.TimeZone.getDefault();
+    boolean use24Hour = android.text.format.DateFormat.is24HourFormat(getContext());
+    DateFormat dateFormat = DateFormat.getInstanceForSkeleton("MMMd", locale);
+    DateFormat timeFormat =
+        DateFormat.getInstanceForSkeleton(use24Hour ? "Hm" : "hm", locale);
+    dateFormat.setTimeZone(zone);
+    timeFormat.setTimeZone(zone);
+    String today = dateFormat.format(System.currentTimeMillis());
+    if (event.isAllDay()) {
+      dateFormat.setTimeZone(android.icu.util.TimeZone.getTimeZone("UTC"));
+    }
+    String eventDate = dateFormat.format(event.getStartTime());
+    String prefix = eventDate.equals(today) ? "" : eventDate + " · ";
+    if (!event.isAllDay()) {
+      prefix += timeFormat.format(event.getStartTime()) + " · ";
+    }
+    return prefix + event.getTitle();
+  }
+
+  private void bindCalendarRow(boolean visible) {
+    if (mCalendarContent == null || mCalendarText == null) return;
+
+    QuickCalendarController calendarController =
+        mController == null ? null : mController.getCalendarController();
+    QuickCalendarController.CalendarEvent event =
+        calendarController == null ? null : calendarController.getEvent();
+    String calendarText = visible ? getCalendarText(event) : null;
+    if (TextUtils.isEmpty(calendarText)) {
+      animateOut(mCalendarContent);
+      return;
+    }
+
+    animateIn(mCalendarContent);
+    updateTextViewIfNeeded(mCalendarText, calendarText, false);
+    mCalendarContent.setContentDescription(calendarText);
+    mCalendarContent.setOnClickListener(
+        v -> {
+          if (mController == null) return;
+          QuickCalendarController calendar = mController.getCalendarController();
+          QuickCalendarController.CalendarEvent current =
+              calendar == null ? null : calendar.getEvent();
+          if (current != null) {
+            getActionReceiver().getCalendarEventAction(current.getId()).onClick(v);
+          } else {
+            getActionReceiver().getCalendarAction().onClick(v);
+          }
+        });
+    post(() -> maybeSetMarquee(mCalendarText));
   }
 
   private QuickSpaceActionReceiver getActionReceiver() {
@@ -817,6 +934,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     boolean showBattery = LauncherPrefs.SHOW_QUICKSPACE_BATTERY.get(getContext());
     boolean showBatteryChip = shouldShowMinimalBattery();
     boolean showPsaChip = shouldShowMinimalPsa();
+    boolean showCalendarChip = minimalMode && shouldShowCalendar();
     QuickBatteryController batController = mController.getBatteryController();
 
     updateMinimalIconRow(
@@ -824,7 +942,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
         showWeatherChip,
         isNowPlaying,
         showBatteryChip,
-        showPsaChip);
+        showPsaChip,
+        showCalendarChip);
 
     if (minimizeWeather) {
       hideWeatherViews(mWeatherContentSub, mWeatherDivider);
@@ -841,6 +960,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
           mCurrentStyle == 3,
           mWeatherDivider);
     }
+
+    bindCalendarRow(
+        shouldShowCalendar()
+            && (!minimalMode || mExpandedMinimalItem == MINIMAL_ITEM_CALENDAR));
 
     boolean showExpandedNowPlaying =
         isNowPlaying && (!minimalMode || mExpandedMinimalItem == MINIMAL_ITEM_NOW_PLAYING);
@@ -998,6 +1121,11 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     int targetColor = mColorStateList.getDefaultColor();
 
+    if (mCurrentStyle == 4 && mBinder != null) {
+      mBinder.applyColors(mColorStateList, mCachedUseBlackText);
+      return;
+    }
+
     if (mEventTitle != null) {
       animateTextColor(mEventTitle, targetColor);
       updateShadows(mEventTitle);
@@ -1026,6 +1154,11 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       animateTextColor(mExpandedWeatherTemp, targetColor);
       updateShadows(mExpandedWeatherTemp);
     }
+    if (mCalendarText != null) {
+      animateTextColor(mCalendarText, targetColor);
+      updateShadows(mCalendarText);
+    }
+    if (mCalendarIcon != null) mCalendarIcon.setImageTintList(mColorStateList);
     if (mWeatherDivider != null) {
       mWeatherDivider.setBackgroundColor(
           Color.argb(
@@ -1425,6 +1558,14 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
   }
 
   private final void loadViews() {
+    mQuickspaceContent = (ViewGroup) findViewById(R.id.quickspace_content);
+    if (mCurrentStyle == 4) {
+      if (mQuickspaceContent instanceof VoltageVerticalView) {
+        mBinder = (VoltageVerticalView) mQuickspaceContent;
+      }
+      return;
+    }
+
     mEventTitle = (TextView) findViewById(R.id.quick_event_title);
     mEventTitleSub = (TextView) findViewById(R.id.quick_event_title_sub);
     mSubtitleLine = (ViewGroup) findViewById(R.id.subtitle_line);
@@ -1432,7 +1573,6 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mNowPlayingIcon = (ImageView) findViewById(R.id.now_playing_icon_sub);
     mEventSubIcon = (ImageView) findViewById(R.id.quick_event_icon_sub);
     mWeatherIconSub = (ImageView) findViewById(R.id.quick_event_weather_icon);
-    mQuickspaceContent = (ViewGroup) findViewById(R.id.quickspace_content);
     mWeatherContentSub = (ViewGroup) findViewById(R.id.quick_event_weather_content);
     mWeatherTempSub = (TextView) findViewById(R.id.quick_event_weather_temp);
     mWeatherDivider = findViewById(R.id.quickspace_weather_divider);
@@ -1441,6 +1581,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mMinimalWeatherChipIcon = (ImageView) findViewById(R.id.quickspace_minimal_weather_icon);
     mMinimalNowPlayingChip = findViewById(R.id.quickspace_minimal_now_playing_chip);
     mMinimalNowPlayingChipIcon = (ImageView) findViewById(R.id.quickspace_minimal_now_playing_icon);
+    mMinimalCalendarChip = findViewById(R.id.quickspace_minimal_calendar_chip);
+    mMinimalCalendarChipIcon = (ImageView) findViewById(R.id.quickspace_minimal_calendar_icon);
     mMinimalBatteryChip = findViewById(R.id.quickspace_minimal_battery_chip);
     mMinimalBatteryChipIcon = (ImageView) findViewById(R.id.quickspace_minimal_battery_icon);
     mMinimalPsaChip = findViewById(R.id.quickspace_minimal_psa_chip);
@@ -1476,6 +1618,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       mBatteryChargingOverlay = findViewById(R.id.battery_charging_overlay);
       mBatteryDotsContainer = findViewById(R.id.battery_dots_container);
       mBatteryShimmer = findViewById(R.id.battery_shimmer_view);
+
+      mCalendarContent = findViewById(R.id.quickspace_calendar_content);
+      mCalendarIcon = (ImageView) findViewById(R.id.quickspace_calendar_icon);
+      mCalendarText = (TextView) findViewById(R.id.quickspace_calendar_text);
 
       if (mBatteryRow != null) {
         mBatteryRow.setClipChildren(false);
@@ -1529,6 +1675,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     mCurrentStyle = style;
     mMarqueeTexts.clear();
+    if (mBinder != null) {
+      mBinder.onDestroy();
+      mBinder = null;
+    }
     int indexOfChild = indexOfChild(mQuickspaceContent);
     if (mQuickspaceContent != null) {
       removeView(mQuickspaceContent);
@@ -1544,12 +1694,22 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       case 3:
         layoutId = R.layout.quickspace_voltage_paged_style;
         break;
+      case 4:
+        layoutId = R.layout.quickspace_voltage_vertical;
+        break;
       default:
         layoutId = R.layout.quickspace_doubleline;
     }
     addView(LayoutInflater.from(getContext()).inflate(layoutId, this, false), indexOfChild);
 
     loadViews();
+    if (mBinder != null) {
+      mBinder.onBind(mController);
+    }
+    if (mCurrentStyle == 4) {
+      refreshColorStateList();
+      updateColorForViews();
+    }
     getQuickSpaceView();
   }
 
@@ -1647,6 +1807,7 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       mWeatherContentSub,
       mExpandedWeatherRow,
       mWeatherDivider,
+      mCalendarContent,
       mMinimalIconsRow,
       mQuickspaceContent,
       mBatteryRow
@@ -1682,11 +1843,11 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     View[] clickableViews = {
       mEventTitle, mEventTitleSub, mEventTitleSubColored,
       mGreetingsExt, mGreetingsExtClock, mEventSubIcon,
-      mNowPlayingIcon, mWeatherContentSub, mQuickspaceDayOfWeek,
+      mNowPlayingIcon, mWeatherContentSub, mCalendarContent, mQuickspaceDayOfWeek,
       mQuickspaceClock, mQuickspaceDate, mPSAMessage,
       mNowPlayingContent, mNowPlayingText, mBatteryRow,
       mExpandedWeatherRow, mMinimalWeatherChip, mMinimalNowPlayingChip,
-      mMinimalBatteryChip, mMinimalPsaChip
+      mMinimalCalendarChip, mMinimalBatteryChip, mMinimalPsaChip
     };
 
     for (View view : clickableViews) {
@@ -1747,6 +1908,12 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
 
     cancelAllAnimations();
     safeRemoveListener();
+
+    if (mBinder != null) {
+      mBinder.onDestroy();
+      mBinder = null;
+      mViewsLoaded = false;
+    }
 
     mAttached = false;
   }
@@ -1845,6 +2012,10 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
       safeRemoveListener();
     }
     mActionReceiver = null;
+    if (mBinder != null) {
+      mBinder.onDestroy();
+      mBinder = null;
+    }
     mController = null;
     mBubbleTextView = null;
     mQuickspaceContent = null;
@@ -1859,11 +2030,16 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mWeatherIconSub = null;
     mWeatherTempSub = null;
     mWeatherDivider = null;
+    mCalendarContent = null;
+    mCalendarIcon = null;
+    mCalendarText = null;
     mMinimalIconsRow = null;
     mMinimalWeatherChip = null;
     mMinimalWeatherChipIcon = null;
     mMinimalNowPlayingChip = null;
     mMinimalNowPlayingChipIcon = null;
+    mMinimalCalendarChip = null;
+    mMinimalCalendarChipIcon = null;
     mMinimalBatteryChip = null;
     mMinimalBatteryChipIcon = null;
     mMinimalPsaChip = null;
@@ -1909,6 +2085,8 @@ public class QuickSpaceView extends FrameLayout implements OnDataListener {
     mLastActionTitle = "";
     mLastDeviceAddress = null;
     mLastBatteryLevel = -1;
+    mLastCalendarEventId = -1;
+    mLastCalendarEventHash = 0;
     mBatteryAlphaRestoreNeeded = false;
     mLastMinimalModeState = false;
     mExpandedMinimalItem = MINIMAL_ITEM_NONE;

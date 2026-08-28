@@ -223,13 +223,29 @@
         <item>Extended</item>
         <item>Voltage</item>
         <item>Voltage paged style</item>
+        <item>Voltage vertical</item>
     </string-array>
     <string-array name="quickspace_style_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
+
+    <string name="quickspace_vertical_content_description">QuickSpace overview</string>
+    <string name="quickspace_vertical_now_playing">NOW PLAYING</string>
+    <string name="quickspace_vertical_note">NOTE</string>
+    <string name="quickspace_vertical_weather">WEATHER</string>
+    <string name="quickspace_vertical_calendar">CALENDAR</string>
+    <string name="quickspace_vertical_battery">BATTERY</string>
+    <string name="quickspace_vertical_battery_value">%1$s · %2$d%%</string>
+    <string name="quickspace_vertical_a11y_calendar">Open calendar</string>
+    <string name="quickspace_vertical_a11y_weather">Open weather</string>
+    <string name="quickspace_vertical_a11y_calendar_event">Open calendar event</string>
+    <string name="quickspace_vertical_a11y_event">Open now playing</string>
+    <string name="quickspace_vertical_a11y_note">Open note</string>
+    <string name="quickspace_vertical_a11y_battery">Open battery settings</string>
 
     <!-- Quickspace clock accent -->
     <string name="quickspace_voltage_accent_title">Accent colored clock</string>
@@ -283,6 +299,9 @@
 
     <string name="quickspace_battery_title">Device Battery</string>
     <string name="quickspace_battery_summary">Show phone and connected bluetooth device battery in Voltage style</string>
+    <string name="quickspace_calendar_title">Calendar events</string>
+    <string name="quickspace_calendar_summary">Show your next event from any enabled calendar</string>
+    <string name="quickspace_calendar_untitled">Untitled event</string>
 
     <!-- Dark App Drawer Text -->
     <string name="all_apps_dark_text_title">Dark app labels</string>

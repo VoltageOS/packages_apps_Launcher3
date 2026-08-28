@@ -8,6 +8,11 @@
 
     <!-- Quickspace -->
     <item type="id" name="reserved_container_workspace" />
+    <item type="id" name="quickspace_vertical_a11y_calendar" />
+    <item type="id" name="quickspace_vertical_a11y_weather" />
+    <item type="id" name="quickspace_vertical_a11y_event" />
+    <item type="id" name="quickspace_vertical_a11y_battery" />
+    <item type="id" name="quickspace_vertical_a11y_calendar_event" />
 
     <!-- Themed icons -->
     <string name="drawable_factory_class" translatable="false">com.android.launcher3.icons.ThirdPartyDrawableFactory</string>
