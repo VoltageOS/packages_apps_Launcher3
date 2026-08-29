@@ -70,6 +70,15 @@ public class QuickBatteryController {
   private long mLastInteractionTime = 0;
   private final Set<String> mAlertedDevices = new HashSet<>();
 
+  private boolean mInitialStickyReceived = false;
+  private boolean mLastPhoneCharging = false;
+  private int mLastPhoneLevel = -1;
+  private boolean mPhoneFullTriggered = false;
+  private boolean mPhoneLowTriggered = false;
+  private final Set<String> mKnownBtDevices = new HashSet<>();
+  private final Set<String> mLowAlertedBtDevices = new HashSet<>();
+  private final java.util.Map<String, Integer> mBtLevels = new java.util.HashMap<>();
+
   private final BroadcastReceiver mReceiver =
       new BroadcastReceiver() {
         @Override
@@ -84,12 +93,52 @@ public class QuickBatteryController {
         }
       };
 
+  private void ensurePhoneContextualEvent(boolean isCharging, int level) {
+    int activeType =
+        mController != null
+            ? mController.getActiveContextualTypeForSource(QuickEventsController.SOURCE_PHONE)
+            : QuickEventsController.CONTEXT_EVENT_NONE;
+
+    if (isCharging && level >= 100) {
+      if (activeType != QuickEventsController.CONTEXT_EVENT_BATTERY_FULL) {
+        mController.triggerBatteryFullEvent();
+      }
+      mPhoneFullTriggered = true;
+      mPhoneLowTriggered = false;
+    } else if (isCharging) {
+      if (activeType != QuickEventsController.CONTEXT_EVENT_CHARGING) {
+        mController.triggerChargingEvent();
+      }
+      mPhoneFullTriggered = false;
+      mPhoneLowTriggered = false;
+    } else if (level <= 15) {
+      if (activeType != QuickEventsController.CONTEXT_EVENT_BATTERY_LOW
+          || level != mLastPhoneLevel) {
+        mController.triggerBatteryLowEvent(level);
+      }
+      mPhoneFullTriggered = false;
+      mPhoneLowTriggered = true;
+    } else {
+      if (activeType != QuickEventsController.CONTEXT_EVENT_NONE) {
+        mController.clearContextualEventForSource(QuickEventsController.SOURCE_PHONE);
+      }
+      mPhoneFullTriggered = false;
+      mPhoneLowTriggered = false;
+    }
+  }
+
   private boolean updatePhoneBattery(Intent intent) {
     int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
     int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
     boolean isCharging =
         status == BatteryManager.BATTERY_STATUS_CHARGING
             || status == BatteryManager.BATTERY_STATUS_FULL;
+
+    ensurePhoneContextualEvent(isCharging, level);
+
+    mLastPhoneCharging = isCharging;
+    mLastPhoneLevel = level;
+    mInitialStickyReceived = true;
 
     if (mPhoneDevice != null
         && mPhoneDevice.level == level
@@ -104,6 +153,7 @@ public class QuickBatteryController {
 
   private void updateBluetoothDevices(Intent intent) {
     mBtDevices.clear();
+    Set<String> currentAddresses = new HashSet<>();
 
     ArrayList<String> names = intent.getStringArrayListExtra("device_list_names");
     ArrayList<Integer> levels = intent.getIntegerArrayListExtra("device_list_levels");
@@ -115,16 +165,69 @@ public class QuickBatteryController {
 
       for (int i = 0; i < count; i++) {
         boolean isAudio = false;
-        if (audioFlags != null) {
+        if (audioFlags != null && i < audioFlags.size()) {
           isAudio = Boolean.parseBoolean(audioFlags.get(i));
         }
 
         String addr = (addresses != null && i < addresses.size()) ? addresses.get(i) : names.get(i);
-
         int level = Math.max(0, Math.min(100, levels.get(i)));
-        mBtDevices.add(new BatteryDevice(names.get(i), level, isAudio, addr, false));
+        String devName = names.get(i);
+
+        mBtDevices.add(new BatteryDevice(devName, level, isAudio, addr, false));
+        currentAddresses.add(addr);
+
+        Integer prevLevel = mBtLevels.get(addr);
+        int phoneActive =
+            mController != null
+                ? mController.getActiveContextualTypeForSource(
+                    QuickEventsController.SOURCE_PHONE)
+                : QuickEventsController.CONTEXT_EVENT_NONE;
+        boolean phoneEventActive = phoneActive != QuickEventsController.CONTEXT_EVENT_NONE;
+        if (!mKnownBtDevices.contains(addr)) {
+          mKnownBtDevices.add(addr);
+          mBtLevels.put(addr, level);
+          if (!phoneEventActive) {
+            mController.triggerBtBatteryEvent(devName, addr, level);
+          }
+          if (level <= 20) {
+            mLowAlertedBtDevices.add(addr);
+          }
+        } else {
+          if (level <= 20) {
+            if (!mLowAlertedBtDevices.contains(addr)) {
+              if (!phoneEventActive) {
+                mController.triggerBtBatteryEvent(devName, addr, level);
+              }
+              mLowAlertedBtDevices.add(addr);
+            } else {
+              if (!phoneEventActive) {
+                int activeForAddr =
+                    mController != null
+                        ? mController.getActiveContextualTypeForSource(addr)
+                        : QuickEventsController.CONTEXT_EVENT_NONE;
+                if (activeForAddr == QuickEventsController.CONTEXT_EVENT_NONE
+                    || (prevLevel != null && prevLevel != level)) {
+                  mController.triggerBtBatteryEvent(devName, addr, level);
+                }
+              }
+            }
+          } else if (level > 20) {
+            mLowAlertedBtDevices.remove(addr);
+          }
+          mBtLevels.put(addr, level);
+        }
       }
     }
+
+    for (String addr : mKnownBtDevices) {
+      if (!currentAddresses.contains(addr)) {
+        mController.clearContextualEventForSource(addr);
+      }
+    }
+
+    mKnownBtDevices.retainAll(currentAddresses);
+    mLowAlertedBtDevices.retainAll(currentAddresses);
+    mBtLevels.keySet().retainAll(currentAddresses);
   }
 
   private void refreshDeviceList() {
@@ -252,10 +355,25 @@ public class QuickBatteryController {
   }
 
   private void clearData() {
-    if (mDevices.isEmpty()) return;
+    if (mDevices.isEmpty()
+        && mBtDevices.isEmpty()
+        && mKnownBtDevices.isEmpty()
+        && !mPhoneFullTriggered
+        && !mPhoneLowTriggered) return;
     mDevices.clear();
     mBtDevices.clear();
+    mKnownBtDevices.clear();
+    mLowAlertedBtDevices.clear();
+    mBtLevels.clear();
+    mAlertedDevices.clear();
+    mPhoneFullTriggered = false;
+    mPhoneLowTriggered = false;
+    mInitialStickyReceived = false;
+    mLastPhoneLevel = -1;
     mCurrentDeviceAddress = null;
+    if (mController != null) {
+      mController.clearContextualEventForSource(QuickEventsController.SOURCE_PHONE);
+    }
     mController.notifyListeners();
   }
 

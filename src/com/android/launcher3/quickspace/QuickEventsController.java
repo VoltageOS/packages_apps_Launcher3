@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2025 crDroid Android Project
+ * Copyright (C) 2026 VoltageOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,7 @@ import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.AlarmClock;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -81,6 +83,51 @@ public class QuickEventsController {
     private int mCachedPSAHour = -1;
     private boolean mCachedPSAIsRandom = false;
 
+    public static final int CONTEXT_EVENT_NONE = 0;
+    public static final int CONTEXT_EVENT_CHARGING = 1;
+    public static final int CONTEXT_EVENT_BATTERY_FULL = 2;
+    public static final int CONTEXT_EVENT_BATTERY_LOW = 3;
+    public static final int CONTEXT_EVENT_BT_BATTERY = 4;
+
+    public static final String SOURCE_PHONE = "device_phone";
+
+    public static class ContextualEvent {
+        public final int type;
+        public final String message;
+        public final long timestamp;
+        public final long durationMs;
+        public final Drawable icon;
+        public final OnClickListener clickAction;
+        public final String sourceKey;
+        public final boolean isSticky;
+        public final int argLevel;
+        public final String argName;
+
+        public ContextualEvent(int type, String message, long timestamp, long durationMs, Drawable icon, OnClickListener clickAction, String sourceKey) {
+            this(type, message, timestamp, durationMs, icon, clickAction, sourceKey, false, -1, null);
+        }
+
+        public ContextualEvent(int type, String message, long timestamp, long durationMs, Drawable icon, OnClickListener clickAction, String sourceKey, boolean isSticky, int argLevel, String argName) {
+            this.type = type;
+            this.message = message;
+            this.timestamp = timestamp;
+            this.durationMs = durationMs;
+            this.icon = icon;
+            this.clickAction = clickAction;
+            this.sourceKey = sourceKey;
+            this.isSticky = isSticky;
+            this.argLevel = argLevel;
+            this.argName = argName;
+        }
+
+        public boolean isExpired() {
+            if (isSticky) return false;
+            return (SystemClock.elapsedRealtime() - timestamp) > durationMs;
+        }
+    }
+
+    private ContextualEvent mActiveContextualEvent = null;
+
     // NowPlaying
     private boolean mEventNowPlaying = false;
     private String mNowPlayingTitle;
@@ -89,6 +136,34 @@ public class QuickEventsController {
 
     private DateFormat mDateFormat;
     private String mLastDateFormatSkeleton;
+
+    private final OnClickListener mBatteryAction = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_POWER_USAGE_SUMMARY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                } catch (Exception e2) {}
+            }
+        }
+    };
+
+    private final OnClickListener mBluetoothAction = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            try {
+                Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            } catch (Exception e) {}
+        }
+    };
 
     private final OnClickListener mPSAAction = new View.OnClickListener() {
         @Override
@@ -136,14 +211,119 @@ public class QuickEventsController {
     }
 
     public void forceUpdatePsonality() {
+        if (mActiveContextualEvent != null) {
+            if (mActiveContextualEvent.isExpired()) {
+                mActiveContextualEvent = null;
+            } else if (mActiveContextualEvent.isSticky) {
+                refreshActiveContextualEvent();
+                return;
+            }
+        }
         // Force clear cache and regenerate PSA - used for scheduled updates
         clearCachedPSA();
         psonalityEvent();
     }
 
     public void updatePsonality() {
-        // This is called from scheduled updates, should force new message
+        if (mActiveContextualEvent != null) {
+            if (mActiveContextualEvent.isExpired()) {
+                mActiveContextualEvent = null;
+            } else if (mActiveContextualEvent.isSticky) {
+                refreshActiveContextualEvent();
+                return;
+            } else {
+                psonalityEvent();
+                return;
+            }
+        }
         forceUpdatePsonality();
+    }
+
+    public int getActiveContextualType() {
+        if (mActiveContextualEvent != null) {
+            if (mActiveContextualEvent.isExpired()) {
+                mActiveContextualEvent = null;
+                return CONTEXT_EVENT_NONE;
+            }
+            return mActiveContextualEvent.type;
+        }
+        return CONTEXT_EVENT_NONE;
+    }
+
+    public int getActiveContextualTypeForSource(String sourceKey) {
+        if (mActiveContextualEvent != null && sourceKey != null
+                && sourceKey.equals(mActiveContextualEvent.sourceKey)) {
+            if (mActiveContextualEvent.isExpired()) {
+                mActiveContextualEvent = null;
+                return CONTEXT_EVENT_NONE;
+            }
+            return mActiveContextualEvent.type;
+        }
+        return CONTEXT_EVENT_NONE;
+    }
+
+    public boolean hasActiveContextualEvent() {
+        return getActiveContextualType() != CONTEXT_EVENT_NONE;
+    }
+
+    private String pickRandomFromArray(int resId) {
+        String[] arr = getCachedArray(resId);
+        if (arr == null || arr.length == 0) return null;
+        return arr[getLuckyNumber(0, arr.length - 1)];
+    }
+
+    private String formatLowTemplate(String template, int level) {
+        try {
+            return String.format(Locale.getDefault(), template, level);
+        } catch (Exception e) {
+            return template.replace("%1$d", String.valueOf(level)).replace("%%", "%");
+        }
+    }
+
+    private String formatBtTemplate(String template, String devName, int level) {
+        String name = TextUtils.isEmpty(devName) ? "Device" : devName;
+        try {
+            return String.format(Locale.getDefault(), template, name, level);
+        } catch (Exception e) {
+            return template.replace("%1$s", name).replace("%2$d", String.valueOf(level)).replace("%%", "%");
+        }
+    }
+
+    private void refreshActiveContextualEvent() {
+        if (mActiveContextualEvent == null || mActiveContextualEvent.isExpired()) return;
+        ContextualEvent old = mActiveContextualEvent;
+        String newMsg = null;
+        switch (old.type) {
+            case CONTEXT_EVENT_CHARGING:
+                newMsg = pickRandomFromArray(R.array.quickspace_psa_charging);
+                break;
+            case CONTEXT_EVENT_BATTERY_FULL:
+                newMsg = pickRandomFromArray(R.array.quickspace_psa_battery_full);
+                break;
+            case CONTEXT_EVENT_BATTERY_LOW:
+                newMsg = pickRandomFromArray(R.array.quickspace_psa_battery_low);
+                if (newMsg != null) newMsg = formatLowTemplate(newMsg, old.argLevel);
+                break;
+            case CONTEXT_EVENT_BT_BATTERY:
+                newMsg = pickRandomFromArray(R.array.quickspace_psa_bt_battery);
+                if (newMsg != null) newMsg = formatBtTemplate(newMsg, old.argName, old.argLevel);
+                break;
+            default:
+                return;
+        }
+        if (newMsg == null) return;
+        mActiveContextualEvent = new ContextualEvent(
+                old.type,
+                newMsg,
+                SystemClock.elapsedRealtime(),
+                old.durationMs,
+                old.icon,
+                old.clickAction,
+                old.sourceKey,
+                old.isSticky,
+                old.argLevel,
+                old.argName);
+        updateQuickEvents();
     }
 
     private void clearCachedPSA() {
@@ -257,7 +437,6 @@ public class QuickEventsController {
         if (mEventNowPlaying) return;
 
         mEventTitle = formatDateTime(mContext, Integer.parseInt(LauncherPrefs.QUICKSPACE_UI_STYLE.get(mContext)));
-        mEventTitleSubAction = mPSAAction;
 
         if (hourOfDay >= 5 && hourOfDay <= 9) {
             mGreetings = mResources.getString(R.string.quickspace_grt_morning);
@@ -284,9 +463,136 @@ public class QuickEventsController {
             return;
         }
 
+        if (mActiveContextualEvent != null) {
+            if (!mActiveContextualEvent.isExpired()) {
+                mEventTitleSub = mActiveContextualEvent.message;
+                mEventTitleSubAction = mActiveContextualEvent.clickAction != null ? mActiveContextualEvent.clickAction : mPSAAction;
+                mEventSubIcon = mActiveContextualEvent.icon;
+                mIsQuickEvent = true;
+                return;
+            } else {
+                mActiveContextualEvent = null;
+            }
+        }
+
         mEventTitleSub = mCachedPSAMessage;
+        mEventTitleSubAction = mPSAAction;
         mIsQuickEvent = true;
         mEventSubIcon = null;
+    }
+
+    public void triggerChargingEvent() {
+        String msg = pickRandomFromArray(R.array.quickspace_psa_charging);
+        if (msg != null) {
+            mActiveContextualEvent = new ContextualEvent(
+                CONTEXT_EVENT_CHARGING,
+                msg,
+                SystemClock.elapsedRealtime(),
+                10 * 60 * 1000,
+                null,
+                mBatteryAction,
+                SOURCE_PHONE,
+                true,
+                -1,
+                null
+            );
+            updateQuickEvents();
+        }
+    }
+
+    public void triggerBatteryFullEvent() {
+        String msg = pickRandomFromArray(R.array.quickspace_psa_battery_full);
+        if (msg != null) {
+            mActiveContextualEvent = new ContextualEvent(
+                CONTEXT_EVENT_BATTERY_FULL,
+                msg,
+                SystemClock.elapsedRealtime(),
+                10 * 60 * 1000,
+                null,
+                mBatteryAction,
+                SOURCE_PHONE,
+                true,
+                100,
+                null
+            );
+            updateQuickEvents();
+        }
+    }
+
+    public void triggerBatteryLowEvent(int level) {
+        String template = pickRandomFromArray(R.array.quickspace_psa_battery_low);
+        if (template != null) {
+            String msg = formatLowTemplate(template, level);
+            mActiveContextualEvent = new ContextualEvent(
+                CONTEXT_EVENT_BATTERY_LOW,
+                msg,
+                SystemClock.elapsedRealtime(),
+                10 * 60 * 1000,
+                null,
+                mBatteryAction,
+                SOURCE_PHONE,
+                true,
+                level,
+                null
+            );
+            updateQuickEvents();
+        }
+    }
+
+    public void triggerBtBatteryEvent(String deviceName, String address, int level) {
+        String template = pickRandomFromArray(R.array.quickspace_psa_bt_battery);
+        if (template != null) {
+            String devName = TextUtils.isEmpty(deviceName) ? "Device" : deviceName;
+            String msg = formatBtTemplate(template, devName, level);
+            boolean sticky = level <= 20;
+            mActiveContextualEvent = new ContextualEvent(
+                CONTEXT_EVENT_BT_BATTERY,
+                msg,
+                SystemClock.elapsedRealtime(),
+                5 * 60 * 1000,
+                null,
+                mBluetoothAction,
+                address,
+                sticky,
+                level,
+                devName
+            );
+            updateQuickEvents();
+        }
+    }
+
+    public void updateBtBatteryLevel(String address, int level) {
+        if (mActiveContextualEvent != null
+                && mActiveContextualEvent.type == CONTEXT_EVENT_BT_BATTERY
+                && address != null && address.equals(mActiveContextualEvent.sourceKey)
+                && !mActiveContextualEvent.isExpired()
+                && mActiveContextualEvent.argLevel != level) {
+            triggerBtBatteryEvent(mActiveContextualEvent.argName, address, level);
+        }
+    }
+
+    public void updateBatteryLowLevel(int level) {
+        if (mActiveContextualEvent != null
+                && mActiveContextualEvent.type == CONTEXT_EVENT_BATTERY_LOW
+                && SOURCE_PHONE.equals(mActiveContextualEvent.sourceKey)
+                && !mActiveContextualEvent.isExpired()
+                && mActiveContextualEvent.argLevel != level) {
+            triggerBatteryLowEvent(level);
+        }
+    }
+
+    public void clearActiveContextualEvent(int type) {
+        if (mActiveContextualEvent != null && (type == CONTEXT_EVENT_NONE || mActiveContextualEvent.type == type)) {
+            mActiveContextualEvent = null;
+            updateQuickEvents();
+        }
+    }
+
+    public void clearActiveContextualEventForSource(String sourceKey) {
+        if (mActiveContextualEvent != null && sourceKey != null && sourceKey.equals(mActiveContextualEvent.sourceKey)) {
+            mActiveContextualEvent = null;
+            updateQuickEvents();
+        }
     }
 
     private String[] getPSAStr(int hour) {
@@ -334,10 +640,16 @@ public class QuickEventsController {
     }
 
     public String getPSAMessage() {
+        if (mActiveContextualEvent != null && !mActiveContextualEvent.isExpired()) {
+            return mActiveContextualEvent.message;
+        }
         return mCachedPSAMessage;
     }
 
     public OnClickListener getPSAAction() {
+        if (mActiveContextualEvent != null && !mActiveContextualEvent.isExpired() && mActiveContextualEvent.clickAction != null) {
+            return mActiveContextualEvent.clickAction;
+        }
         return mPSAAction;
     }
 
