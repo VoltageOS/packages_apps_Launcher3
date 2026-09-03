@@ -139,9 +139,23 @@ public class AllAppsState extends LauncherState {
     }
 
     @Override
+    public PageAlphaProvider getWorkspacePageAlphaProvider(Launcher launcher) {
+        PageAlphaProvider superProvider = super.getWorkspacePageAlphaProvider(launcher);
+        if (shouldReduceWorkspaceBlurUsage(launcher)) {
+            return new PageAlphaProvider(superProvider.interpolator) {
+                @Override
+                public float getPageAlpha(int pageIndex) {
+                    return 0f;
+                }
+            };
+        }
+        return superProvider;
+    }
+
+    @Override
     public int getVisibleElements(LauncherUiState launcherUiState) {
-        return Flags.allAppsSurface() ? HOTSEAT_ICONS
-                : ALL_APPS_CONTENT | FLOATING_SEARCH_BAR | HOTSEAT_ICONS;
+        return Flags.allAppsSurface() ? 0
+                : ALL_APPS_CONTENT | FLOATING_SEARCH_BAR;
     }
 
     @Override
