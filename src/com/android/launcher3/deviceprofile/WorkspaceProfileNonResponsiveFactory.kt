@@ -255,6 +255,13 @@ object WorkspaceProfileNonResponsiveFactory {
                         workspacePadding.bottom + workspacePadding.top,
                     ),
             )
+        val minSpacing = pxFromDp(6f, res.displayMetrics)
+        val widgetPadding = Rect(
+            max(0, minSpacing - cellLayoutBorderSpacePx.x),
+            max(0, minSpacing - cellLayoutBorderSpacePx.y),
+            max(0, minSpacing - cellLayoutBorderSpacePx.x),
+            max(0, minSpacing - cellLayoutBorderSpacePx.y)
+        )
         return WorkspaceProfile(
             // Workspace icons
             iconScale = iconScale,
@@ -305,6 +312,7 @@ object WorkspaceProfileNonResponsiveFactory {
             scale = scale,
             flingToDeleteThresholdVelocity =
                 res.getDimensionPixelSize(R.dimen.drag_flingToDeleteMinVelocity),
+            widgetPadding = widgetPadding,
         )
     }
 
@@ -451,6 +459,13 @@ object WorkspaceProfileNonResponsiveFactory {
                         workspacePadding.bottom + workspacePadding.top,
                     ),
             )
+        val minSpacingScalable = pxFromDp(6f, metrics)
+        val widgetPaddingScalable = Rect(
+            max(0, minSpacingScalable - cellLayoutBorderSpacePx.x),
+            max(0, minSpacingScalable - cellLayoutBorderSpacePx.y),
+            max(0, minSpacingScalable - cellLayoutBorderSpacePx.x),
+            max(0, minSpacingScalable - cellLayoutBorderSpacePx.y)
+        )
         return WorkspaceProfile(
             // Workspace icons
             iconScale = iconScale,
@@ -501,6 +516,7 @@ object WorkspaceProfileNonResponsiveFactory {
             scale = scale,
             flingToDeleteThresholdVelocity =
                 res.getDimensionPixelSize(R.dimen.drag_flingToDeleteMinVelocity),
+            widgetPadding = widgetPaddingScalable,
         )
     }
 
