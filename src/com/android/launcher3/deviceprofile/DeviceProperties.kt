@@ -52,7 +52,8 @@ data class DeviceProperties(
     val insets: Rect,
     val deviceConfiguration: DeviceConfiguration,
     val taskbarConfiguration: TaskbarConfiguration,
-    val densityDpi: Int
+    val densityDpi: Int,
+    val isDefaultLandscape: Boolean
 ) {
 
     /**
@@ -112,6 +113,7 @@ data class DeviceProperties(
                             (allowTaskbar || taskbarOrBubbleBarOnPhones) && isTaskbarDrawnInProcess
                     ),
                 densityDpi = windowBounds.densityDpi,
+                isDefaultLandscape = info.isDefaultLandscape,
             )
         }
     }
