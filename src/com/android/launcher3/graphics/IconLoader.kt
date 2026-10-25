@@ -125,12 +125,12 @@ constructor(
         if (mainIcon == null) {
             return null
         }
+        val noWrapHint =
+            mainIcon.changingConfigurations and BaseIconFactory.CONFIG_HINT_NO_WRAP != 0
         var result: AdaptiveIconDrawable? =
             if (mainIcon is AdaptiveIconDrawable) {
                 mainIcon
-            } else if (
-                mainIcon.changingConfigurations and BaseIconFactory.CONFIG_HINT_NO_WRAP == 0
-            ) {
+            } else if (!noWrapHint) {
                 // Wrap the main icon in AID
                 LauncherIcons.obtain(context).use { li -> li.wrapToAdaptiveIcon(mainIcon) }
             } else {
@@ -141,7 +141,7 @@ constructor(
             return null
         }
         // Inject theme icon drawable
-        if (Utilities.ATLEAST_T && useTheme) {
+        if (Utilities.ATLEAST_T && useTheme && !noWrapHint) {
             val themeController = themeManager.themeController
             if (themeController != null) {
                 result =

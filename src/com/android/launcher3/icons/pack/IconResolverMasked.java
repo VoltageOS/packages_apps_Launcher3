@@ -20,6 +20,8 @@ import com.android.launcher3.icons.LauncherIcons;
 
 import com.android.launcher3.icons.clock.CustomClock;
 
+import static com.android.launcher3.icons.BaseIconFactory.CONFIG_HINT_NO_WRAP;
+
 public class IconResolverMasked implements IconResolver {
     private final Context mContext;
     private final IconPack.Data mData;
@@ -83,12 +85,16 @@ public class IconResolverMasked implements IconResolver {
                 uponBitmap(iconBm, res.getDrawableForDensity(iconUpon, iconDpi, null));
             }
 
-            return new BitmapDrawable(mContext.getResources(), iconBm);
+            Drawable drawable = new BitmapDrawable(mContext.getResources(), iconBm);
+            drawable.setChangingConfigurations(
+                    drawable.getChangingConfigurations() | CONFIG_HINT_NO_WRAP);
+            return drawable;
         } catch (PackageManager.NameNotFoundException | Resources.NotFoundException e) {
             e.printStackTrace();
         }
 
         li.recycle();
+        icon.setChangingConfigurations(icon.getChangingConfigurations() | CONFIG_HINT_NO_WRAP);
         return icon;
     }
 

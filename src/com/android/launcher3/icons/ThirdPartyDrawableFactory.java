@@ -16,6 +16,7 @@ import com.android.launcher3.icons.pack.IconPackManager;
 import com.android.launcher3.icons.pack.IconResolver;
 
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+import static com.android.launcher3.icons.BaseIconFactory.CONFIG_HINT_NO_WRAP;
 
 public class ThirdPartyDrawableFactory extends DrawableFactory {
     private final IconPackManager mManager;
@@ -47,11 +48,16 @@ public class ThirdPartyDrawableFactory extends DrawableFactory {
                         FastBitmapDrawable fb = mCustomClockDrawer.drawIcon(
                                 info, drawable, resolver.clockData());
                         fb.setDisabled(info.isDisabled());
+                        fb.setChangingConfigurations(
+                                fb.getChangingConfigurations() | CONFIG_HINT_NO_WRAP);
                         return fb;
                     }
                 }
             } else if (info.getTargetComponent().equals(DynamicClock.DESK_CLOCK)) {
-                return mDynamicClockDrawer.drawIcon(info);
+                FastBitmapDrawable fb = mDynamicClockDrawer.drawIcon(info);
+                fb.setChangingConfigurations(
+                        fb.getChangingConfigurations() | CONFIG_HINT_NO_WRAP);
+                return fb;
             }
         }
 
