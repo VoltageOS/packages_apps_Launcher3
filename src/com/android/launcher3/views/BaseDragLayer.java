@@ -25,6 +25,7 @@ import static com.android.launcher3.Flags.enableSystemDrag;
 import static com.android.launcher3.util.window.RefreshRateTracker.getSingleFrameMs;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Insets;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -124,6 +125,7 @@ public abstract class BaseDragLayer<T extends Context & ActivityContext>
     protected TouchController mProxyTouchController;
 
     private TouchCompleteListener mTouchCompleteListener;
+    private boolean mDrawingForBlur;
 
     public BaseDragLayer(Context context, AttributeSet attrs, int alphaChannelCount) {
         super(context, attrs);
@@ -511,6 +513,24 @@ public abstract class BaseDragLayer<T extends Context & ActivityContext>
 
     public void setTouchCompleteListener(TouchCompleteListener listener) {
         mTouchCompleteListener = listener;
+    }
+
+    public void drawForBlur(Canvas canvas) {
+        boolean wasDrawingForBlur = mDrawingForBlur;
+        mDrawingForBlur = true;
+        try {
+            draw(canvas);
+        } finally {
+            mDrawingForBlur = wasDrawingForBlur;
+        }
+    }
+
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        if (mDrawingForBlur && child instanceof AbstractFloatingView) {
+            return false;
+        }
+        return super.drawChild(canvas, child, drawingTime);
     }
 
     public interface TouchCompleteListener {

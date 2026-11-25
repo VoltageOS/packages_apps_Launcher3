@@ -36,7 +36,7 @@ constructor() {
 
     open fun drawFolderBlur(canvas: Canvas, pathWrapper: PathWrapper?, view: View) {}
 
-    open fun folderCloseComplete() {}
+    open fun folderCloseComplete(folder: Folder) {}
 
     open fun isBlurEnabled() = false
 }

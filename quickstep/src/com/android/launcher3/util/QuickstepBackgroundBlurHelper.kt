@@ -55,6 +55,7 @@ constructor(
     private val workspaceBlurRenderNode = RenderNode("workspaceBlur")
     private val workspaceBlurRenderNodeOutline = Outline()
     private val bounds = Rect()
+    private var activeFolder: Folder? = null
     private val folderBlurDrawable: BackgroundBlurDrawable? by lazy {
         if (!isBlurEnabled()) null
         else
@@ -70,6 +71,9 @@ constructor(
             return
         }
 
+        activeFolder?.invalidate()
+        activeFolder = folder
+
         val folderIcon = folder.folderIcon
         val folderNameVisibility: Int = folderIcon.folderName.visibility
         val isIconVisible = folderIcon.iconVisible
@@ -77,19 +81,24 @@ constructor(
         folderIcon.setTextVisible(false)
         folderIcon.setIconVisible(false)
 
-        val dragLayer = activityContext.dragLayer
-        val canvas =
-            workspaceBlurRenderNode.beginRecording(dragLayer.getWidth(), dragLayer.getHeight())
-        dragLayer.draw(canvas)
-        workspaceBlurRenderNode.endRecording()
-        workspaceBlurRenderNode.setPosition(0, 0, dragLayer.getWidth(), dragLayer.getHeight())
-
-        folderIcon.folderName.visibility = folderNameVisibility
-        folderIcon.setIconVisible(isIconVisible)
+        try {
+            val dragLayer = activityContext.dragLayer
+            val canvas =
+                workspaceBlurRenderNode.beginRecording(dragLayer.getWidth(), dragLayer.getHeight())
+            try {
+                dragLayer.drawForBlur(canvas)
+            } finally {
+                workspaceBlurRenderNode.endRecording()
+            }
+            workspaceBlurRenderNode.setPosition(0, 0, dragLayer.getWidth(), dragLayer.getHeight())
+        } finally {
+            folderIcon.folderName.visibility = folderNameVisibility
+            folderIcon.setIconVisible(isIconVisible)
+        }
     }
 
     override fun drawFolderBlur(canvas: Canvas, pathWrapper: PathWrapper?, view: View) {
-        if (!isBlurEnabled()) {
+        if (!isBlurEnabled() || view !== activeFolder) {
             return
         }
 
@@ -144,7 +153,11 @@ constructor(
         d.draw(canvas)
     }
 
-    override fun folderCloseComplete() {
+    override fun folderCloseComplete(folder: Folder) {
+        if (folder !== activeFolder) {
+            return
+        }
+        activeFolder = null
         if (workspaceBlurRenderNode.hasDisplayList()) {
             workspaceBlurRenderNode.discardDisplayList()
         }

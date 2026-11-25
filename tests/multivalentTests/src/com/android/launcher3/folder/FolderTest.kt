@@ -16,6 +16,7 @@
 
 package com.android.launcher3.folder
 
+import android.animation.AnimatorSet
 import android.content.ComponentName
 import android.graphics.Point
 import android.os.Process
@@ -23,6 +24,7 @@ import android.os.UserHandle
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -69,6 +71,7 @@ import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -83,6 +86,24 @@ class FolderTest {
     @get:Rule val context = TestActivityContext(app)
 
     private lateinit var folder: Folder
+
+    private class TestFolder(context: TestActivityContext, isOpen: Boolean = true) :
+        Folder(context, null) {
+        var lastCloseAnimated: Boolean? = null
+        var immediateCloseCount = 0
+
+        init {
+            mIsOpen = isOpen
+        }
+
+        override fun handleClose(animate: Boolean) {
+            lastCloseAnimated = animate
+            if (!animate) {
+                immediateCloseCount++
+                (parent as? ViewGroup)?.removeView(this)
+            }
+        }
+    }
 
     @Before
     fun <T : DragController> setUp() {
@@ -193,21 +214,67 @@ class FolderTest {
 
     @Test
     fun `Should be true if there is an open folder`() {
-        val closeOpenFolderResult = folder.closeOpenFolder(Mockito.mock(Folder::class.java))
+        val openFolder = TestFolder(context)
+        context.dragLayer.addView(openFolder)
+
+        val closeOpenFolderResult = folder.closeOpenFolder()
 
         assertTrue(closeOpenFolderResult)
+        assertEquals(false, openFolder.lastCloseAnimated)
+        assertNull(openFolder.parent)
+    }
+
+    @Test
+    fun `Should finish a folder that is already closing`() {
+        val closingFolder = TestFolder(context, false)
+        context.dragLayer.addView(closingFolder)
+        assertFalse(closingFolder.isOpen)
+
+        val closeOpenFolderResult = folder.closeOpenFolder()
+
+        assertTrue(closeOpenFolderResult)
+        assertEquals(false, closingFolder.lastCloseAnimated)
+        assertNull(closingFolder.parent)
+    }
+
+    @Test
+    fun `Should not close a folder twice when cancelling detaches it`() {
+        val closingFolder = TestFolder(context, false)
+        context.dragLayer.addView(closingFolder)
+        val animator = mock<AnimatorSet>()
+        whenever(animator.isRunning).thenReturn(true)
+        doAnswer {
+                closingFolder.close(false)
+                null
+            }
+            .whenever(animator)
+            .cancel()
+        Folder::class.java.getDeclaredField("mCurrentAnimator").apply {
+            isAccessible = true
+            set(closingFolder, animator)
+        }
+
+        val closeOpenFolderResult = folder.closeOpenFolder()
+
+        assertTrue(closeOpenFolderResult)
+        verify(animator).cancel()
+        assertEquals(1, closingFolder.immediateCloseCount)
+        assertNull(closingFolder.parent)
     }
 
     @Test
     fun `Should be false if the open folder is this folder`() {
-        val closeOpenFolderResult = folder.closeOpenFolder(folder)
+        context.dragLayer.addView(folder)
+
+        val closeOpenFolderResult = folder.closeOpenFolder()
 
         assertFalse(closeOpenFolderResult)
+        assertEquals(context.dragLayer, folder.parent)
     }
 
     @Test
     fun `Should be false if there is not an open folder`() {
-        val closeOpenFolderResult = folder.closeOpenFolder(null)
+        val closeOpenFolderResult = folder.closeOpenFolder()
 
         assertFalse(closeOpenFolderResult)
     }

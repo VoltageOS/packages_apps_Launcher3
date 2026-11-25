@@ -752,8 +752,11 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         if (!shouldAnimateOpen(items)) {
             return;
         }
-        Folder openFolder = getOpen(mActivityContext);
-        closeOpenFolder(openFolder);
+        cancelRunningAnimations();
+        Log.d("b/383526431", "animateOpen: content child count after cancelling"
+                + " animation: " + mContent.getTotalChildCount());
+
+        closeOpenFolder();
 
         if (blurOnMoreSurfaces()) {
             mBlurBackgroundHelper.prepareToOpenFolder(this);
@@ -792,10 +795,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         // leads to an inconsistent state if you drag out of the folder and drag back in without
         // dropping. One resulting issue is that replaceFolderWithFinalItem() can be called twice.
         mDeleteFolderOnDropCompleted = false;
-
-        cancelRunningAnimations();
-        Log.d("b/383526431", "animateOpen: content child count after cancelling"
-                + " animation: " + mContent.getTotalChildCount());
 
         AnimatorSet animatorSet = getFolderAnimationManager()
                 .createAnimatorSet(/* isOpening */ true);
@@ -908,10 +907,14 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
      * If there's a folder already open, we want to close it before opening another one.
      */
     @VisibleForTesting
-    boolean closeOpenFolder(Folder openFolder) {
+    boolean closeOpenFolder() {
+        Folder openFolder = getAnyView(mActivityContext, TYPE_FOLDER);
         if (openFolder != null && openFolder != this) {
             // Close any open folder before opening a folder.
-            openFolder.close(true);
+            openFolder.cancelRunningAnimations();
+            if (openFolder.getParent() != null) {
+                openFolder.close(false);
+            }
             return true;
         }
         return false;
@@ -1017,7 +1020,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
     private void closeComplete(boolean wasAnimated) {
         mIsOpen = false;
-        mBlurBackgroundHelper.folderCloseComplete();
+        mBlurBackgroundHelper.folderCloseComplete(this);
 
         // TODO: Clear all active animations.
         BaseDragLayer parent = (BaseDragLayer) getParent();

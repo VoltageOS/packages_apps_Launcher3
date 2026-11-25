@@ -16,6 +16,9 @@
 
 package com.android.launcher3.views
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.flag.junit.SetFlagsRule
@@ -23,6 +26,7 @@ import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.test.filters.SmallTest
+import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.Flags.FLAG_ENABLE_SYSTEM_DRAG
 import com.android.launcher3.dragndrop.DragController.SystemDragHandler
 import com.android.launcher3.util.LauncherMultivalentJUnit
@@ -30,6 +34,7 @@ import com.android.launcher3.util.ReflectionHelpers
 import com.android.launcher3.util.TestActivityContext
 import com.android.launcher3.util.TouchController
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -71,6 +76,18 @@ class BaseDragLayerTest {
         override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
             return super.dispatchTouchEvent(ev)
         }
+    }
+
+    private class TestFloatingView(context: TestActivityContext) :
+        AbstractFloatingView(context, null) {
+        init {
+            mIsOpen = true
+            setBackgroundColor(Color.RED)
+        }
+
+        override fun handleClose(animate: Boolean) {}
+
+        override fun isOfType(type: Int) = true
     }
 
     @Before
@@ -212,6 +229,69 @@ class BaseDragLayerTest {
         dragLayer.proxyTouchEvent(newDownEvent, false)
         verify(touchController1).onControllerInterceptTouchEvent(newDownEvent)
         verify(touchController2).onControllerInterceptTouchEvent(newDownEvent)
+    }
+
+    @Test
+    fun drawForBlur_skipsOpenAndClosingFloatingViews() {
+        val background = View(context).apply { setBackgroundColor(Color.BLUE) }
+        val openView = TestFloatingView(context)
+        val closingView = TestFloatingView(context)
+        closingView.close(false)
+        for (child in listOf(background, openView, closingView)) {
+            dragLayer.addView(child, BaseDragLayer.LayoutParams(100, 100))
+        }
+        layoutDragLayer()
+
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        try {
+            dragLayer.drawForBlur(Canvas(bitmap))
+
+            assertThat(bitmap.getPixel(50, 50)).isEqualTo(Color.BLUE)
+            assertThat(dragLayer.childCount).isEqualTo(3)
+            assertThat(openView.isOpen).isTrue()
+            assertThat(closingView.isOpen).isFalse()
+
+            dragLayer.draw(Canvas(bitmap))
+
+            assertThat(bitmap.getPixel(50, 50)).isEqualTo(Color.RED)
+        } finally {
+            bitmap.recycle()
+        }
+    }
+
+    @Test
+    fun drawForBlur_restoresNormalDrawingAfterException() {
+        var failDrawing = true
+        val background =
+            object : View(context) {
+                override fun onDraw(canvas: Canvas) {
+                    if (failDrawing) throw IllegalStateException()
+                    super.onDraw(canvas)
+                }
+            }.apply { setBackgroundColor(Color.BLUE) }
+        dragLayer.addView(background, BaseDragLayer.LayoutParams(100, 100))
+        dragLayer.addView(TestFloatingView(context), BaseDragLayer.LayoutParams(100, 100))
+        layoutDragLayer()
+
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        try {
+            assertThrows(IllegalStateException::class.java) {
+                dragLayer.drawForBlur(Canvas(bitmap))
+            }
+            failDrawing = false
+
+            dragLayer.draw(Canvas(bitmap))
+
+            assertThat(bitmap.getPixel(50, 50)).isEqualTo(Color.RED)
+        } finally {
+            bitmap.recycle()
+        }
+    }
+
+    private fun layoutDragLayer() {
+        val size = View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY)
+        dragLayer.measure(size, size)
+        dragLayer.layout(0, 0, 100, 100)
     }
 
     private fun obtainMotionEvent(action: Int, x: Float = 0f, y: Float = 0f): MotionEvent {
